@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: catalog
+  labels:
+    app: eshop
+    service: catalog
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /catalog-api
+          backend: 
+            serviceName: catalog-api
+            servicePort: 80

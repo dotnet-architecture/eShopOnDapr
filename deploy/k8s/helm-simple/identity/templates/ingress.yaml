@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: identity
+  labels:
+    app: eshop
+    service: identity
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /identity
+          backend: 
+            serviceName: identity-api
+            servicePort: 80
