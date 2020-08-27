@@ -11,7 +11,7 @@ services:
   basket-api:
     image: ${REGISTRY:-eshop}/basket.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Basket/Basket.API/Dockerfile
     depends_on:
       - identity-api
@@ -26,7 +26,7 @@ services:
   catalog-api:
     image: catalog
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
     depends_on:
       - rabbitmq
@@ -41,7 +41,7 @@ services:
   identity-api:
     image: ${REGISTRY:-eshop}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
     depends_on:
       - sqldata
@@ -49,7 +49,7 @@ services:
   ordering-api:
     image: ${REGISTRY:-eshop}/ordering.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
     depends_on:
       - rabbitmq
@@ -64,7 +64,7 @@ services:
   ordering-backgroundtasks:
     image: ${REGISTRY:-eshop}/ordering.backgroundtasks:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Ordering/Ordering.BackgroundTasks/Dockerfile
     depends_on:
       - rabbitmq
@@ -79,7 +79,7 @@ services:
   ordering-signalrhub:
     image: ${REGISTRY:-eshop}/ordering.signalrhub:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Ordering/Ordering.SignalrHub/Dockerfile
     depends_on:
       - basket-api
@@ -98,7 +98,7 @@ services:
   payment-api:
     image: ${REGISTRY:-eshop}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
     depends_on:
       - rabbitmq
@@ -112,7 +112,7 @@ services:
   webshoppingagg:
     image: ${REGISTRY:-eshop}/webshoppingagg:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Dockerfile
     depends_on:
       - basket-api
@@ -131,7 +131,7 @@ services:
   webspa:
     image: ${REGISTRY:-eshop}/webspa:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Web/WebSPA/Dockerfile
     depends_on:
       - webshoppingagg
@@ -139,7 +139,7 @@ services:
   webstatus:
     image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
     build:
-      context: .
+      context: ../../
       dockerfile: src/Web/WebStatus/Dockerfile
 
   dapr-placement:
