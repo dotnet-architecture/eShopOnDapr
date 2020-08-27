@@ -24,7 +24,7 @@ services:
       - basket-api
 
   catalog-api:
-    image: catalog
+    image: ${REGISTRY:-eshop}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: ../../
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
