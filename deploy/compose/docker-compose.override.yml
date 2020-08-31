@@ -1,0 +1,359 @@
+version: '3.4'
+
+# The default docker-compose.override file can use the "localhost" as the external name for testing web apps within the same dev machine.
+# The ESHOP_EXTERNAL_DNS_NAME_OR_IP environment variable is taken, by default, from the ".env" file defined like:
+#     ESHOP_EXTERNAL_DNS_NAME_OR_IP=localhost
+# but values present in the environment vars at runtime will always override those defined inside the .env file
+
+services:
+
+  rabbitmq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  seq:
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5340:80"
+
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - eshop-sqldata:/var/opt/mssql
+
+  basket-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ESHOP_AZURE_REDIS_BASKET_DB:-redis}
+      - identityUrl=http://identity-api
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+#      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - PATH_BASE=/basket-api
+      - GRPC_PORT=81
+      - PORT=80
+      - DAPR_GRPC_PORT=50001
+    ports:
+      - "5103:80"
+      - "9103:81"
+      - "50001:50001"
+
+  basket-api-dapr:
+    command: ["./daprd",
+      "-app-id", "basket-api",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50001",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  catalog-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=${ESHOP_AZURE_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
+      - PicBaseUrl=${ESHOP_STORAGE_CATALOG_URL}
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - AzureStorageAccountName=${ESHOP_AZURE_STORAGE_CATALOG_NAME}
+      - AzureStorageAccountKey=${ESHOP_AZURE_STORAGE_CATALOG_KEY}
+      - UseCustomizationData=True
+      - AzureServiceBusEnabled=False
+      - AzureStorageEnabled=False
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - GRPC_PORT=81
+      - PORT=80
+      - PATH_BASE=/catalog-api
+      - DAPR_GRPC_PORT=50002
+    ports:
+      - "5101:80"
+      - "9101:81"
+      - "3501:3500"
+      - "50002:50002"
+
+  catalog-api-dapr:
+    command: ["./daprd",
+      "-app-id", "catalog-api",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50002",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - SpaClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
+      - XamarinCallback=http://${ESHOP_PROD_EXTERNAL_DNS_NAME_OR_IP}:5105/xamarincallback
+      - ConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Service.IdentityDb;User Id=sa;Password=Pass@word}
+      - MvcClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5100
+      - LocationApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5109
+      - MarketingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5110
+      - BasketApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
+      - OrderingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
+      - MobileShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
+      - WebShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
+      - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
+      - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+    ports:
+      - "5105:80"
+
+  ordering-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
+      - identityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - UseCustomizationData=True
+      - AzureServiceBusEnabled=False
+      - CheckUpdateTime=30000
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+      - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - Serilog__MinimumLevel__Override__ordering-api=Verbose
+      - PATH_BASE=/ordering-api
+      - GRPC_PORT=81
+      - PORT=80
+      - DAPR_GRPC_PORT=50003
+    ports:
+      - "5102:80"
+      - "9102:81"
+      - "50003:50003"
+
+  ordering-api-dapr:
+    command: ["./daprd",
+      "-app-id", "ordering-api",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50003",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  ordering-backgroundtasks:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - UseCustomizationData=True
+      - AzureServiceBusEnabled=False
+      - CheckUpdateTime=30000
+      - GracePeriodTime=1
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+      - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - DAPR_GRPC_PORT=50004
+    ports:
+      - "5111:80"
+      - "50004:50004"
+
+  ordering-backgroundtasks-dapr:
+    command: ["./daprd",
+      "-app-id", "ordering-backgroundtasks",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50004",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  ordering-signalrhub:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - AzureServiceBusEnabled=False
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - identityUrl=http://identity-api
+      - DAPR_GRPC_PORT=50005
+    ports:
+      - "5112:80"
+      - "50005:50005"
+
+  ordering-signalrhub-dapr:
+    command: ["./daprd",
+      "-app-id", "ordering-signalrhub",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50005",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  payment-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - AzureServiceBusEnabled=False
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling=Verbose
+      - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - DAPR_GRPC_PORT=50006
+    ports:
+      - "5108:80"
+      - "50006:50006"
+
+  payment-api-dapr:
+    command: ["./daprd",
+      "-app-id", "payment-api",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50006",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  webshoppingagg:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - urls__basket=http://basket-api
+      - urls__catalog=http://catalog-api
+      - urls__orders=http://ordering-api
+      - urls__identity=http://identity-api
+      - urls__grpcBasket=http://basket-api:81
+      - urls__grpcCatalog=http://catalog-api:81
+      - urls__grpcOrdering=http://ordering-api:81
+      - BasketUrlHC=http://basket-api/hc
+      - CatalogUrlHC=http://catalog-api/hc
+      - OrderingUrlHC=http://ordering-api/hc
+      - IdentityUrlHC=http://identity-api/hc
+      - PaymentUrlHC=http://payment-api/hc
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - DAPR_GRPC_PORT=50007
+    ports:
+      - "5121:80"
+      - "50007:50007"
+
+  webshoppingagg-dapr:
+    command: ["./daprd",
+      "-app-id", "webshoppingagg",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50007",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  webshoppingapigw:
+    volumes:
+      - ../../src/ApiGateways/Envoy/config/webshopping:/etc/envoy
+    ports:
+    - "5202:80"
+    - "15202:8001"
+    - "3500:3500"
+    - "50008:50008"
+
+  webshoppingapigw-dapr:
+    command: ["./daprd",
+      "-app-id", "webshoppingapigw",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50008",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
+  webspa:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - PurchaseUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrlHC=http://identity-api/hc
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+    ports:
+      - "5104:80"
+
+  webstatus:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - HealthChecksUI__HealthChecks__1__Name=Basket API
+      - HealthChecksUI__HealthChecks__1__Uri=http://basket-api/hc
+      - HealthChecksUI__HealthChecks__2__Name=Catalog API
+      - HealthChecksUI__HealthChecks__2__Uri=http://catalog-api/hc
+      - HealthChecksUI__HealthChecks__3__Name=Identity API
+      - HealthChecksUI__HealthChecks__3__Uri=http://identity-api/hc
+      - HealthChecksUI__HealthChecks__4__Name=Ordering API
+      - HealthChecksUI__HealthChecks__4__Uri=http://ordering-api/hc
+      - HealthChecksUI__HealthChecks__5__Name=Ordering Background Tasks
+      - HealthChecksUI__HealthChecks__5__Uri=http://ordering-backgroundtasks/hc
+      - HealthChecksUI__HealthChecks__6__Name=Ordering SignalR Hub
+      - HealthChecksUI__HealthChecks__6__Uri=http://ordering-signalrhub/hc
+      - HealthChecksUI__HealthChecks__7__Name=Payment API
+      - HealthChecksUI__HealthChecks__7__Uri=http://payment-api/hc
+      - HealthChecksUI__HealthChecks__8__Name=Web Shopping Aggregator
+      - HealthChecksUI__HealthChecks__8__Uri=http://webshoppingagg/hc
+      - HealthChecksUI__HealthChecks__9__Name=Web SPA
+      - HealthChecksUI__HealthChecks__9__Uri=http://webspa/hc
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+    ports:
+      - "5107:80"
+
+  dapr-placement:
+    command: ["./placement", "-port", "50000", "-log-level", "debug"]
+    ports:
+      - "50000:50000"
+
+volumes:
+  eshop-sqldata:
+    external: false
+  eshop-nosqldata:
+    external: false
+  eshop-basketdata:
+    external: false
+

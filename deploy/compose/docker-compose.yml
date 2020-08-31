@@ -1,0 +1,161 @@
+version: '3.4'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  redis:
+    image: redis:alpine
+
+  seq:
+    image: datalust/seq:latest
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2017-latest 
+
+  basket-api:
+    image: ${REGISTRY:-eshop}/basket.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+    depends_on:
+      - identity-api
+      - rabbitmq
+
+  basket-api-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:basket-api"
+    depends_on:
+      - basket-api
+
+  catalog-api:
+    image: ${REGISTRY:-eshop}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+    depends_on:
+      - rabbitmq
+      - sqldata
+
+  catalog-api-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:catalog-api"
+    depends_on:
+      - catalog-api
+
+  identity-api:
+    image: ${REGISTRY:-eshop}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  ordering-api:
+    image: ${REGISTRY:-eshop}/ordering.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+    depends_on:
+      - rabbitmq
+      - sqldata
+
+  ordering-api-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:ordering-api"
+    depends_on:
+      - ordering-api
+
+  ordering-backgroundtasks:
+    image: ${REGISTRY:-eshop}/ordering.backgroundtasks:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Ordering/Ordering.BackgroundTasks/Dockerfile
+    depends_on:
+      - rabbitmq
+      - sqldata
+
+  ordering-backgroundtasks-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:ordering-backgroundtasks"
+    depends_on:
+      - ordering-backgroundtasks
+
+  ordering-signalrhub:
+    image: ${REGISTRY:-eshop}/ordering.signalrhub:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Ordering/Ordering.SignalrHub/Dockerfile
+    depends_on:
+      - basket-api
+      - catalog-api
+      - identity-api
+      - ordering-api
+      - rabbitmq
+      - sqldata
+
+  ordering-signalrhub-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:ordering-signalrhub"
+    depends_on:
+      - ordering-signalrhub
+
+  payment-api:
+    image: ${REGISTRY:-eshop}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+    depends_on:
+      - rabbitmq
+
+  payment-api-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:payment-api"
+    depends_on:
+      - payment-api
+
+  webshoppingagg:
+    image: ${REGISTRY:-eshop}/webshoppingagg:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Dockerfile
+    depends_on:
+      - basket-api
+      - catalog-api
+      - identity-api
+      - ordering-api
+      - rabbitmq
+      - sqldata
+
+  webshoppingagg-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:webshoppingagg"
+    depends_on:
+      - webshoppingagg
+
+  webshoppingapigw:
+    image: envoyproxy/envoy:v1.14.2
+
+  webshoppingapigw-dapr:
+    image: "daprio/daprd:0.9.0"
+    network_mode: "service:webshoppingapigw"
+    depends_on:
+      - webshoppingapigw
+
+  webspa:
+    image: ${REGISTRY:-eshop}/webspa:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Web/WebSPA/Dockerfile
+    depends_on:
+      - webshoppingagg
+
+  webstatus:
+    image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: src/Web/WebStatus/Dockerfile
+
+  dapr-placement:
+    image: "daprio/dapr:0.9.0"

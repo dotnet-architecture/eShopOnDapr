@@ -3,6 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# VS Code 
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
 # User-specific files
 *.rsuser
 *.suo
@@ -230,6 +238,8 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 
+!src/Services/Identity/Identity.API/Certificate/idsrv3test.pfx
+
 # Including strong name files can present a security risk
 # (https://github.com/github/gitignore/pull/2483#issue-259490424)
 #*.snk
@@ -348,3 +358,14 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+
+# Sonar Qube work directories
+.sonarqube/
+
+# status web temp files
+**/healthchecksdb
+**/healthchecksdb-shm
+**/healthchecksdb-wal
+
+**/tempkey.rsa

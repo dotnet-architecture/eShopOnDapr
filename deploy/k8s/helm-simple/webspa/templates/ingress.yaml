@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: webspa
+  labels:
+    app: eshop
+    service: webspa
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /
+          backend: 
+            serviceName: webspa
+            servicePort: 80

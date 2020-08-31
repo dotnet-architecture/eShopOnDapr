@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: webstatus
+  labels:
+    app: eshop
+    service: webstatus
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /webstatus
+          backend: 
+            serviceName: webstatus
+            servicePort: 80
