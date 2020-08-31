@@ -8,6 +8,9 @@ services:
   redis:
     image: redis:alpine
 
+  seq:
+    image: datalust/seq:latest
+
   sqldata:
     image: mcr.microsoft.com/mssql/server:2017-latest 
 

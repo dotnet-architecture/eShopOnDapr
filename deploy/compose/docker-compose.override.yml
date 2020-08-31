@@ -17,6 +17,12 @@ services:
     ports:
       - "6379:6379"
 
+  seq:
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5340:80"
+
   sqldata:
     environment:
       - SA_PASSWORD=Pass@word
