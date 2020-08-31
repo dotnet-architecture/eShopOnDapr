@@ -12,6 +12,11 @@ services:
       - "15672:15672"
       - "5672:5672"
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
   sqldata:
     environment:
       - SA_PASSWORD=Pass@word
@@ -27,6 +32,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ESHOP_AZURE_REDIS_BASKET_DB:-redis}
       - identityUrl=http://identity-api
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
 #      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - PATH_BASE=/basket-api
@@ -248,13 +254,11 @@ services:
       - urls__grpcBasket=http://basket-api:81
       - urls__grpcCatalog=http://catalog-api:81
       - urls__grpcOrdering=http://ordering-api:81
+      - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - OrderingUrlHC=http://ordering-api/hc
       - IdentityUrlHC=http://identity-api/hc
-      - BasketUrlHC=http://basket-api/hc
-      - MarketingUrlHC=http://marketing-api/hc
       - PaymentUrlHC=http://payment-api/hc
-      - LocationUrlHC=http://locations-api/hc
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - DAPR_GRPC_PORT=50007
     ports:
@@ -273,13 +277,33 @@ services:
     volumes:
       - "../../src/components/:/components"
 
+  webshoppingapigw:
+    volumes:
+      - ../../src/ApiGateways/Envoy/config/webshopping:/etc/envoy
+    ports:
+    - "5202:80"
+    - "15202:8001"
+    - "3500:3500"
+    - "50008:50008"
+
+  webshoppingapigw-dapr:
+    command: ["./daprd",
+      "-app-id", "webshoppingapigw",
+      "-app-port", "80",
+      "-placement-address", "placement:50000",
+      "-dapr-grpc-port", "50008",
+      "-components-path", "/components",
+      "-config", "/components/config.yaml"
+      ]
+    volumes:
+      - "../../src/components/:/components"
+
   webspa:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - PurchaseUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - MarketingUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5203
       - IdentityUrlHC=http://identity-api/hc
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
