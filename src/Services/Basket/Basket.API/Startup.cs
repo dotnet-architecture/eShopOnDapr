@@ -17,8 +17,6 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBusServiceBus;
 using Microsoft.eShopOnContainers.Services.Basket.API.Controllers;
 using Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.EventHandling;
-using Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.Events;
 using Microsoft.eShopOnContainers.Services.Basket.API.Model;
 using Microsoft.eShopOnContainers.Services.Basket.API.Services;
 using Microsoft.Extensions.Configuration;
@@ -64,7 +62,9 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                     options.Filters.Add(typeof(ValidateModelStateFilter));
 
-                }) // Added for functional tests
+                })
+                .AddDapr()
+                // Added for functional tests
                 .AddApplicationPart(typeof(BasketController).Assembly)
                 .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
@@ -178,7 +178,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
                     .AllowCredentials());
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IBasketRepository, RedisBasketRepository>();
+            services.AddTransient<IBasketRepository, DaprBasketRepository>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
@@ -323,7 +323,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
-            services.AddTransient<ProductPriceChangedIntegrationEventHandler>();
             services.AddTransient<OrderStartedIntegrationEventHandler>();
         }
 
@@ -331,7 +330,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<ProductPriceChangedIntegrationEvent, ProductPriceChangedIntegrationEventHandler>();
             eventBus.Subscribe<OrderStartedIntegrationEvent, OrderStartedIntegrationEventHandler>();
         }
     }
@@ -344,11 +342,12 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
             hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
-            hcBuilder
-                .AddRedis(
-                    configuration["ConnectionString"],
-                    name: "redis-check",
-                    tags: new string[] { "redis" });
+            // TODO Ideally replace with Dapr health checks
+            // hcBuilder
+            //     .AddRedis(
+            //         configuration["ConnectionString"],
+            //         name: "redis-check",
+            //         tags: new string[] { "redis" });
 
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {

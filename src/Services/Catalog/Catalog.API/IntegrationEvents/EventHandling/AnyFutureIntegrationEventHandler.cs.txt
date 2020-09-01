@@ -1,3 +1,2 @@
 ﻿
 
-// To implement ProductPriceChangedEvent.cs here

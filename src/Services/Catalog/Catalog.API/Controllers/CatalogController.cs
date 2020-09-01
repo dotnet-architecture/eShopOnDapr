@@ -215,46 +215,6 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API.Controllers
             return await _catalogContext.CatalogBrands.ToListAsync();
         }
 
-        //PUT api/v1/[controller]/items
-        [Route("items")]
-        [HttpPut]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<ActionResult> UpdateProductAsync([FromBody]CatalogItem productToUpdate)
-        {
-            var catalogItem = await _catalogContext.CatalogItems.SingleOrDefaultAsync(i => i.Id == productToUpdate.Id);
-
-            if (catalogItem == null)
-            {
-                return NotFound(new { Message = $"Item with id {productToUpdate.Id} not found." });
-            }
-
-            var oldPrice = catalogItem.Price;
-            var raiseProductPriceChangedEvent = oldPrice != productToUpdate.Price;
-
-            // Update current product
-            catalogItem = productToUpdate;
-            _catalogContext.CatalogItems.Update(catalogItem);
-
-            if (raiseProductPriceChangedEvent) // Save product's data and publish integration event through the Event Bus if price has changed
-            {
-                //Create Integration Event to be published through the Event Bus
-                var priceChangedEvent = new ProductPriceChangedIntegrationEvent(catalogItem.Id, productToUpdate.Price, oldPrice);
-
-                // Achieving atomicity between original Catalog database operation and the IntegrationEventLog thanks to a local transaction
-                await _catalogIntegrationEventService.SaveEventAndCatalogContextChangesAsync(priceChangedEvent);
-
-                // Publish through the Event Bus and mark the saved event as published
-                await _catalogIntegrationEventService.PublishThroughEventBusAsync(priceChangedEvent);
-            }
-            else // Just save the updated product because the Product's Price hasn't changed.
-            {
-                await _catalogContext.SaveChangesAsync();
-            }
-
-            return CreatedAtAction(nameof(ItemByIdAsync), new { id = productToUpdate.Id }, null);
-        }
-
         //POST api/v1/[controller]/items
         [Route("items")]
         [HttpPost]
