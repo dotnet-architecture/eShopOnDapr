@@ -9,7 +9,7 @@ spec:
     value: redis:6379
   - name: redisPassword
     secretKeyRef:
-      name: ESHOP_SECRET_REDIS_PASSWORD
-      key: ESHOP_SECRET_REDIS_PASSWORD
+      name: RedisPassword
+      key: RedisPassword
 auth:
   secretStore: eshop-secretstore

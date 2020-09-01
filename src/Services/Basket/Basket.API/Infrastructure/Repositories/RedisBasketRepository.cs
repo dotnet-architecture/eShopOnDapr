@@ -1,70 +1,43 @@
-﻿using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+﻿using Dapr.Client;
+using Microsoft.eShopOnContainers.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using StackExchange.Redis;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Repositories
 {
-    public class RedisBasketRepository : IBasketRepository
+    public class DaprBasketRepository : IBasketRepository
     {
-        private readonly ILogger<RedisBasketRepository> _logger;
-        private readonly ConnectionMultiplexer _redis;
-        private readonly IDatabase _database;
+        private const string StoreName = "eshop-basket-statestore";
 
-        public RedisBasketRepository(ILoggerFactory loggerFactory, ConnectionMultiplexer redis)
+        private readonly ILogger<DaprBasketRepository> _logger;
+        private readonly DaprClient _dapr;
+
+        public DaprBasketRepository(ILoggerFactory loggerFactory, DaprClient dapr)
         {
-            _logger = loggerFactory.CreateLogger<RedisBasketRepository>();
-            _redis = redis;
-            _database = redis.GetDatabase();
+            _logger = loggerFactory.CreateLogger<DaprBasketRepository>();
+            _dapr = dapr;
         }
 
-        public async Task<bool> DeleteBasketAsync(string id)
+        public async Task DeleteBasketAsync(string id)
         {
-            return await _database.KeyDeleteAsync(id);
-        }
-
-        public IEnumerable<string> GetUsers()
-        {
-            var server = GetServer();
-            var data = server.Keys();
-
-            return data?.Select(k => k.ToString());
+            await _dapr.DeleteStateAsync(StoreName, id);
         }
 
         public async Task<CustomerBasket> GetBasketAsync(string customerId)
         {
-            var data = await _database.StringGetAsync(customerId);
-
-            if (data.IsNullOrEmpty)
-            {
-                return null;
-            }
-
-            return JsonConvert.DeserializeObject<CustomerBasket>(data);
+            return await _dapr.GetStateAsync<CustomerBasket>(StoreName, customerId);
         }
 
         public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
         {
-            var created = await _database.StringSetAsync(basket.BuyerId, JsonConvert.SerializeObject(basket));
+            var state = await _dapr.GetStateEntryAsync<CustomerBasket>(StoreName, basket.BuyerId);
+            state.Value = basket;
 
-            if (!created)
-            {
-                _logger.LogInformation("Problem occur persisting the item.");
-                return null;
-            }
+            await state.SaveAsync();
 
             _logger.LogInformation("Basket item persisted succesfully.");
 
             return await GetBasketAsync(basket.BuyerId);
-        }
-
-        private IServer GetServer()
-        {
-            var endpoint = _redis.GetEndPoints();
-            return _redis.GetServer(endpoint.First());
         }
     }
 }
