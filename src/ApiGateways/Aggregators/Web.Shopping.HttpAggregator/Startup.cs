@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Config;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Filters.Basket.API.Infrastructure.Filters;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Infrastructure;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,13 +37,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
                 .AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" })
                 .AddUrlGroup(new Uri(Configuration["BasketUrlHC"]), name: "basketapi-check", tags: new string[] { "basketapi" })
                 .AddUrlGroup(new Uri(Configuration["PaymentUrlHC"]), name: "paymentapi-check", tags: new string[] { "paymentapi" });
-
-            // HC dependency is configured this way to save one build step on ACR
-            var couponHealthEndpoint = Configuration["CouponUrlHC"];
-            if (!string.IsNullOrWhiteSpace(couponHealthEndpoint))
-            {
-                healthCheckBuilder.AddUrlGroup(new Uri(couponHealthEndpoint), name: "couponapi-check", tags: new string[] { "couponapi" });
-            }
 
             services.AddCustomMvc(Configuration)
                 .AddCustomAuthentication(Configuration)
@@ -128,7 +118,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
         public static IServiceCollection AddCustomMvc(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions();
-            services.Configure<UrlsConfig>(configuration.GetSection("urls"));
 
             services.AddControllers()
                 .AddDapr()
@@ -179,29 +168,11 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
         }
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            //register delegating handlers
-            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            //register http services
-
-            services.AddHttpClient<IBasketService, BasketService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient<ICatalogService, CatalogService>();
-
-            services.AddHttpClient<IOrderApiClient, OrderApiClient>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient<IOrderingService, OrderingService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient<ICouponService, CouponService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<ICatalogService, CatalogService>();
+            services.AddScoped<IOrderingService, OrderingService>();
 
             return services;
         }
-
-
     }
 }
