@@ -68,7 +68,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
 
@@ -132,6 +131,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             services.Configure<UrlsConfig>(configuration.GetSection("urls"));
 
             services.AddControllers()
+                .AddDapr()
                 .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddSwaggerGen(options =>

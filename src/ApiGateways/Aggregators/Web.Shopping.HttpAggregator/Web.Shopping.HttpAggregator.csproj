@@ -18,7 +18,8 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.0.2" />
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="3.0.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.11.3" />
+    <PackageReference Include="Dapr.AspNetCore" Version="0.10.0-preview01" />
+    <PackageReference Include="Google.Protobuf" Version="3.12.3" />
     <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.27.0" />
     <PackageReference Include="Grpc.Core" Version="2.27.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.27.0" />
