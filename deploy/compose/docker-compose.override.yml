@@ -44,7 +44,6 @@ services:
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - PATH_BASE=/basket-api
-      - GRPC_PORT=81
       - PORT=80
       - DAPR_GRPC_PORT=50001
     ports:
@@ -80,7 +79,6 @@ services:
       - AzureStorageEnabled=False
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - GRPC_PORT=81
       - PORT=80
       - PATH_BASE=/catalog-api
       - DAPR_GRPC_PORT=50002
@@ -144,7 +142,6 @@ services:
       - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
       - Serilog__MinimumLevel__Override__ordering-api=Verbose
       - PATH_BASE=/ordering-api
-      - GRPC_PORT=81
       - PORT=80
       - DAPR_GRPC_PORT=50003
     ports:
@@ -265,9 +262,6 @@ services:
       - urls__catalog=http://catalog-api
       - urls__orders=http://ordering-api
       - urls__identity=http://identity-api
-      - urls__grpcBasket=http://basket-api:81
-      - urls__grpcCatalog=http://catalog-api:81
-      - urls__grpcOrdering=http://ordering-api:81
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - OrderingUrlHC=http://ordering-api/hc

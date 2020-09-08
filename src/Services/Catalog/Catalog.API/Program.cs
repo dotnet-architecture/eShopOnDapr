@@ -70,14 +70,10 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
                 .CaptureStartupErrors(false)
                 .ConfigureKestrel(options =>
                 {
-                    var ports = GetDefinedPorts(configuration);
-                    options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
+                    var httpPort = configuration.GetValue("PORT", 80);
+                    options.Listen(IPAddress.Any, httpPort, listenOptions =>
                     {
                         listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                    });
-                    options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
-                    {
-                        listenOptions.Protocols = HttpProtocols.Http2;
                     });
 
                 })
@@ -100,13 +96,6 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
                 .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
-        }
-
-        private static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
-        {
-            var grpcPort = config.GetValue("GRPC_PORT", 81);
-            var port = config.GetValue("PORT", 80);
-            return (port, grpcPort);
         }
 
         private static IConfiguration GetConfiguration()
