@@ -33,8 +33,6 @@
                         o.Address_State as state, 
                         o.Address_Street as street, 
                         o.Address_ZipCode as zipcode,
-                        o.DiscountCode as coupon,
-                        o.Discount as discount,
                         os.Name as status, 
                         oi.ProductName as productname, 
                         oi.Units as units, 
@@ -71,11 +69,7 @@
                         o.Id ordernumber,
                         o.OrderDate date,
                         os.Name status,
-                        case
-                            when ot.subtotal > isnull(o.Discount, 0) 
-                                then ot.subtotal - isnull(o.Discount, 0)
-                            else 0
-                        end total
+                        ot.subtotal total
                     from ordering.orders o
                     join OrderTotal ot on ot.OrderId = o.Id
                     join ordering.orderstatus os on os.Id = o.OrderStatusId
@@ -108,8 +102,6 @@
                 country = result[0].country,
                 orderitems = new List<Orderitem>(),
                 subtotal = 0,
-                coupon = result[0].coupon,
-                discount = result[0].discount ?? 0m,
                 total = 0,
             };
 
@@ -127,9 +119,7 @@
                 order.orderitems.Add(orderitem);
             }
 
-            order.total = order.discount < order.subtotal
-                ? order.subtotal - order.discount
-                : 0;
+            order.total = order.subtotal;
 
             return order;
         }

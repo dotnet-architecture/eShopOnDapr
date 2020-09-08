@@ -146,7 +146,6 @@
                 OrderStatus.Submitted,
                 OrderStatus.AwaitingStockValidation,
                 OrderStatus.Validated,
-                OrderStatus.AwaitingCouponValidation,
                 OrderStatus.Paid,
                 OrderStatus.Shipped,
                 OrderStatus.Cancelled

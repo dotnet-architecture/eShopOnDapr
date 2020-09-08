@@ -50,7 +50,7 @@ namespace Ordering.API.Application.IntegrationEvents.EventHandling
                             integrationEvent.Street, integrationEvent.State, integrationEvent.Country,
                             integrationEvent.ZipCode, integrationEvent.CardNumber, integrationEvent.CardHolderName,
                             integrationEvent.CardExpiration, integrationEvent.CardSecurityNumber,
-                            integrationEvent.CardTypeId, integrationEvent.CodeDiscount, integrationEvent.Discount);
+                            integrationEvent.CardTypeId);
 
                         var requestCreateOrder = new IdentifiedCommand<CreateOrderCommand, bool>(createOrderCommand, integrationEvent.RequestId);
 

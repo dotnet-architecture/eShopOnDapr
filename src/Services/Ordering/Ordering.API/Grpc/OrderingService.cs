@@ -64,7 +64,6 @@ namespace GrpcOrdering
 
             order.OrderItems.ToList().ForEach(i => result.OrderItems.Add(new OrderItemDTO()
             {
-                Discount = (double)i.Discount,
                 PictureUrl = i.PictureUrl,
                 ProductId = i.ProductId,
                 ProductName = i.ProductName,
