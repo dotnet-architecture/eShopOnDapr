@@ -25,6 +25,7 @@ services:
     depends_on:
       - identity-api
       - rabbitmq
+      - redis
 
   basket-api-dapr:
     image: "daprio/daprd:0.10.0"

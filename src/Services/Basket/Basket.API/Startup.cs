@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Basket.API.Infrastructure.Filters;
-using Basket.API.Infrastructure.Middlewares;
 using Basket.API.IntegrationEvents.EventHandling;
 using Basket.API.IntegrationEvents.Events;
 using HealthChecks.UI.Client;
@@ -30,10 +29,6 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using GrpcBasket;
-using Microsoft.AspNetCore.Http.Features;
-using Serilog;
 using Newtonsoft.Json.Converters;
 
 namespace Microsoft.eShopOnContainers.Services.Basket.API
@@ -50,11 +45,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc(options =>
-            {
-                options.EnableDetailedErrors = true;
-            });
-
             RegisterAppInsights(services);
 
             services.AddControllers(options =>
@@ -101,25 +91,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             ConfigureAuthService(services);
 
             services.AddCustomHealthCheck(Configuration);
-
-            services.Configure<BasketSettings>(Configuration);
-
-            //By connecting here we are making sure that our service
-            //cannot start until redis is ready. This might slow down startup,
-            //but given that there is a delay on resolving the ip address
-            //and then creating the connection it seems reasonable to move
-            //that cost to startup instead of having the first request pay the
-            //penalty.
-            services.AddSingleton<ConnectionMultiplexer>(sp =>
-            {
-                var settings = sp.GetRequiredService<IOptions<BasketSettings>>().Value;
-                var configuration = ConfigurationOptions.Parse(settings.ConnectionString, true);
-
-                configuration.ResolveDns = true;
-
-                return ConnectionMultiplexer.Connect(configuration);
-            });
-
 
             if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {
@@ -217,23 +188,8 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<BasketService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
-                endpoints.MapGet("/_proto/", async ctx =>
-                {
-                    ctx.Response.ContentType = "text/plain";
-                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "basket.proto"), FileMode.Open, FileAccess.Read);
-                    using var sr = new StreamReader(fs);
-                    while (!sr.EndOfStream)
-                    {
-                        var line = await sr.ReadLineAsync();
-                        if (line != "/* >>" || line != "<< */")
-                        {
-                            await ctx.Response.WriteAsync(line);
-                        }
-                    }
-                });
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
@@ -276,11 +232,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)
         {
-            if (Configuration.GetValue<bool>("UseLoadTest"))
-            {
-                app.UseMiddleware<ByPassAuthMiddleware>();
-            }
-
             app.UseAuthentication();
             app.UseAuthorization();
         }
