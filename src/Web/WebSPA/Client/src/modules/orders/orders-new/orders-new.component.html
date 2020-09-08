@@ -84,41 +84,9 @@
                 </div>
             </article>
 
-            <!--DISCOUNT-COUPON-COMMENT**<div class="d-flex align-items-center justify-content-end mt-4 mb-4 text-uppercase">-->
-                <!--DISCOUNT-COUPON-COMMENT**<div>Subtotal</div>-->
-                <!--DISCOUNT-COUPON-COMMENT**<div class="ml-3">${{order.total | number:'.2-2'}}</div>-->
-            <!--DISCOUNT-COUPON-COMMENT**</div>-->
-
-            <!--DISCOUNT-COUPON-COMMENT**<div class="d-flex flex-nowrap justify-content-between align-items-center mb-3 mt-3">-->
-                <!--DISCOUNT-COUPON-COMMENT**<div>-->
-                    <!--DISCOUNT-COUPON-COMMENT**<div *ngIf="!coupon">-->
-                        <!--DISCOUNT-COUPON-COMMENT**<div class="u-text-uppercase">Have a discount code?</div>-->
-                        <!--DISCOUNT-COUPON-COMMENT**<div class="d-flex flex-nowrap justify-content-between align-items-center mt-1">-->
-                            <!--DISCOUNT-COUPON-COMMENT**<input-->
-                            <!--DISCOUNT-COUPON-COMMENT**#discountcode-->
-                            <!--DISCOUNT-COUPON-COMMENT**class="esh-orders_new-coupon mr-2 form-control"-->
-                            <!--DISCOUNT-COUPON-COMMENT**type="text"-->
-                            <!--DISCOUNT-COUPON-COMMENT**placeholder="Coupon number"-->
-                            <!--DISCOUNT-COUPON-COMMENT**(keydown)="keyDownValidationCoupon($event, discountcode.value)">-->
-                            <!--DISCOUNT-COUPON-COMMENT**<button-->
-                                <!--DISCOUNT-COUPON-COMMENT**type="button"-->
-                                <!--DISCOUNT-COUPON-COMMENT**(click)="checkValidationCoupon(discountcode.value)"-->
-                                <!--DISCOUNT-COUPON-COMMENT**class="btn btn-secondary u-minwidth-unset">Apply</button>-->
-                        <!--DISCOUNT-COUPON-COMMENT**</div>-->
-                        <!--DISCOUNT-COUPON-COMMENT**<div class="mt-1" *ngIf="couponValidationMessage">{{couponValidationMessage}}</div>-->
-                    <!--DISCOUNT-COUPON-COMMENT**</div>-->
-                <!--DISCOUNT-COUPON-COMMENT**</div>-->
-                <!--DISCOUNT-COUPON-COMMENT**<div class="d-flex align-items-center justify-content-end text-uppercase">-->
-                    <!--DISCOUNT-COUPON-COMMENT**<div *ngIf="coupon?.code">{{coupon?.code}}</div>-->
-                    <!--DISCOUNT-COUPON-COMMENT**<div>-->
-                        <!--DISCOUNT-COUPON-COMMENT**<div class="text-right ml-3" *ngIf="coupon?.discount">-${{coupon?.discount | number:'.2-2'}}</div>-->
-                    <!--DISCOUNT-COUPON-COMMENT**</div>-->
-                <!--DISCOUNT-COUPON-COMMENT**</div>-->
-            <!--DISCOUNT-COUPON-COMMENT**</div>-->
-
             <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
                 <div>Total</div>
-                <div class="ml-3">${{ (coupon?.discount ? ((order.total - coupon?.discount) < 0 ? 0 : (order.total - coupon?.discount)) : order.total) | number:'.2-2'}}</div>
+                <div class="ml-3">${{order.total | number:'.2-2'}}</div>
             </div>
 
             <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">

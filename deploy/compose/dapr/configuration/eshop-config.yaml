@@ -6,4 +6,4 @@ metadata:
 spec:
   tracing:
     samplingRate: "1"
-    stdout: true
+    stdout: false

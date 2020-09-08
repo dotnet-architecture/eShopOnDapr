@@ -71,7 +71,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.O
 
         // DDD Patterns comment
         // This Order AggregateRoot's method "AddOrderitem()" should be the only way to add Items to the Order,
-        // so any behavior (discounts, etc.) and validations are controlled by the AggregateRoot 
+        // so any behavior and validations are controlled by the AggregateRoot 
         // in order to maintain consistency between the whole Aggregate. 
         public void AddOrderItem(int productId, string productName, decimal unitPrice, string pictureUrl, int units = 1)
         {

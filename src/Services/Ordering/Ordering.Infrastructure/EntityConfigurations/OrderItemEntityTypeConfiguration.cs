@@ -22,12 +22,6 @@ namespace Ordering.Infrastructure.EntityConfigurations
             orderItemConfiguration.Property<int>("OrderId")
                 .IsRequired();
 
-            orderItemConfiguration
-                .Property<decimal>("_discount")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Discount")
-                .IsRequired();
-
             orderItemConfiguration.Property<int>("ProductId")
                 .IsRequired();
 

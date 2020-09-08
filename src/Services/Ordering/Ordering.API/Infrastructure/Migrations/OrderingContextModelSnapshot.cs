@@ -124,16 +124,6 @@ namespace Ordering.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Discount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("DiscountCode")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<bool?>("DiscountConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("_buyerId")
                         .HasColumnName("BuyerId")
                         .HasColumnType("int");
@@ -174,10 +164,6 @@ namespace Ordering.API.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("_discount")
-                        .HasColumnName("Discount")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("_pictureUrl")
                         .HasColumnName("PictureUrl")

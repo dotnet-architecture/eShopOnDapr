@@ -11,8 +11,6 @@ export interface IOrderDetail {
     zipcode: string;
     country: number;
     subtotal: number;
-    coupon: string;
-    discount: number;
     total: number;
     orderitems: IOrderItem[];
 }

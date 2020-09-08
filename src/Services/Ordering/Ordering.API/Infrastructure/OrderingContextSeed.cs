@@ -68,7 +68,7 @@
             string[] csvheaders;
             try
             {
-                string[] requiredHeaders = { "CardType" };
+                string[] requiredHeaders = { "cardtype" };
                 csvheaders = GetHeaders(requiredHeaders, csvFileCardTypes);
             }
             catch (Exception ex)
@@ -79,7 +79,7 @@
 
             int id = 1;
             return File.ReadAllLines(csvFileCardTypes)
-                                        .Skip(1) // skip header column
+                                        .Skip(1) // skip header row
                                         .SelectTry(x => CreateCardType(x, ref id))
                                         .OnCaughtException(ex => { log.LogError(ex, "EXCEPTION ERROR: {Message}", ex.Message); return null; })
                                         .Where(x => x != null);
@@ -171,7 +171,6 @@
 
             return csvheaders;
         }
-
 
         private AsyncRetryPolicy CreatePolicy(ILogger<OrderingContextSeed> logger, string prefix, int retries = 3)
         {

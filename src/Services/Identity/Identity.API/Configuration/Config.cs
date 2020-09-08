@@ -302,21 +302,6 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                     {
                         "webhooks"
                     }
-                },
-                new Client
-                {
-                    ClientId = "couponswaggerui",
-                    ClientName = "Coupon Swagger UI",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
-
-                    RedirectUris = { $"{clientsUrl["CouponApi"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{clientsUrl["CouponApi"]}/swagger/" },
-
-                    AllowedScopes =
-                    {
-                        "coupon"
-                    }
                 }
             };
         }

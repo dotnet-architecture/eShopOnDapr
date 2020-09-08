@@ -38,7 +38,3 @@ A few seconds after running the `update-aks.sh` script you should see something 
 And after two or three minutes you should see all services running again:
 
 ![](media/eshoponcontainers-webstatus-working-services-after-update.png)
-
-At this point you should be able to see the discount code field in the checkout page, like this:
-
-![](media/eshoponcontainers-checkout-page-with-discount-code.png)
