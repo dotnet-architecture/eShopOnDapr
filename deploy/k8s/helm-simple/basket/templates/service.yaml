@@ -10,8 +10,5 @@ spec:
     - port: 80
       protocol: TCP
       name: http
-    - port: 81
-      protocol: TCP
-      name: grpc
   selector:
     service: basket

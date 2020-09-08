@@ -12,7 +12,6 @@ data:
   CheckUpdateTime: "30000"
   ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word
   EventBusConnection: rabbitmq
-  GRPC_PORT: "81"
   identityUrl: http://identity-api
   IdentityUrlExternal: http://{{ .Values.aksLB }}/identity
   OrchestratorType: K8S

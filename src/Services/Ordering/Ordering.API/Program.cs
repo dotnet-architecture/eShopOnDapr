@@ -66,17 +66,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
                 .CaptureStartupErrors(false)
                 .ConfigureKestrel(options =>
                 {
-                    var ports = GetDefinedPorts(configuration);
-                    options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
+                    var httpPort = configuration.GetValue("PORT", 80);
+                    options.Listen(IPAddress.Any, httpPort, listenOptions =>
                     {
                         listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
                     });
-
-                    options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
-                    {
-                        listenOptions.Protocols = HttpProtocols.Http2;
-                    });
-
                 })
                 .UseStartup<Startup>()
                 .UseContentRoot(Directory.GetCurrentDirectory())
@@ -117,12 +111,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
             }
 
             return builder.Build();
-        }
-        private static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
-        {
-            var grpcPort = config.GetValue("GRPC_PORT", 5001);
-            var port = config.GetValue("PORT", 80);
-            return (port, grpcPort);
         }
     }
 }

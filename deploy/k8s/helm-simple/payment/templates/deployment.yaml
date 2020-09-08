@@ -24,9 +24,6 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-            - name: grpc
-              containerPort: 81
-              protocol: TCP
           livenessProbe:
             httpGet:
               port: 80

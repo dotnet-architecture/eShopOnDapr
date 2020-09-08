@@ -12,8 +12,6 @@
     using global::Ordering.API.Application.IntegrationEvents;
     using global::Ordering.API.Application.IntegrationEvents.Events;
     using global::Ordering.API.Infrastructure.Filters;
-    using global::Ordering.API.Infrastructure.Middlewares;
-    using GrpcOrdering;
     using HealthChecks.UI.Client;
     using Infrastructure.AutofacModules;
     using Infrastructure.Filters;
@@ -52,11 +50,6 @@
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
-                .AddGrpc(options =>
-                {
-                    options.EnableDetailedErrors = true;
-                })
-                .Services
                 .AddApplicationInsights(Configuration)
                 .AddCustomMvc()
                 .AddHealthChecks(Configuration)
@@ -104,7 +97,6 @@
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<OrderingService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>
@@ -146,18 +138,10 @@
             eventBus.Subscribe<OrderStockRejectedIntegrationEvent, IIntegrationEventHandler<OrderStockRejectedIntegrationEvent>>();
             eventBus.Subscribe<OrderPaymentFailedIntegrationEvent, IIntegrationEventHandler<OrderPaymentFailedIntegrationEvent>>();
             eventBus.Subscribe<OrderPaymentSucceededIntegrationEvent, IIntegrationEventHandler<OrderPaymentSucceededIntegrationEvent>>();
-
-            eventBus.Subscribe<OrderCouponRejectedIntegrationEvent, IIntegrationEventHandler<OrderCouponRejectedIntegrationEvent>>();
-            eventBus.Subscribe<OrderCouponConfirmedIntegrationEvent, IIntegrationEventHandler<OrderCouponConfirmedIntegrationEvent>>();
         }
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)
         {
-            if (Configuration.GetValue<bool>("UseLoadTest"))
-            {
-                app.UseMiddleware<ByPassAuthMiddleware>();
-            }
-
             app.UseAuthentication();
             app.UseAuthorization();
         }

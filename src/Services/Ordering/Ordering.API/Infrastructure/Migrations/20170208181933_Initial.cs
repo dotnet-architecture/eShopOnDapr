@@ -171,7 +171,6 @@ namespace Ordering.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    Discount = table.Column<decimal>(nullable: false),
                     OrderId = table.Column<int>(nullable: false),
                     PictureUrl = table.Column<string>(nullable: true),
                     ProductId = table.Column<int>(nullable: false),

@@ -150,8 +150,6 @@ namespace Ordering.API.Migrations
                         .HasAnnotation("SqlServer:HiLoSequenceName", "orderitemseq")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
-                    b.Property<decimal>("Discount");
-
                     b.Property<int>("OrderId");
 
                     b.Property<string>("PictureUrl");

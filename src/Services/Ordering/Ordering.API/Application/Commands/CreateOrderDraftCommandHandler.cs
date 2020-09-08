@@ -28,7 +28,7 @@
             var orderItems = message.Items.Select(i => i.ToOrderItemDTO());
             foreach (var item in orderItems)
             {
-                order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
+                order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.PictureUrl, item.Units);
             }
 
             return Task.FromResult(OrderDraftDTO.FromOrder(order));
@@ -47,7 +47,6 @@
             {
                 OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
                 {
-                    Discount = oi.GetCurrentDiscount(),
                     ProductId = oi.ProductId,
                     UnitPrice = oi.GetUnitPrice(),
                     PictureUrl = oi.GetPictureUri(),

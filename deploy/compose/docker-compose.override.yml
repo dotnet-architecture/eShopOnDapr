@@ -32,6 +32,10 @@ services:
     volumes:
       - eshop-sqldata:/var/opt/mssql
 
+  zipkin:
+    ports:
+      - "9411:9411"
+
   basket-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -40,7 +44,6 @@ services:
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - PATH_BASE=/basket-api
-      - GRPC_PORT=81
       - PORT=80
       - DAPR_GRPC_PORT=50001
     ports:
@@ -55,10 +58,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50001",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   catalog-api:
     environment:
@@ -75,7 +79,6 @@ services:
       - AzureStorageEnabled=False
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - GRPC_PORT=81
       - PORT=80
       - PATH_BASE=/catalog-api
       - DAPR_GRPC_PORT=50002
@@ -92,10 +95,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50002",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   identity-api:
     environment:
@@ -138,7 +142,6 @@ services:
       - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
       - Serilog__MinimumLevel__Override__ordering-api=Verbose
       - PATH_BASE=/ordering-api
-      - GRPC_PORT=81
       - PORT=80
       - DAPR_GRPC_PORT=50003
     ports:
@@ -153,10 +156,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50003",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   ordering-backgroundtasks:
     environment:
@@ -186,10 +190,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50004",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   ordering-signalrhub:
     environment:
@@ -214,10 +219,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50005",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   payment-api:
     environment:
@@ -243,10 +249,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50006",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   webshoppingagg:
     environment:
@@ -255,9 +262,6 @@ services:
       - urls__catalog=http://catalog-api
       - urls__orders=http://ordering-api
       - urls__identity=http://identity-api
-      - urls__grpcBasket=http://basket-api:81
-      - urls__grpcCatalog=http://catalog-api:81
-      - urls__grpcOrdering=http://ordering-api:81
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - OrderingUrlHC=http://ordering-api/hc
@@ -276,14 +280,15 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50007",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   webshoppingapigw:
     volumes:
-      - ../../src/ApiGateways/Envoy/config/webshopping:/etc/envoy
+      - ./Envoy/config/webshopping:/etc/envoy
     ports:
     - "5202:80"
     - "15202:8001"
@@ -297,10 +302,11 @@ services:
       "-placement-address", "placement:50000",
       "-dapr-grpc-port", "50008",
       "-components-path", "/components",
-      "-config", "/components/config.yaml"
+      "-config", "/configuration/eshop-config.yaml"
       ]
     volumes:
       - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   webspa:
     environment:

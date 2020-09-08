@@ -23,32 +23,47 @@ static_resources:
               domains:
               - "*"
               routes:
+              - name: "pics"
+                match:
+                  safe_regex:
+                    google_re2: {}
+                    regex: "\/c\/api\/v1\/catalog\/items\/(\\d+)\/pic\/"
+                route:
+                  auto_host_rewrite: true
+                  regex_rewrite:
+                    pattern:
+                      google_re2: {}
+                      regex: "\/c\/api\/v1\/catalog\/items\/(\\d+)\/pic\/"
+                    substitution: "/catalog-api/api/v1/catalog/items/\\1/pic/"
+                  cluster: catalog
               - name: "c-short"
                 match:
                   prefix: "/c/"
                 route:
                   auto_host_rewrite: true
-                  prefix_rewrite: "/catalog-api/"
-                  cluster: catalog
+                  prefix_rewrite: "/v1.0/invoke/catalog-api/method/"
+                  cluster: dapr
               - name: "c-long"
                 match:
                   prefix: "/catalog-api/"
                 route:
                   auto_host_rewrite: true
-                  cluster: catalog
+                  prefix_rewrite: "/v1.0/invoke/catalog-api/method/"
+                  cluster: dapr
               - name: "o-short"
                 match:
                   prefix: "/o/"
                 route:
                   auto_host_rewrite: true
-                  prefix_rewrite: "/ordering-api/"
-                  cluster: ordering
+                  prefix_rewrite: "/v1.0/invoke/ordering-api/method/"
+                  cluster: dapr
               - name: "o-long"
                 match:
                   prefix: "/ordering-api/"
                 route:
                   auto_host_rewrite: true
-                  cluster: ordering
+                  prefix_rewrite: "/v1.0/invoke/ordering-api/method/"
+                  cluster: dapr
               - name: "h-long"
                 match:
                   prefix: "/hub/notificationhub"
@@ -61,34 +76,22 @@ static_resources:
                   prefix: "/b/"
                 route:
                   auto_host_rewrite: true
-                  prefix_rewrite: "/basket-api/"
-                  cluster: basket
+                  prefix_rewrite: "/v1.0/invoke/basket-api/method/"
+                  cluster: dapr
               - name: "b-long"
                 match:
                   prefix: "/basket-api/"
                 route:
                   auto_host_rewrite: true
-                  cluster: basket
-              - name: "cp-short"
-                match:
-                  prefix: "/cp/"
-                route:
-                  auto_host_rewrite: true
-                  prefix_rewrite: "/coupon-api/"
-                  cluster: coupon
-              - name: "cp-long"
-                match:
-                  prefix: "/coupon-api/"
-                route:
-                  auto_host_rewrite: true
-                  cluster: coupon
+                  prefix_rewrite: "/v1.0/invoke/basket-api/method/"
+                  cluster: dapr
               - name: "agg"
                 match:
                   prefix: "/"
                 route:
                   auto_host_rewrite: true
-                  prefix_rewrite: "/"
-                  cluster: shoppingagg
+                  prefix_rewrite: "/v1.0/invoke/webshoppingagg/method/"
+                  cluster: dapr
           http_filters:
           - name: envoy.router
           access_log:
@@ -110,14 +113,14 @@ static_resources:
                 upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
               path: "/tmp/access.log"
   clusters:
-  - name: shoppingagg
+  - name: dapr
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: webshoppingagg
-        port_value: 80
+        address: 127.0.0.1
+        port_value: 3500
   - name: catalog
     connect_timeout: 0.25s
     type: strict_dns
@@ -126,22 +129,6 @@ static_resources:
     - socket_address:
         address: catalog-api
         port_value: 80
-  - name: basket
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    hosts:
-    - socket_address:
-        address: basket-api
-        port_value: 80
-  - name: ordering
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    hosts:
-    - socket_address:
-        address: ordering-api
-        port_value: 80
   - name: signalr-hub
     connect_timeout: 0.25s
     type: strict_dns
@@ -149,12 +136,4 @@ static_resources:
     hosts:
     - socket_address:
         address: ordering-signalrhub
-        port_value: 80
-  - name: coupon
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    hosts:
-    - socket_address:
-        address: coupon-api
         port_value: 80
