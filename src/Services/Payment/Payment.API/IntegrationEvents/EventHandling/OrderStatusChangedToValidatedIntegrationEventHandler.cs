@@ -56,9 +56,7 @@
 
                 _logger.LogInformation("----- Publishing integration event: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", orderPaymentIntegrationEvent.Id, Program.AppName, orderPaymentIntegrationEvent);
 
-                _eventBus.Publish(orderPaymentIntegrationEvent);
-
-                await Task.CompletedTask;
+                await _eventBus.PublishAsync(orderPaymentIntegrationEvent);
             }
         }
     }
