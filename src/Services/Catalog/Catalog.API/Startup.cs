@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -16,15 +15,12 @@ using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
 using Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure;
 using Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.EventHandling;
-using Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
-using RabbitMQ.Client;
 using System;
 using System.Data.Common;
 using System.IO;
@@ -48,7 +44,7 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
                 .AddCustomDbContext(Configuration)
                 .AddCustomOptions(Configuration)
                 .AddIntegrationServices(Configuration)
-                .AddEventBus(Configuration)
+                .AddEventBus()
                 .AddSwagger(Configuration)
                 .AddCustomHealthCheck(Configuration);
 
@@ -265,7 +261,7 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
             return services;
         }
 
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddEventBus(this IServiceCollection services)
         {
             services.AddScoped<IEventBus, DaprEventBus>();
             services.AddTransient<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();

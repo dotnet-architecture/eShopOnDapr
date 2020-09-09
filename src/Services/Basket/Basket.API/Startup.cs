@@ -40,7 +40,9 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
         {
             RegisterAppInsights(services);
 
-            services.AddControllers(options =>
+            services
+                .AddEventBus()
+                .AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                     options.Filters.Add(typeof(ValidateModelStateFilter));
@@ -84,8 +86,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             ConfigureAuthService(services);
 
             services.AddCustomHealthCheck(Configuration);
-
-            RegisterEventBus(services);
 
             services.AddCors(options =>
             {
@@ -181,12 +181,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             app.UseAuthentication();
             app.UseAuthorization();
         }
-
-        private void RegisterEventBus(IServiceCollection services)
-        {
-            services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<OrderStartedIntegrationEventHandler>();
-        }
     }
 
     public static class CustomExtensionMethods
@@ -221,6 +215,14 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
                         name: "basket-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }
+
+            return services;
+        }
+
+        public static IServiceCollection AddEventBus(this IServiceCollection services)
+        {
+            services.AddScoped<IEventBus, DaprEventBus>();
+            services.AddTransient<OrderStartedIntegrationEventHandler>();
 
             return services;
         }
