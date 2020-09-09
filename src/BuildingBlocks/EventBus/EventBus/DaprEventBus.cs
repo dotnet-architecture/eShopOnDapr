@@ -7,6 +7,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
 {
     public class DaprEventBus : IEventBus
     {
+        private const string DAPR_PUBSUB_NAME = "pubsub";
+
         private readonly DaprClient _dapr;
 
         public DaprEventBus(DaprClient dapr)
@@ -17,7 +19,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
         public async Task PublishAsync<TIntegrationEvent>(TIntegrationEvent @event)
             where TIntegrationEvent : IntegrationEvent
         {
-            await _dapr.PublishEventAsync(@event.GetType().Name, (dynamic)@event);
+            var topicName = @event.GetType().Name;
+
+            await _dapr.PublishEventAsync<TIntegrationEvent>(DAPR_PUBSUB_NAME, topicName, @event);
         }
     }
 }
