@@ -25,8 +25,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBusServiceBus;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
     using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
@@ -124,21 +122,6 @@
                     Predicate = r => r.Name.Contains("self")
                 });
             });
-
-            ConfigureEventBus(app);
-        }
-
-
-        private void ConfigureEventBus(IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
-            eventBus.Subscribe<UserCheckoutAcceptedIntegrationEvent, IIntegrationEventHandler<UserCheckoutAcceptedIntegrationEvent>>();
-            eventBus.Subscribe<GracePeriodConfirmedIntegrationEvent, IIntegrationEventHandler<GracePeriodConfirmedIntegrationEvent>>();
-            eventBus.Subscribe<OrderStockConfirmedIntegrationEvent, IIntegrationEventHandler<OrderStockConfirmedIntegrationEvent>>();
-            eventBus.Subscribe<OrderStockRejectedIntegrationEvent, IIntegrationEventHandler<OrderStockRejectedIntegrationEvent>>();
-            eventBus.Subscribe<OrderPaymentFailedIntegrationEvent, IIntegrationEventHandler<OrderPaymentFailedIntegrationEvent>>();
-            eventBus.Subscribe<OrderPaymentSucceededIntegrationEvent, IIntegrationEventHandler<OrderPaymentSucceededIntegrationEvent>>();
         }
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)
