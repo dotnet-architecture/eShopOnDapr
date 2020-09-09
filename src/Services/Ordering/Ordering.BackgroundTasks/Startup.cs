@@ -11,6 +11,8 @@
     using Ordering.BackgroundTasks.Tasks;
     using System;
     using HealthChecks.UI.Client;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 
     public class Startup
     {
@@ -24,6 +26,7 @@
         public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddCustomHealthCheck(this.Configuration)
+                .AddEventBus()
                 .Configure<BackgroundTaskSettings>(this.Configuration)
                 .AddOptions()
                 .AddHostedService<GracePeriodManagerService>()
@@ -46,6 +49,16 @@
                     Predicate = r => r.Name.Contains("self")
                 });
             });
+        }
+    }
+
+    public static class CustomExtensionMethods
+    {
+        public static IServiceCollection AddEventBus(this IServiceCollection services)
+        {
+            services.AddScoped<IEventBus, DaprEventBus>();
+
+            return services;
         }
     }
 }
