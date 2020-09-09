@@ -24,22 +24,6 @@ namespace Ordering.BackgroundTasks.Extensions
                     name: "OrderingTaskDB-check",
                     tags: new string[] { "orderingtaskdb" });
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                hcBuilder.AddAzureServiceBusTopic(
-                        configuration["EventBusConnection"],
-                        topicName: "eshop_event_bus",
-                        name: "orderingtask-servicebus-check",
-                        tags: new string[] { "servicebus" });
-            }
-            else
-            {
-                hcBuilder.AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "orderingtask-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
-            }
-
             return services;
         }
 

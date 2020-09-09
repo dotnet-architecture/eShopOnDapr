@@ -161,24 +161,6 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
                         tags: new string[] { "catalogstorage" });
             }
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                hcBuilder
-                    .AddAzureServiceBusTopic(
-                        configuration["EventBusConnection"],
-                        topicName: "eshop_event_bus",
-                        name: "catalog-servicebus-check",
-                        tags: new string[] { "servicebus" });
-            }
-            else
-            {
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "catalog-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
-            }
-
             return services;
         }
 

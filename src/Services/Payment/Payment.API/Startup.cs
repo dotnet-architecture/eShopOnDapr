@@ -83,24 +83,6 @@ namespace Payment.API
 
             hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                hcBuilder
-                    .AddAzureServiceBusTopic(
-                        configuration["EventBusConnection"],
-                        topicName: "eshop_event_bus",
-                        name: "payment-servicebus-check",
-                        tags: new string[] { "servicebus" });
-            }
-            else
-            {
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "payment-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
-            }
-
             return services;
         }
 

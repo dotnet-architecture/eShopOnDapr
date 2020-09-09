@@ -14,8 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="3.0.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="3.0.5" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.0.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Dapr.AspNetCore" Version="0.10.0-preview01" />
