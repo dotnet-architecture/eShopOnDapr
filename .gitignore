@@ -369,3 +369,6 @@ MigrationBackup/
 **/healthchecksdb-wal
 
 **/tempkey.rsa
+
+# macOS files
+.DS_Store
