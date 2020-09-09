@@ -91,6 +91,8 @@ namespace Ordering.SignalrHub
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
+                
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
