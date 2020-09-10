@@ -217,7 +217,7 @@
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "eShopOnContainers - Ordering HTTP API",
+                    Title = "eShopOnDapr - Ordering HTTP API",
                     Version = "v1",
                     Description = "The Ordering Service HTTP API"
                 });

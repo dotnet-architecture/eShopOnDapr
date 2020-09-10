@@ -139,7 +139,7 @@ body {
 }
 
 ::selection { 
-    background: rgba(#f66f61, .75);
+    background: rgba(#0d2092, .75);
 }
 
 .mt-15 {
@@ -266,30 +266,30 @@ select::-ms-expand {
 }
 
 .btn-primary {
-    border-color:#f66f61;
-    color:#f66f61;
+    border-color:#0d2092;
+    color:#0d2092;
 }
 
 .btn-primary:hover {
     color: #fff;
-    background-color: #f44e3d;
-    border-color: #f34331;
+    background-color: #0d2092;
+    border-color: #0d2092;
 }
 
 .btn-primary:focus {
     box-shadow: none;
     opacity: .7;
     color: #fff !important;
-    background-color: #f44e3d !important;
-    border-color: #f34331 !important;
+    background-color: #0d2092 !important;
+    border-color: #0d2092 !important;
 }
 
 .btn-primary:active {
     box-shadow: none;
     opacity: .7;
     color: #fff !important;
-    background-color: #f44e3d !important;
-    border-color: #f34331 !important;
+    background-color: #0d2092 !important;
+    border-color: #0d2092 !important;
 }
 
 .btn-secondary {
@@ -297,7 +297,7 @@ select::-ms-expand {
     color:#292929;
 }
 
-.btn-secondary: hover {
+.btn-secondary:hover {
     color: #fff;
     background-color: #292929;
     border-color: #292929;
@@ -704,11 +704,11 @@ form .col-md-4 {
 }
 
 .input-validation-error {
-    border: 1px solid #fb0d0d;
+    border: 1px solid #0d2092;
 }
 
 .text-danger {
-    color: #fb0d0d;
+    color: #0d2092;
     font-size: 12px;
 }
 
@@ -717,7 +717,7 @@ form .col-md-4 {
 }
 
 .text-link {
-    color: #f66f61;
+    color: #0d2092;
 }
 
 .text-link:hover {
@@ -742,7 +742,7 @@ form .col-md-4 {
 }
 
 .form-control:focus {
-    border-color: #f66f61;
+    border-color: #0d2092;
     box-shadow: unset;
 }
 
@@ -925,7 +925,7 @@ form .col-md-4 {
 }
 
 .es-header {
-    background: url(../images/header.jpg) center -2.7rem no-repeat,linear-gradient(90deg,#5F6571 0%, #5F6571 35%, #CFC6BF 65%, #CFC6BF 100%);
+    background: url(../images/header.jpg) center -2.7rem no-repeat,linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);
     background-size: auto, auto;
     background-size: 94rem,auto;
     height: 13rem;
@@ -1058,5 +1058,5 @@ h2 {
 }
 
 ::selection {
-    background: rgba(246, 111, 97, .75);
+    background: rgba(12, 32, 145, .75);
 }

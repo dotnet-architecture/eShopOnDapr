@@ -178,7 +178,7 @@ ClientBin/
 node_modules/
 bower_components/
 wwwroot/*
-!wwwroot/favicon.ico
+!wwwroot/favicon.png
 
 
 orleans.codegen.cs
