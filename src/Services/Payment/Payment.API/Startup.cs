@@ -29,7 +29,8 @@ namespace Payment.API
             services
                 .AddCustomHealthCheck(Configuration)
                 .AddEventBus()
-                .Configure<PaymentSettings>(Configuration);
+                .Configure<PaymentSettings>(Configuration)
+                .AddMvc().AddDapr();
 
             RegisterAppInsights(services);
 
@@ -52,10 +53,13 @@ namespace Payment.API
             }
 
             app.UseRouting();
+            app.UseCloudEvents();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-
+                endpoints.MapSubscribeHandler();
+                
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,

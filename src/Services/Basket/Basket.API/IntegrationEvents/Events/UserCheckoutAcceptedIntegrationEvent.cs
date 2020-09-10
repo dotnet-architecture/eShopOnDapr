@@ -6,9 +6,9 @@ namespace Basket.API.IntegrationEvents.Events
 {
     public class UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
     {
-        public string UserId { get; }
+        public string UserId { get; set; }
 
-        public string UserName { get; }
+        public string UserName { get; set; }
 
         public int OrderNumber { get; set; }
 

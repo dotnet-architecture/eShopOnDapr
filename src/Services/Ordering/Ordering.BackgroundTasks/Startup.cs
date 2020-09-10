@@ -1,7 +1,5 @@
 ﻿namespace Ordering.BackgroundTasks
 {
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Configuration;
@@ -9,7 +7,6 @@
     using Microsoft.Extensions.Logging;
     using Ordering.BackgroundTasks.Extensions;
     using Ordering.BackgroundTasks.Tasks;
-    using System;
     using HealthChecks.UI.Client;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -30,7 +27,8 @@
                 .Configure<BackgroundTaskSettings>(this.Configuration)
                 .AddOptions()
                 .AddHostedService<GracePeriodManagerService>()
-                .AddEventBus(this.Configuration);
+                .AddEventBus(this.Configuration)
+                .AddDaprClient();
         }
 
 

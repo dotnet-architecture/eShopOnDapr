@@ -4,7 +4,11 @@
 
     public class OrderPaymentFailedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
+
+        public OrderPaymentFailedIntegrationEvent ()
+        {
+        }
 
         public OrderPaymentFailedIntegrationEvent(int orderId) => OrderId = orderId;
     }

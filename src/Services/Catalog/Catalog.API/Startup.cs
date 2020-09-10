@@ -77,10 +77,12 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
 
             app.UseCors("CorsPolicy");
             app.UseRouting();
+            app.UseCloudEvents();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapSubscribeHandler();
                 endpoints.MapGet("/_proto/", async ctx =>
                 {
                     ctx.Response.ContentType = "text/plain";
@@ -123,7 +125,9 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            }).AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            })
+            .AddDapr()
+            .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddCors(options =>
             {

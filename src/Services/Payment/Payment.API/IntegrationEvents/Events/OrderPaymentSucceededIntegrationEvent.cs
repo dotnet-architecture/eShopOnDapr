@@ -4,7 +4,11 @@
 
     public class OrderPaymentSucceededIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
+
+        public OrderPaymentSucceededIntegrationEvent()
+        {
+        }
 
         public OrderPaymentSucceededIntegrationEvent(int orderId) => OrderId = orderId;
     }

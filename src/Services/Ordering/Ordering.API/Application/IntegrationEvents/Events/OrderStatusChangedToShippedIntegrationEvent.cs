@@ -8,9 +8,13 @@ namespace Ordering.API.Application.IntegrationEvents.Events
 {
     public class OrderStatusChangedToShippedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
-        public string OrderStatus { get; }
-        public string BuyerName { get; }
+        public int OrderId { get; set; }
+        public string OrderStatus { get; set; }
+        public string BuyerName { get; set; }
+
+        public OrderStatusChangedToShippedIntegrationEvent()
+        {
+        }
 
         public OrderStatusChangedToShippedIntegrationEvent(int orderId, string orderStatus, string buyerName)
         {

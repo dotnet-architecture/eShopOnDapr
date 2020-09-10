@@ -129,6 +129,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
                });
 
             app.UseRouting();
+            app.UseCloudEvents();
             ConfigureAuth(app);
 
             app.UseStaticFiles();
@@ -138,6 +139,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapSubscribeHandler();
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,

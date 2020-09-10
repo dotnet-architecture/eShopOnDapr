@@ -5,10 +5,14 @@
 
     public class OrderStatusChangedToAwaitingStockValidationIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
-        public string OrderStatus { get; }
-        public string BuyerName { get; }
-        public IEnumerable<OrderStockItem> OrderStockItems { get; }
+        public int OrderId { get; set; }
+        public string OrderStatus { get; set; }
+        public string BuyerName { get; set; }
+        public IEnumerable<OrderStockItem> OrderStockItems { get; set; }
+
+        public OrderStatusChangedToAwaitingStockValidationIntegrationEvent()
+        {
+        }
 
         public OrderStatusChangedToAwaitingStockValidationIntegrationEvent(int orderId, string orderStatus, string buyerName,
             IEnumerable<OrderStockItem> orderStockItems)
@@ -22,8 +26,8 @@
 
     public class OrderStockItem
     {
-        public int ProductId { get; }
-        public int Units { get; }
+        public int ProductId { get; set; }
+        public int Units { get; set; }
 
         public OrderStockItem(int productId, int units)
         {
