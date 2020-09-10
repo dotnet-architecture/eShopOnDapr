@@ -4,10 +4,14 @@
 
     public class OrderStatusChangedToValidatedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
-        public string OrderStatus { get; }
-        public string BuyerName { get; }
-        public decimal Total { get; }
+        public int OrderId { get; set; }
+        public string OrderStatus { get; set; }
+        public string BuyerName { get; set; }
+        public decimal Total { get; set; }
+
+        public OrderStatusChangedToValidatedIntegrationEvent()
+        {
+        }
 
         public OrderStatusChangedToValidatedIntegrationEvent(int orderId, string orderStatus, string buyerName, decimal total)
         {

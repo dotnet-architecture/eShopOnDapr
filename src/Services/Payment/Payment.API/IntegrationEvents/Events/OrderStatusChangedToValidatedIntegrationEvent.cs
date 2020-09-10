@@ -5,10 +5,12 @@
 
     public class OrderStatusChangedToValidatedIntegrationEvent : IntegrationEvent
     {
-        [JsonProperty]
-        public int OrderId { get; private set; }
+        public int OrderId { get; set; }
 
-        [JsonProperty]
-        public decimal Total { get; private set; }
+        public decimal Total { get; set; }
+
+        public OrderStatusChangedToValidatedIntegrationEvent()
+        {
+        }
     }
 }

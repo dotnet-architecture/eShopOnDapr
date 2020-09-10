@@ -93,7 +93,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
             // order creation process
             try
             {
-                _eventBus.Publish(eventMessage);
+                await _eventBus.PublishAsync(eventMessage);
             }
             catch (Exception ex)
             {

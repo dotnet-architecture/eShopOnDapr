@@ -42,7 +42,7 @@ namespace Catalog.API.IntegrationEvents
                 _logger.LogInformation("----- Publishing integration event: {IntegrationEventId_published} from {AppName} - ({@IntegrationEvent})", evt.Id, Program.AppName, evt);
 
                 await _eventLogService.MarkEventAsInProgressAsync(evt.Id);
-                _eventBus.Publish(evt);
+                await _eventBus.PublishAsync(evt);
                 await _eventLogService.MarkEventAsPublishedAsync(evt.Id);
             }
             catch (Exception ex)

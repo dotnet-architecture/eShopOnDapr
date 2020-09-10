@@ -6,9 +6,9 @@ namespace Ordering.API.Application.IntegrationEvents.Events
 {
     public class UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
     {
-        public string UserId { get; }
+        public string UserId { get; set; }
 
-        public string UserName { get; }
+        public string UserName { get; set; }
 
         public string City { get; set; }
 
@@ -34,7 +34,7 @@ namespace Ordering.API.Application.IntegrationEvents.Events
 
         public Guid RequestId { get; set; }
 
-        public CustomerBasket Basket { get; }
+        public CustomerBasket Basket { get; set; }
 
         public UserCheckoutAcceptedIntegrationEvent(string userId, string userName, string city, string street,
             string state, string country, string zipCode, string cardNumber, string cardHolderName,

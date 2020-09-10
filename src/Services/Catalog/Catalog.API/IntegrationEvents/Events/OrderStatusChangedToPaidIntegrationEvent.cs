@@ -5,8 +5,12 @@
 
     public class OrderStatusChangedToPaidIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
-        public IEnumerable<OrderStockItem> OrderStockItems { get; }
+        public int OrderId { get; set; }
+        public IEnumerable<OrderStockItem> OrderStockItems { get; set; }
+
+        public OrderStatusChangedToPaidIntegrationEvent()
+        {
+        }
 
         public OrderStatusChangedToPaidIntegrationEvent(int orderId,
             IEnumerable<OrderStockItem> orderStockItems)

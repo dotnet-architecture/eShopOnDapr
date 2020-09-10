@@ -5,9 +5,13 @@
 
     public class OrderStockRejectedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
 
-        public List<ConfirmedOrderStockItem> OrderStockItems { get; }
+        public List<ConfirmedOrderStockItem> OrderStockItems { get; set; }
+
+        public OrderStockRejectedIntegrationEvent()
+        {
+        }
 
         public OrderStockRejectedIntegrationEvent(int orderId,
             List<ConfirmedOrderStockItem> orderStockItems)
@@ -19,8 +23,8 @@
 
     public class ConfirmedOrderStockItem
     {
-        public int ProductId { get; }
-        public bool HasStock { get; }
+        public int ProductId { get; set; }
+        public bool HasStock { get; set; }
 
         public ConfirmedOrderStockItem(int productId, bool hasStock)
         {

@@ -4,7 +4,11 @@
 
     public class OrderStockConfirmedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
+
+        public OrderStockConfirmedIntegrationEvent()
+        {
+        }
 
         public OrderStockConfirmedIntegrationEvent(int orderId) => OrderId = orderId;
     }

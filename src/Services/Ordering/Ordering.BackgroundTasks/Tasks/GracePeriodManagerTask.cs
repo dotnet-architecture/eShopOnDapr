@@ -35,7 +35,7 @@ namespace Ordering.BackgroundTasks.Tasks
             {
                 _logger.LogDebug("GracePeriodManagerService background task is doing background work.");
 
-                CheckConfirmedGracePeriodOrders();
+                await CheckConfirmedGracePeriodOrdersAsync();
 
                 await Task.Delay(_settings.CheckUpdateTime, stoppingToken);
             }
@@ -45,7 +45,7 @@ namespace Ordering.BackgroundTasks.Tasks
             await Task.CompletedTask;
         }
 
-        private void CheckConfirmedGracePeriodOrders()
+        private async Task CheckConfirmedGracePeriodOrdersAsync()
         {
             _logger.LogDebug("Checking confirmed grace period orders");
 
@@ -57,7 +57,7 @@ namespace Ordering.BackgroundTasks.Tasks
 
                 _logger.LogInformation("----- Publishing integration event: {IntegrationEventId} from {AppName} - ({@IntegrationEvent})", confirmGracePeriodEvent.Id, Program.AppName, confirmGracePeriodEvent);
 
-                _eventBus.Publish(confirmGracePeriodEvent);
+                await _eventBus.PublishAsync(confirmGracePeriodEvent);
             }
         }
 
