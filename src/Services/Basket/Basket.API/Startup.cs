@@ -57,7 +57,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "eShopOnContainers - Basket HTTP API",
+                    Title = "eShopOnDapr - Basket HTTP API",
                     Version = "v1",
                     Description = "The Basket Service HTTP API"
                 });
