@@ -9,7 +9,7 @@
 .esh-app {
 
     &-header {
-        background: url('/assets/images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #5F6571 0%, #5F6571 35%, #CFC6BF 65%, #CFC6BF 100%);
+        background: url('/assets/images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);
         background-size: 94rem, auto;
         height: 13rem;
         padding-top: 2.25rem;
@@ -29,7 +29,7 @@
 
     &-header-brand {
         height: auto;
-        width: 92px;
+        width: 125px;
     }
 
     &-header-promo {
@@ -43,7 +43,7 @@
 
     &-header-promo-title {
         display: block;
-        color: rgba($color-brightest, .3);
+        color: rgba($color-brightest, .7);
         font-size: 5rem;
         line-height: 5rem;
         word-wrap: none;

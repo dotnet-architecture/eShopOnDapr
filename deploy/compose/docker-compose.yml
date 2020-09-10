@@ -21,7 +21,6 @@ services:
       dockerfile: src/Services/Basket/Basket.API/Dockerfile
     depends_on:
       - identity-api
-      - rabbitmq
       - redis
 
   basket-api-dapr:
@@ -36,7 +35,6 @@ services:
       context: ../../
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
     depends_on:
-      - rabbitmq
       - sqldata
 
   catalog-api-dapr:
@@ -59,7 +57,6 @@ services:
       context: ../../
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
     depends_on:
-      - rabbitmq
       - sqldata
 
   ordering-api-dapr:
@@ -74,7 +71,6 @@ services:
       context: ../../
       dockerfile: src/Services/Ordering/Ordering.BackgroundTasks/Dockerfile
     depends_on:
-      - rabbitmq
       - sqldata
 
   ordering-backgroundtasks-dapr:
@@ -93,7 +89,6 @@ services:
       - catalog-api
       - identity-api
       - ordering-api
-      - rabbitmq
       - sqldata
 
   ordering-signalrhub-dapr:
@@ -107,8 +102,6 @@ services:
     build:
       context: ../../
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
-    depends_on:
-      - rabbitmq
 
   payment-api-dapr:
     image: "daprio/daprd:0.10.0"
@@ -126,7 +119,6 @@ services:
       - catalog-api
       - identity-api
       - ordering-api
-      - rabbitmq
       - sqldata
 
   webshoppingagg-dapr:
