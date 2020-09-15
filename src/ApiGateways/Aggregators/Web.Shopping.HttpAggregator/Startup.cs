@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +42,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             services.AddCustomMvc(Configuration)
                 .AddCustomAuthentication(Configuration)
                 .AddApplicationServices();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +124,11 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             services.AddControllers()
                 .AddDapr()
                 .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+
+            services.AddDaprClient(builder => builder.UseJsonSerializationOptions(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            }));
 
             services.AddSwaggerGen(options =>
             {
