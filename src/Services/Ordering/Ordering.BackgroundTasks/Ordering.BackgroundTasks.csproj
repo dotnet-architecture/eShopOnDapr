@@ -13,7 +13,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0"/>
     <PackageReference Include="Autofac" Version="5.0.0"/>
     <PackageReference Include="Dapper" Version="2.0.30"/>
-    <PackageReference Include="Dapr.AspNetCore" Version="0.10.0-preview01"/>
+    <PackageReference Include="Dapr.AspNetCore" Version="0.11.0-preview01"/>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0"/>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1"/>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10"/>

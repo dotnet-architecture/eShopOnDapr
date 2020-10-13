@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +42,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             services.AddCustomMvc(Configuration)
                 .AddCustomAuthentication(Configuration)
                 .AddApplicationServices();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

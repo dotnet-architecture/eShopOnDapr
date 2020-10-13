@@ -67,7 +67,7 @@ export class BasketService {
     }
 
     setBasket(basket): Observable<boolean> {
-        let url = this.purchaseUrl + '/b/api/v1/basket/';
+        let url = this.purchaseUrl + '/api/v1/basket/';
 
         this.basket = basket;
 

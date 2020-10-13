@@ -9,8 +9,4 @@ spec:
   - name: redisHost
     value: redis:6379
   - name: redisPassword
-    secretKeyRef:
-      name: RedisPassword
-      key: RedisPassword
-auth:
-  secretStore: eshop-secretstore
+    value: ""

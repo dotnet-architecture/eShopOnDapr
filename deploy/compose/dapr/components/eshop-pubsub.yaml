@@ -1,10 +1,15 @@
 apiVersion: dapr.io/v1alpha1
-kind: Component 
+kind: Component
 metadata:
   name: pubsub
   namespace: default
 spec:
-  type: pubsub.nats
+  type: pubsub.redis
   metadata:
-  - name: natsURL
-    value: nats://demo.nats.io:4222
+  - name: redisHost
+    value: redis:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: redisPassword
+auth:
+  secretStore: eshop-secretstore

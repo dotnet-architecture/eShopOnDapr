@@ -10,7 +10,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - "5379:6379"
 
   seq:
     environment:
@@ -29,7 +29,7 @@ services:
 
   zipkin:
     ports:
-      - "9411:9411"
+      - "5411:9411"
 
   basket-api:
     environment:
@@ -183,17 +183,17 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - identityUrl=http://identity-api
-      - DAPR_GRPC_PORT=50005
+      - DAPR_GRPC_PORT=50009
     ports:
       - "5112:80"
-      - "50005:50005"
+      - "50009:50009"
 
   ordering-signalrhub-dapr:
     command: ["./daprd",
       "-app-id", "ordering-signalrhub",
       "-app-port", "80",
       "-placement-address", "placement:50000",
-      "-dapr-grpc-port", "50005",
+      "-dapr-grpc-port", "50009",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
