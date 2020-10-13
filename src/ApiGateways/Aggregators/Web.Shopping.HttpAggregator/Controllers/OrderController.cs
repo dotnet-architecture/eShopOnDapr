@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -27,14 +24,14 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(OrderData), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<OrderData>> GetOrderDraftAsync(string basketId)
+        public async Task<ActionResult<OrderData>> GetOrderDraftAsync(string basketId, [FromHeader] string authorization)
         {
             if (string.IsNullOrEmpty(basketId))
             {
                 return BadRequest("Need a valid basketid");
             }
             // Get the basket data and build a order draft based on it
-            var basket = await _basketService.GetById(basketId);
+            var basket = await _basketService.GetById(basketId, authorization);
 
             if (basket == null)
             {

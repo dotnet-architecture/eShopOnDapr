@@ -26,7 +26,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(BasketData), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync([FromBody] UpdateBasketRequest data)
+        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync([FromBody] UpdateBasketRequest data, [FromHeader] string authorization)
         {
             var basket = new BasketData(data.BuyerId);
 
@@ -65,7 +65,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
                 }
             }
 
-            await _basket.UpdateAsync(basket);
+            await _basket.UpdateAsync(basket, authorization);
 
             return basket;
         }

@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dapr.Client;
 using Dapr.Client.Http;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
+using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
 {
@@ -16,20 +18,34 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             _daprClient = daprClient;
         }
 
-        public async Task<BasketData> GetById(string id)
+        public async Task<BasketData> GetById(string id, string accessToken)
         {
             return await _daprClient.InvokeMethodAsync<BasketData>(
                 DaprAppId,
                 $"api/v1/basket/{id}",
-                new HTTPExtension { Verb = HTTPVerb.Get });
+                new HTTPExtension
+                {
+                    Verb = HTTPVerb.Get,
+                    Headers = new Dictionary<string, string>
+                    {
+                        [HeaderNames.Authorization] = accessToken
+                    }
+                });
         }
 
-        public Task UpdateAsync(BasketData currentBasket)
+        public Task UpdateAsync(BasketData currentBasket, string accessToken)
         {
             return _daprClient.InvokeMethodAsync(
                 DaprAppId,
                 "api/v1/basket",
-                currentBasket);
+                currentBasket,
+                new HTTPExtension
+                {
+                    Headers = new Dictionary<string, string>
+                    {
+                        [HeaderNames.Authorization] = accessToken
+                    }
+                });
         }
     }
 }

@@ -125,11 +125,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
                 .AddDapr()
                 .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
-            services.AddDaprClient(builder => builder.UseJsonSerializationOptions(new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            }));
-
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
