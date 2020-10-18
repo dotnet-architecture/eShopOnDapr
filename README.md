@@ -1,44 +1,47 @@
 # eShop on Dapr
 
-These are high-level steps:
+A sample .NET Core distributed application, powered by [Dapr](https://dapr.io/) building blocks, based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*. 
 
-1. Deploy an AKS cluster with the base application
+![eShopOnDapr](media/eshopondapr.png)
 
-2. Set up a private registry in ACR
+Dapr enables developers using any language or framework to easily write microservices. It addresses many of the challenges found that come along with distributed applications, such as:
 
-3. Deploy changes
+- How can distributed services discover each other and communicate synchronously?
+ - How can they implement asynchronous messaging? 
+ - How can they maintain contextual information across a transaction?
+ - How can they become resilient to failure?
+ - How can they scale to meet fluctuating demand?
+ - How are they monitored and observed?
 
-You can run the whole process from the [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/overview) in bash mode, without any other local resource. You'll need an Azure subscription and you can create a free one in few seconds if you need it.
+The code in this repository is work in progress. An accompanying e-Book called *Dapr for .NET developers* is currently in development and will use the sample code in this repository to demonstrate Dapr features and benefits.
 
-## Steps
+## Getting started
 
-### 1. Deploy an AKS cluster with the base application
+1. eShopOnDapr runs in containers and requires Docker to run. To start the application:
+   - Go to directory `deploy/compose`.
+   - Create and start the containers: `docker-compose up`
 
-- Follow the [quickstart](deploy/k8s/README.md) guide to create an AKS with the base images from "[eshoplearn](https://hub.docker.com/orgs/eshoplearn/repositories)" in DockerHub.
+2. It may take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://host.docker.internal:5107/hc-ui`.
 
-### 2. Set up a private registry in ACR
+3. You can access the Web UI at `http://host.docker.internal:5104/`.
 
-- Go to directory `deploy/k8s`.
-- Run the `./create-acr.sh` script.
+> Support for K8s deployments is on the roadmap.
 
-### 3. Deploy changes
+## Roadmap
 
-1. Build images for the applications and push them to the ACR.
-   - Go to directory `deploy/k8s`.
-   - Run the `./build-to-acr.sh` script.
+- [ ] Deployment
+  - [x] Standalone: Docker Compose
+  - [ ] K8s
+- [x] Service invocation
+- [x] Pub/sub
+- [x] State management
+- [ ] Secrets
+  - [x] in configuration files
+  - [ ] in .NET startup code
+- [x] Observability
+- [ ] Actor model
+- [ ] Bindings
 
-2. Deploy the services.
-   - Go to directory `deploy/k8s`.
-   - Run the `./update-aks.sh` script.
-
-A few seconds after running the `update-aks.sh` script you should see something like this in the webstatus page:
-
-![](media/eshoponcontainers-webstatus-failing-services-after-update.png)
-
-And after two or three minutes you should see all services running again:
-
-![](media/eshoponcontainers-webstatus-working-services-after-update.png)
-
-## Attributions
+### Attributions
 
 Model photos by  [Laura Chouette](https://unsplash.com/@laurachouette?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText), [Heng Films](https://unsplash.com/@hengfilms?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) & [Enmanuel betances Santos](https://unsplash.com/@enmanuelbs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on  [Unsplash](https://unsplash.com/photos/HqtYwlY9dxs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
