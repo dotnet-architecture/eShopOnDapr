@@ -1,6 +1,6 @@
 # eShop on Dapr
 
-A sample .NET Core distributed application, powered by [Dapr](https://dapr.io/) building blocks, based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*. 
+A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/).
 
 ![eShopOnDapr](media/eshopondapr.png)
 
@@ -13,7 +13,7 @@ Dapr enables developers using any language or framework to easily write microser
  - How can they scale to meet fluctuating demand?
  - How are they monitored and observed?
 
-The code in this repository is work in progress. An accompanying e-Book called *Dapr for .NET developers* is currently in development and will use the sample code in this repository to demonstrate Dapr features and benefits.
+> The code in this repository is **work in progress**. An accompanying e-Book called *Dapr for .NET developers* is currently in development and will use the sample code in this repository to demonstrate Dapr features and benefits.
 
 ## Getting started
 
