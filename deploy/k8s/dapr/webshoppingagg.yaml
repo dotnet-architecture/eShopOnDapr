@@ -1,0 +1,59 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: webshoppingagg
+  labels:
+    app: eshop
+    service: webshoppingagg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: webshoppingagg
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: webshoppingagg
+    spec:
+      containers:
+        - name: webshoppingagg
+          image: ${REGISTRY:-eshop}/webshoppingagg:${PLATFORM:-linux}-${TAG:-latest}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /liveness
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /hc
+            initialDelaySeconds: 90
+            periodSeconds: 60
+            timeoutSeconds: 5
+          envFrom:
+            - configMapRef:
+                name: webshoppingagg-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webshoppingagg
+  labels:
+    app: eshop
+    service: webshoppingagg
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: webshoppingagg

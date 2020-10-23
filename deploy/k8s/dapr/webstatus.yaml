@@ -1,0 +1,66 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: webstatus
+  labels:
+    app: eshop
+    service: webstatus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: webstatus
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: webstatus
+    spec:
+      containers:
+        - name: webstatus
+          image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: webstatus-cm
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: webstatus
+  labels:
+    app: eshop
+    service: webstatus
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: webstatus
+
+---
+
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: webstatus
+  labels:
+    app: eshop
+    service: webstatus
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /webstatus
+          backend:
+            serviceName: webstatus
+            servicePort: 80

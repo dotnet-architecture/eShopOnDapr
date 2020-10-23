@@ -1,0 +1,42 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: basketdata
+  labels:
+    app: eshop
+    service: basketdata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: basketdata
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: basketdata
+    spec:
+      containers:
+        - name: basketdata
+          image: redis:alpine
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: basketdata
+  labels:
+    app: eshop
+    service: basketdata
+spec:
+  ports:
+    - port: 6379
+      protocol: TCP
+      name: redis
+  selector:
+    service: basketdata

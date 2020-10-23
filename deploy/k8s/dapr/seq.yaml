@@ -1,0 +1,67 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: seq
+  labels:
+    app: eshop
+    service: seq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: seq
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: seq
+    spec:
+      containers:
+      - name: seq
+        image: datalust/seq:latest
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+        env:
+          - name: ACCEPT_EULA
+            value: "Y"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: seq
+  labels:
+    app: eshop
+    service: seq
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: seq
+
+---
+
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: seq
+  labels:
+    app: eshop
+    service: seq
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /seq(/|$)(.*)
+        backend:
+          serviceName: seq
+          servicePort: 80
