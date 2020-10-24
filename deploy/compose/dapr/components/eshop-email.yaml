@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: todo
+  namespace: default
+spec:
+  type: bindings.twilio.sendgrid
+  metadata:
+  - name: apiKey
+    secretKeyRef:
+      name: sendGridAPIKey
+auth:
+  secretStore: eshop-secretstore
