@@ -31,9 +31,10 @@ COPY ["src/Services/Ordering/Ordering.SignalrHub/Ordering.SignalrHub.csproj", "s
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
 COPY ["src/Web/WebSPA/WebSPA.csproj", "src/Web/WebSPA/"]
 COPY ["src/Web/WebStatus/WebStatus.csproj", "src/Web/WebStatus/"]
+COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
-COPY ["eShop-Learn.sln", "./"]
-RUN dotnet restore "eShop-Learn.sln"
+COPY ["eShopOnDapr.sln", "./"]
+RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
 COPY --from=node-build /web/wwwroot /src/src/Web/WebSPA/wwwroot/
