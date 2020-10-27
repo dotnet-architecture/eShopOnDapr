@@ -8,7 +8,7 @@ FROM node as node-build
 WORKDIR /web/src
 COPY src/Web/WebSPA/Client/package.json .
 COPY src/Web/WebSPA/Client/package-lock.json .
-RUN npm install
+RUN npm i npm@latest -g && npm update && npm install
 COPY src/Web/WebSPA/Client .
 RUN npm run build:prod
 
