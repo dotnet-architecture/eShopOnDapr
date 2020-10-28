@@ -1,7 +1,30 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: catalog-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: catalog
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  AzureServiceBusEnabled: "False"
+  AzureStorageEnabled: "False"
+  ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word
+  EventBusConnection: rabbitmq
+  OrchestratorType: K8S
+  PATH_BASE: /catalog-api
+  PicBaseUrl: http://{{ .Values.aksLB }}/apigateway/c/api/v1/catalog/items/[0]/pic/
+  PORT: "80"
+  UseCustomizationData: "False"
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: catalog
+  namespace: eshop
   labels:
     app: eshop
     service: catalog
@@ -15,29 +38,21 @@ spec:
       labels:
         app: eshop
         service: catalog
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "catalog-api"
+        dapr.io/app-port: "80"
+        dapr.io/log-level: "debug"
     spec:
       containers:
         - name: catalog-api
-          image: ${REGISTRY:-eshop}/catalog.api:{$PLATFORM:-linux}-{$TAG:-latest}
-          imagePullPolicy: Always
+          image: eshop/catalog.api:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
               protocol: TCP
             - containerPort: 81
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: catalog-cm
@@ -48,12 +63,16 @@ kind: Service
 apiVersion: v1
 metadata:
   name: catalog-api
+  namespace: eshop
   labels:
     app: eshop
     service: catalog
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30003
       protocol: TCP
       name: http
   selector:

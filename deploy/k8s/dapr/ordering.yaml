@@ -1,7 +1,30 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ordering-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: ordering
+data:
+  CONNECTIONSTRING: "Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word;"
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  CheckUpdateTime: "30000"
+  identityUrl: http://identity-api
+  OrchestratorType: K8S
+  PATH_BASE: /ordering-api
+  PORT: "80"
+  Serilog__MinimumLevel__Override__ordering.api: Verbose
+  UseCustomizationData: "True"
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: ordering
+  namespace: eshop
   labels:
     app: eshop
     service: ordering
@@ -15,28 +38,20 @@ spec:
       labels:
         app: eshop
         service: ordering
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "ordering-api"
+        dapr.io/app-port: "80"
+        dapr.io/log-level: "debug"
     spec:
       containers:
         - name: ordering-api
-          image: ${REGISTRY:-eshop}/ordering.api:${PLATFORM:-linux}-${TAG:-latest}
-          imagePullPolicy: Always
+          image: eshop/ordering.api:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: ordering-cm
@@ -47,12 +62,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ordering-api
+  namespace: eshop
   labels:
     app: eshop
     service: ordering
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30002
       protocol: TCP
       name: http
   selector:
@@ -64,6 +83,7 @@ kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: ordering
+  namespace: eshop
   labels:
     app: eshop
     service: ordering

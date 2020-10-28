@@ -2,6 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: seq
+  namespace: eshop
   labels:
     app: eshop
     service: seq
@@ -33,12 +34,16 @@ kind: Service
 apiVersion: v1
 metadata:
   name: seq
+  namespace: eshop
   labels:
     app: eshop
     service: seq
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30011
       protocol: TCP
       name: http
   selector:
@@ -50,6 +55,7 @@ kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: seq
+  namespace: eshop
   labels:
     app: eshop
     service: seq

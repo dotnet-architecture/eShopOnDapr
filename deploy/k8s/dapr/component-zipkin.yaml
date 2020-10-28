@@ -1,0 +1,31 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: zipkin
+  namespace: eshop
+spec:
+  type: exporters.zipkin
+  metadata:
+  - name: enabled
+    value: "true"
+  - name: exporterAddress
+    value: "http://zipkin:9411/api/v2/spans"
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: zipkin
+#   namespace: eshop
+#   labels:
+#     app: eshop
+#     service: zipkin
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 9411
+#       targetPort: 9411
+#       nodePort: 30010
+#       protocol: TCP
+#       name: http
