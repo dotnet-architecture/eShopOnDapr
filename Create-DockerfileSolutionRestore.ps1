@@ -13,6 +13,7 @@ $outfile = "DockerfileSolutionRestore.txt"
 Write-Output "" > $outfile 
 Add-Content -Path $outfile "# Create this ""restore-solution"" section by running ./Create-DockerfileSolutionRestore.ps1, to optimize build cache reuse"
 Select-String -Path $solution -Pattern ', "(.*?\.csproj)"' | ForEach-Object { $_.Matches.Groups[1].Value.Replace("\", "/") } | Sort-Object | ForEach-Object {"COPY [""$_"", """ + $_.Substring(0, $_.LastIndexOf("/") + 1) + """]"} | Out-File -FilePath $outfile -Append
+Add-Content -Path $outfile "COPY [""docker-compose.dcproj"", ""./""]"
 Add-Content -Path $outfile "COPY [""NuGet.config"", ""./""]"
 Add-Content -Path $outfile "COPY [""$solution"", ""./""]"
 Add-Content -Path $outfile "RUN dotnet restore ""$solution"""

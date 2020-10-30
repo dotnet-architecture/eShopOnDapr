@@ -4,7 +4,7 @@
     <RootNamespace>Microsoft.eShopOnContainers.BuildingBlocks.EventBus</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
-    <PackageReference Include="Dapr.Client" Version="0.11.0-preview01"/>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Dapr.Client" Version="0.11.0-preview01" />
   </ItemGroup>
 </Project>
