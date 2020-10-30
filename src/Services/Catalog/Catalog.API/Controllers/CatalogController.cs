@@ -5,6 +5,7 @@ using Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure;
 using Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events;
 using Microsoft.eShopOnContainers.Services.Catalog.API.Model;
 using Microsoft.eShopOnContainers.Services.Catalog.API.ViewModel;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,12 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API.Controllers
         private readonly CatalogContext _catalogContext;
         private readonly CatalogSettings _settings;
         private readonly ICatalogIntegrationEventService _catalogIntegrationEventService;
+        private readonly ILogger<CatalogController> _logger;
 
-        public CatalogController(CatalogContext context, IOptionsSnapshot<CatalogSettings> settings, ICatalogIntegrationEventService catalogIntegrationEventService)
+        public CatalogController(CatalogContext context, IOptionsSnapshot<CatalogSettings> settings, ICatalogIntegrationEventService catalogIntegrationEventService,
+            ILogger<CatalogController> logger)
         {
+            _logger = logger;
             _catalogContext = context ?? throw new ArgumentNullException(nameof(context));
             _catalogIntegrationEventService = catalogIntegrationEventService ?? throw new ArgumentNullException(nameof(catalogIntegrationEventService));
             _settings = settings.Value;

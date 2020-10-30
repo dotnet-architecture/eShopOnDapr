@@ -1,8 +1,8 @@
-﻿using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapr.Client;
 using Dapr.Client.Http;
+using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
 {
