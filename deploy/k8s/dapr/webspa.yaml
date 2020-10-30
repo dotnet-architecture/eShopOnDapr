@@ -1,7 +1,35 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: webspa-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: webspa
+data:
+  ASPNETCORE_ENVIRONMENT: Docker
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  CallBackUrl: http://localhost
+  DPConnectionString: basketdata
+  BasketUrl: http://{{ .Values.aksLB }}/apigateway
+  IdentityUrl: http://{{ .Values.aksLB }}/identity
+  IdentityUrlHC: http://identity-api/hc
+  IsClusterEnv: "True"
+  OrchestratorType: K8S
+  PATH_BASE: /
+  PurchaseUrl: http://{{ .Values.aksLB }}/apigateway
+  PurchaseUrlHC: http://ordering-api/hc
+  SignalrHubUrl: http://{{ .Values.aksLB }}/apigateway
+  UseCustomizationData: "True"
+  UseLoadTest: "False"
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: webspa
+  namespace: eshop
   labels:
     app: eshop
     service: webspa
@@ -15,10 +43,14 @@ spec:
       labels:
         app: eshop
         service: webspa
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "webspa"
+        dapr.io/app-port: "80"
     spec:
       containers:
         - name: webspa
-          image: ${REGISTRY:-eshop}/webspa:${PLATFORM:-linux}-${TAG:-latest}
+          image: eshop/webspa:linux-latest
           imagePullPolicy: Always
           ports:
             - name: http
@@ -34,13 +66,16 @@ kind: Service
 apiVersion: v1
 metadata:
   name: webspa
+  namespace: eshop
   labels:
     app: eshop
     service: webspa
 spec:
+  type: NodePort
   ports:
     - port: 80
-      targetPort: http
+      targetPort: 80
+      nodePort: 30000
       protocol: TCP
       name: http
   selector:
@@ -52,6 +87,7 @@ kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: webspa
+  namespace: eshop
   labels:
     app: eshop
     service: webspa

@@ -1,7 +1,29 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: signalr-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: signalr
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  AzureServiceBusEnabled: "False"
+  EventBusConnection: rabbitmq
+  identityUrl: http://identity-api
+  IsClusterEnv: "True"
+  OrchestratorType: K8S
+  PATH_BASE: /ordering-signalrhub
+  SignalrStoreConnectionString: basketdata
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: signalr
+  namespace: eshop
   labels:
     app: eshop
     service: signalr
@@ -15,28 +37,19 @@ spec:
       labels:
         app: eshop
         service: signalr
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "ordering-signalrhub"
+        dapr.io/app-port: "80"
     spec:
       containers:
         - name: ordering-signalrhub
-          image: ${REGISTRY:-eshop}/ordering.signalrhub:${PLATFORM:-linux}-${TAG:-latest}
-          imagePullPolicy: Always
+          image: eshop/ordering.signalrhub:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: signalr-cm
@@ -47,6 +60,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ordering-signalrhub
+  namespace: eshop
   labels:
     app: eshop
     service: signalr

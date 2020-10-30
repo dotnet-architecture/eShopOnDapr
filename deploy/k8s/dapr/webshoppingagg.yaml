@@ -1,7 +1,32 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: webshoppingagg-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: webshoppingagg
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  BasketUrlHC: http://basket-api/hc
+  CatalogUrlHC: http://catalog-api/hc
+  IdentityUrlExternal: http://localhost/identity
+  IdentityUrlHC: http://identity-api/hc
+  OrderingUrlHC: http://ordering-api/hc
+  PATH_BASE: /webshoppingagg
+  PaymentUrlHC: http://payment-api/hc
+  urls__basket: http://basket-api
+  urls__catalog: http://catalog-api
+  urls__identity: http://identity-api
+  urls__orders: http://ordering-api
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: webshoppingagg
+  namespace: eshop
   labels:
     app: eshop
     service: webshoppingagg
@@ -15,28 +40,19 @@ spec:
       labels:
         app: eshop
         service: webshoppingagg
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "webshoppingagg"
+        dapr.io/app-port: "80"
     spec:
       containers:
         - name: webshoppingagg
-          image: ${REGISTRY:-eshop}/webshoppingagg:${PLATFORM:-linux}-${TAG:-latest}
-          imagePullPolicy: Always
+          image: eshop/webshoppingagg:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: webshoppingagg-cm
@@ -47,6 +63,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: webshoppingagg
+  namespace: eshop
   labels:
     app: eshop
     service: webshoppingagg

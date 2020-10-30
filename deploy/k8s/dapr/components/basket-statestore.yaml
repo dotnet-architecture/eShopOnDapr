@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: eshop-basket-statestore
+  namespace: eshop
+spec:
+  type: state.redis
+  metadata:
+  - name: redisHost
+    value: redis:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: eshopsecrets
+      key: redisPassword
+auth:
+  secretStore: kubernetes

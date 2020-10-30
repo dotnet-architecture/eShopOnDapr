@@ -1,7 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: basket-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: basket
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  OrchestratorType: K8S
+  PATH_BASE: /basket-api
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: basket
+  namespace: eshop
   labels:
     app: eshop
     service: basket
@@ -15,28 +31,19 @@ spec:
       labels:
         app: eshop
         service: basket
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "basket-api"
+        dapr.io/app-port: "80"
     spec:
       containers:
         - name: basket-api
-          image: ${REGISTRY:-eshop}/basket.api:${PLATFORM:-linux}-${TAG:-latest}
-          imagePullPolicy: Always
+          image: eshop/basket.api:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: basket-cm
@@ -47,33 +54,17 @@ apiVersion: v1
 kind: Service
 metadata:
   name: basket-api
+  namespace: eshop
   labels:
     app: eshop
     service: basket
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30005
       protocol: TCP
       name: http
   selector:
     service: basket
-
----
-
-kind: Ingress
-apiVersion: extensions/v1beta1
-metadata:
-  name: basket
-  labels:
-    app: eshop
-    service: basket
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-spec:
-  rules:
-    - http:
-        paths:
-        - path: /basket-api
-          backend:
-            serviceName: basket-api
-            servicePort: 80

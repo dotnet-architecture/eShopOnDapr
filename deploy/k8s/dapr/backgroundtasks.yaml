@@ -1,7 +1,28 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: backgroundtasks-cm
+  namespace: eshop
+  labels:
+    app: eshop
+    service: backgroundtasks
+data:
+  OrchestratorType: K8S
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word
+  UseCustomizationData: "True"
+  CheckUpdateTime: "15000"
+  GracePeriodTime: "15"
+  Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ: Verbose
+
+---
+
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: backgroundtasks
+  namespace: eshop
   labels:
     app: eshop
     service: backgroundtasks
@@ -15,28 +36,19 @@ spec:
       labels:
         app: eshop
         service: backgroundtasks
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "backgroundtasks"
+        dapr.io/app-port: "80"
     spec:
       containers:
         - name: ordering-backgroundtasks
-          image: ${REGISTRY:-eshop}/ordering.backgroundtasks:${PLATFORM:-linux}-${TAG:latest}
-          imagePullPolicy: Always
+          image: eshop/ordering.backgroundtasks:linux-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /liveness
-            initialDelaySeconds: 10
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /hc
-            initialDelaySeconds: 90
-            periodSeconds: 60
-            timeoutSeconds: 5
           envFrom:
             - configMapRef:
                 name: backgroundtasks-cm
@@ -47,12 +59,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ordering-backgroundtasks
+  namespace: eshop
   labels:
     app: eshop
     service: backgroundtasks
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30006
       protocol: TCP
       name: http
   selector:
