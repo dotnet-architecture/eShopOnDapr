@@ -9,17 +9,17 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  BasketApiClient: http://localhost/basket-api
+  BasketApiClient: http://basket-api
   ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Service.IdentityDb;User Id=sa;Password=Pass@word
-  CouponApiClient: http://localhost/coupon-api
+  CouponApiClient: http://coupon-api
   DPConnectionString: basketdata
   IsClusterEnv: "True"
   OrchestratorType: K8S
-  OrderingApiClient: http://localhost/ordering-api
+  OrderingApiClient: http://ordering-api
   PATH_BASE: /identity
   SpaClient: http://localhost
   UseCustomizationData: "True"
-  WebShoppingAggClient: http://localhost/webshoppingagg
+  WebShoppingAggClient: http://webshoppingagg
 
 ---
 

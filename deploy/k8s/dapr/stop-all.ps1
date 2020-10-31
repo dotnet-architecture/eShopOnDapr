@@ -11,6 +11,7 @@ kubectl delete `
     -f ./components/basket-statestore.yaml `
     -f ./components/sendmail.yaml `
     -f ./components/zipkin.yaml `
+    -f ./apigateway.yaml `
     -f ./signalr.yaml `
     -f ./seq.yaml `
     -f ./zipkin.yaml `

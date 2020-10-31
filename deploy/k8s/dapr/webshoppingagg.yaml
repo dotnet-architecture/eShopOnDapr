@@ -10,7 +10,7 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   BasketUrlHC: http://basket-api/hc
   CatalogUrlHC: http://catalog-api/hc
-  IdentityUrlExternal: http://localhost/identity
+  IdentityUrlExternal: http://identity
   IdentityUrlHC: http://identity-api/hc
   OrderingUrlHC: http://ordering-api/hc
   PATH_BASE: /webshoppingagg

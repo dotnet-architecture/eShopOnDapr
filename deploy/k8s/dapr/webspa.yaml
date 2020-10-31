@@ -11,15 +11,15 @@ data:
   ASPNETCORE_URLS: http://0.0.0.0:80
   CallBackUrl: http://localhost
   DPConnectionString: basketdata
-  BasketUrl: http://{{ .Values.aksLB }}/apigateway
-  IdentityUrl: http://{{ .Values.aksLB }}/identity
+  BasketUrl: http://apigateway
+  IdentityUrl: http://identity
   IdentityUrlHC: http://identity-api/hc
-  IsClusterEnv: "True"
+  IsClusterEnv: "False"
   OrchestratorType: K8S
   PATH_BASE: /
-  PurchaseUrl: http://{{ .Values.aksLB }}/apigateway
+  PurchaseUrl: http://apigateway
   PurchaseUrlHC: http://ordering-api/hc
-  SignalrHubUrl: http://{{ .Values.aksLB }}/apigateway
+  SignalrHubUrl: http://apigateway
   UseCustomizationData: "True"
   UseLoadTest: "False"
 
@@ -51,7 +51,7 @@ spec:
       containers:
         - name: webspa
           image: eshop/webspa:linux-latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80

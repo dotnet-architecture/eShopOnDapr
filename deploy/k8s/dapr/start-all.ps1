@@ -6,6 +6,7 @@ kubectl apply `
     -f ./sqldata.yaml `
     -f ./redis.yaml `
     -f ./signalr.yaml `
+    -f ./apigateway.yaml `
     -f ./components/pubsub-redis.yaml `
     -f ./components/basket-statestore.yaml `
     -f ./components/sendmail.yaml `

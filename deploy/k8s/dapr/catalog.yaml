@@ -14,7 +14,7 @@ data:
   EventBusConnection: rabbitmq
   OrchestratorType: K8S
   PATH_BASE: /catalog-api
-  PicBaseUrl: http://{{ .Values.aksLB }}/apigateway/c/api/v1/catalog/items/[0]/pic/
+  PicBaseUrl: http://apigateway/c/api/v1/catalog/items/[0]/pic/
   PORT: "80"
   UseCustomizationData: "False"
 
