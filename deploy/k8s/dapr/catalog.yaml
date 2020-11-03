@@ -11,7 +11,6 @@ data:
   AzureServiceBusEnabled: "False"
   AzureStorageEnabled: "False"
   ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word
-  EventBusConnection: rabbitmq
   OrchestratorType: K8S
   PATH_BASE: /catalog-api
   PicBaseUrl: http://apigateway/c/api/v1/catalog/items/[0]/pic/
@@ -74,5 +73,15 @@ spec:
       nodePort: 30003
       protocol: TCP
       name: http
+    - port: 3500
+      targetPort: 3500
+      nodePort: 30040
+      protocol: TCP
+      name: dapr-http
+    - port: 50001
+      targetPort: 50001
+      nodePort: 30041
+      protocol: TCP
+      name: dapr-grpc
   selector:
     service: catalog
