@@ -259,7 +259,7 @@ services:
 
   webshoppingapigw:
     volumes:
-      - ./Envoy/config/webshopping:/etc/envoy
+      - ./src/ApiGateways/Envoy:/etc/envoy
     ports:
     - "5202:80"
     - "15202:8001"
