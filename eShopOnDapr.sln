@@ -29,11 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationEventLogEF", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{8ACD66D8-4B4E-489A-8C75-E25EA9E0E399}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "webshopping", "webshopping", "{64B29A06-E154-456D-B054-06DC2DE419B8}"
-	ProjectSection(SolutionItems) = preProject
-		src\ApiGateways\Envoy\config\webshopping\envoy.yaml = src\ApiGateways\Envoy\config\webshopping\envoy.yaml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aggregators", "Aggregators", "{4C14BF67-4B0C-429D-96C7-73803AA76CFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Shopping.HttpAggregator", "src\ApiGateways\Aggregators\Web.Shopping.HttpAggregator\Web.Shopping.HttpAggregator.csproj", "{4C18A91D-9C0A-4DFF-A2A3-39E8317951FD}"
@@ -63,6 +58,29 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.API", "src\Services\Payment\Payment.API\Payment.API.csproj", "{37327280-77E7-48E5-9E6D-C6D1EC86F125}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.SignalrHub", "src\Services\Ordering\Ordering.SignalrHub\Ordering.SignalrHub.csproj", "{E84BCF7A-0B5A-4F73-A1B0-ED1E29A0FE17}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{250B824E-6A72-4D6E-8287-CC73F40410E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dapr", "dapr", "{B52FAD6A-7976-48CD-8791-96E9D3CA5519}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{EE9EF69B-6FCD-4274-8857-8BD9382E29CB}"
+	ProjectSection(SolutionItems) = preProject
+		dapr\components\eshop-secretstore.json = dapr\components\eshop-secretstore.json
+		dapr\components\eshop-basket-statestore.yaml = dapr\components\eshop-basket-statestore.yaml
+		dapr\components\eshop-pubsub.yaml = dapr\components\eshop-pubsub.yaml
+		dapr\components\eshop-secretstore.yaml = dapr\components\eshop-secretstore.yaml
+		dapr\components\eshop-tracing.yaml = dapr\components\eshop-tracing.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configuration", "configuration", "{EDFC0510-8EC6-4E51-AE47-965E2599D9D0}"
+	ProjectSection(SolutionItems) = preProject
+		dapr\configuration\eshop-config.yaml = dapr\configuration\eshop-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Envoy", "Envoy", "{589088F3-E92E-4BBC-AEF9-EDED51C8E6F8}"
+	ProjectSection(SolutionItems) = preProject
+		src\ApiGateways\Envoy\envoy.yaml = src\ApiGateways\Envoy\envoy.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,6 +148,10 @@ Global
 		{E84BCF7A-0B5A-4F73-A1B0-ED1E29A0FE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E84BCF7A-0B5A-4F73-A1B0-ED1E29A0FE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E84BCF7A-0B5A-4F73-A1B0-ED1E29A0FE17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +184,9 @@ Global
 		{B894E134-F56A-4057-8F29-6D9DD4A6CDFA} = {4A00DE64-EC27-4F46-8782-47541FC40AE0}
 		{37327280-77E7-48E5-9E6D-C6D1EC86F125} = {B894E134-F56A-4057-8F29-6D9DD4A6CDFA}
 		{E84BCF7A-0B5A-4F73-A1B0-ED1E29A0FE17} = {6E06245D-F575-4D67-AECE-EEC5D70AE53B}
+		{EE9EF69B-6FCD-4274-8857-8BD9382E29CB} = {B52FAD6A-7976-48CD-8791-96E9D3CA5519}
+		{EDFC0510-8EC6-4E51-AE47-965E2599D9D0} = {B52FAD6A-7976-48CD-8791-96E9D3CA5519}
+		{589088F3-E92E-4BBC-AEF9-EDED51C8E6F8} = {8ACD66D8-4B4E-489A-8C75-E25EA9E0E399}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBED0B95-87F8-439B-BC1E-382C8ABD4F2E}
