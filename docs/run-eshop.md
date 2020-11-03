@@ -38,11 +38,26 @@ To run eShopOnDapr from Visual Studio Code it's best to install the *C#* and *Do
 
 Open the root folder in Visual Studio Code:
 
+![Visual Studio Code](media/vscode.png)
 
+Open the command palette (Ctrl+Shift+P/Command+Shift+P) and select the *Docker: Compose Up* command:
 
+![Docker Compose Up](media/vscode-compose.png)
 
+Visual Studio Code will run docker compose to build and start the containers.
 
+> Do *not* select *Compose Up* from the context menu of the `docker-compose.yml` file in the explorer. This will not work because Visual Studio Code does not include the associated `docker-compose.override.yml` file in the compose operation.
 
+### Debugging with Visual Studio Code
 
+Visual Studio Code supports attaching to containers for debugging. Once the application has started, go to the *Run* tab and click on the *Start Debugging* button with the  *Docker .NET Core Attach (Preview)* profile selected:
 
-To get started with Visual Studio Code, open the root folder 
+![Visual Studio Code debugging](media/vscode-debug.png)
+
+Visual Studio Code will ask you to select a container group. Choose *eshopondapr*.
+
+Next, you can select the container you want to attach to. Select one of the .NET microservice containers. 
+
+Finally, Visual Studio Code will ask you if you want to copy the .NET Core debugger to the container. Select *Yes*.
+
+The debugger is now attached to your container and you can set breakpoints in the code of the selected .NET microservice.
