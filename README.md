@@ -2,30 +2,32 @@
 
 A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/).
 
-![eShopOnDapr](media/eshopondapr.png)
+![eShopOnDapr](docs/media/eshopondapr.png)
 
 Dapr enables developers using any language or framework to easily write microservices. It addresses many of the challenges found that come along with distributed applications, such as:
 
 - How can distributed services discover each other and communicate synchronously?
- - How can they implement asynchronous messaging? 
- - How can they maintain contextual information across a transaction?
- - How can they become resilient to failure?
- - How can they scale to meet fluctuating demand?
- - How are they monitored and observed?
+- How can they implement asynchronous messaging? 
+- How can they maintain contextual information across a transaction?
+- How can they become resilient to failure?
+- How can they scale to meet fluctuating demand?
+- How are they monitored and observed?
 
 > The code in this repository is **work in progress**. An accompanying e-Book called *Dapr for .NET developers* is currently in development and will use the sample code in this repository to demonstrate Dapr features and benefits.
 
 ## Getting started
 
-1. eShopOnDapr runs in containers and requires Docker to run. To start the application:
-   - Go to directory `deploy/compose`.
-   - Create and start the containers: `docker-compose up`
+eShopOnDapr runs in containers and requires Docker to run. There are various ways to start the application:
 
-2. It may take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://host.docker.internal:5107/hc-ui`.
+- [Run eShopOnDapr from the CLI](docs/run-eshop.md#run-eshopondapr-from-the-cli)
+- [Run eShopOnDapr from Visual Studio (best F5 debugging experience)](docs/run-eshop.md#run-eshopondapr-from-visual-studio)
+- [Run eShopOnDapr from Visual Studio Code (allows you to debug individual containers))](docs/run-eshop.md#run-eshopondapr-from-visual-studio-code)
 
-3. You can access the Web UI at `http://host.docker.internal:5104/`.
+> Support for Kubernetes deployments is on the roadmap.
 
-> Support for K8s deployments is on the roadmap.
+Note that it will take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://host.docker.internal:5107/hc-ui`.
+
+When all microservices are healthy, you can navigate to http://host.docker.internal:5104 to view the eShopOnDapr UI.
 
 ## Roadmap
 
