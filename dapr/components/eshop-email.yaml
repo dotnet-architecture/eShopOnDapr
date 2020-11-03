@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sendmail
+  namespace: default
+spec:
+  type: bindings.twilio.sendgrid
+  metadata:
+  - name: apiKey
+    secretKeyRef:
+      name: sendgridAPIKey
+auth:
+  secretStore: eshop-secretstore
