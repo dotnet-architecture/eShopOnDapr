@@ -13,7 +13,7 @@ data:
   ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word
   OrchestratorType: K8S
   PATH_BASE: /catalog-api
-  PicBaseUrl: http://apigateway/c/api/v1/catalog/items/[0]/pic/
+  PicBaseUrl: http://localhost:30050/c/api/v1/catalog/items/[0]/pic/
   PORT: "80"
   UseCustomizationData: "False"
 

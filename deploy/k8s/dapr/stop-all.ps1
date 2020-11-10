@@ -12,6 +12,7 @@ kubectl delete `
     -f ./components/sendmail.yaml `
     -f ./components/zipkin.yaml `
     -f ./apigateway.yaml `
+    -f ./identity.yaml `
     -f ./signalr.yaml `
     -f ./seq.yaml `
     -f ./zipkin.yaml `

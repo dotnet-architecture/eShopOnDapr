@@ -10,6 +10,8 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   OrchestratorType: K8S
   PATH_BASE: /basket-api
+  IdentityUrlExternal: http://identity-api
+  IdentityUrl: http://identity-api
 
 ---
 

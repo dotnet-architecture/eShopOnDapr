@@ -10,9 +10,8 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   AzureServiceBusEnabled: "False"
-  EventBusConnection: rabbitmq
   identityUrl: http://identity-api
-  IsClusterEnv: "True"
+  IsClusterEnv: "False"
   OrchestratorType: K8S
   PATH_BASE: /ordering-signalrhub
   SignalrStoreConnectionString: basketdata
@@ -65,8 +64,11 @@ metadata:
     app: eshop
     service: signalr
 spec:
+  type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30025
       protocol: TCP
       name: http
   selector:

@@ -42,8 +42,12 @@ metadata:
     app: eshop
     service: sqldata
 spec:
+  type: NodePort
   ports:
     - port: 1433
+      targetPort: 1433
+      nodePort: 31433
       protocol: TCP
+      name: tds
   selector:
     service: sqldata
