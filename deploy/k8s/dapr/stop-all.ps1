@@ -17,4 +17,5 @@ kubectl delete `
     -f ./seq.yaml `
     -f ./zipkin.yaml `
     -f ./sqldata.yaml `
-    -f ./redis.yaml
+    -f ./redis.yaml `
+    -f ./dapr-config.yaml

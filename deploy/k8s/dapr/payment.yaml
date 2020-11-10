@@ -39,6 +39,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "payment-api"
         dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
     spec:
       containers:
         - name: payment-api

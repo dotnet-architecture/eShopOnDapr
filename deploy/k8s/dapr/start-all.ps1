@@ -1,5 +1,6 @@
 kubectl apply `
     -f ./namespace.yaml `
+    -f ./dapr-config.yaml `
     -f ./secrets.yaml `
     -f ./seq.yaml `
     -f ./zipkin.yaml `
