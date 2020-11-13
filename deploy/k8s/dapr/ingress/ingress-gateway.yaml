@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-gw
+  namespace: eshop
+  labels:
+    app: eshop
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /webspa
+        backend:
+          serviceName: webspa
+          servicePort: 80
+      - path: /*
+        backend:
+          serviceName: apigateway
+          servicePort: 80
