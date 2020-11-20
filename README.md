@@ -42,7 +42,7 @@ When all microservices are healthy, you can navigate to http://localhost:5104 to
   - [ ] in .NET startup code
 - [x] Observability
 - [ ] Actor model
-- [ ] Bindings
+- [x] Bindings
 
 ### Attributions
 
