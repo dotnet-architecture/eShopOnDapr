@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 using System;
-using System.Data.SqlClient;
 
 namespace Microsoft.AspNetCore.Hosting
 {
@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Hosting
                                 sleepDurationProvider: (retryAttempt, ctx) => TimeSpan.FromSeconds(retryInSeconds),
                                 onRetry: (exception, retryAttempt, timeSpan, ctx) =>
                                 {
-                                    logger.LogWarning(exception, "[{prefix}] Exception {ExceptionType} with message {Message} detected on attempt {retry}", nameof(TContext), exception.GetType().Name, exception.Message, retryAttempt);
+                                    logger.LogWarning(exception, "[{prefix}] Exception {ExceptionType} with message {Message} detected on attempt {retry}", typeof(TContext).Name, exception.GetType().Name, exception.Message, retryAttempt);
                                 });
 
                         //if the sql server container is not created on run docker compose this
@@ -60,7 +60,7 @@ namespace Microsoft.AspNetCore.Hosting
                     logger.LogError(ex, "An error occurred while migrating the database used on context {DbContextName}", typeof(TContext).Name);
                     if (underK8s)
                     {
-                        throw;          // Rethrow under k8s because we rely on k8s to re-run the pod
+                        throw; // Rethrow under k8s because we rely on k8s to re-run the pod
                     }
                 }
             }
