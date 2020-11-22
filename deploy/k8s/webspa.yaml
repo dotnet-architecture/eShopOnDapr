@@ -19,7 +19,7 @@ data:
   PATH_BASE: /
   PurchaseUrl: http://localhost:30050
   PurchaseUrlHC: http://apigateway/hc
-  SignalrHubUrl: http://localhost:30025
+  SignalrHubUrl: http://localhost:30050
   UseCustomizationData: "True"
   UseLoadTest: "False"
 
