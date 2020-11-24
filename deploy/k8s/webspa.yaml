@@ -14,7 +14,6 @@ data:
   BasketUrl: http://localhost:30050
   IdentityUrl: http://localhost:30008
   IdentityUrlHC: http://identity-api/hc
-  IsClusterEnv: "False"
   OrchestratorType: K8S
   PATH_BASE: /
   PurchaseUrl: http://localhost:30050
