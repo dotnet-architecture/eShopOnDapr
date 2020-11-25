@@ -152,6 +152,3 @@ services:
 
   # dapr-placement:
   #   image: "daprio/dapr:1.0.0-rc.1"
-
-  # dapr-sentry:
-  #   image: "daprio/sentry:1.0.0-rc.1"
