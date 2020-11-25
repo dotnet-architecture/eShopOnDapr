@@ -24,7 +24,7 @@ services:
       - redis
 
   basket-api-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:basket-api"
     depends_on:
       - basket-api
@@ -38,7 +38,7 @@ services:
       - sqldata
 
   catalog-api-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:catalog-api"
     depends_on:
       - catalog-api
@@ -60,7 +60,7 @@ services:
       - sqldata
 
   ordering-api-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:ordering-api"
     depends_on:
       - ordering-api
@@ -74,7 +74,7 @@ services:
       - sqldata
 
   ordering-backgroundtasks-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:ordering-backgroundtasks"
     depends_on:
       - ordering-backgroundtasks
@@ -92,7 +92,7 @@ services:
       - sqldata
 
   ordering-signalrhub-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:ordering-signalrhub"
     depends_on:
       - ordering-signalrhub
@@ -104,7 +104,7 @@ services:
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
 
   payment-api-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:payment-api"
     depends_on:
       - payment-api
@@ -122,7 +122,7 @@ services:
       - sqldata
 
   webshoppingagg-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:webshoppingagg"
     depends_on:
       - webshoppingagg
@@ -131,7 +131,7 @@ services:
     image: envoyproxy/envoy:v1.14.2
 
   webshoppingapigw-dapr:
-    image: "daprio/daprd:0.11.0"
+    image: "daprio/daprd:1.0.0-rc.1"
     network_mode: "service:webshoppingapigw"
     depends_on:
       - webshoppingapigw
@@ -151,4 +151,4 @@ services:
       dockerfile: src/Web/WebStatus/Dockerfile
 
   dapr-placement:
-    image: "daprio/dapr:0.11.0"
+    image: "daprio/dapr:1.0.0-rc.1"

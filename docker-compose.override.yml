@@ -49,7 +49,7 @@ services:
     command: ["./daprd",
       "-app-id", "basket-api",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50001",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -82,7 +82,7 @@ services:
     command: ["./daprd",
       "-app-id", "catalog-api",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50002",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -138,7 +138,7 @@ services:
     command: ["./daprd",
       "-app-id", "ordering-api",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50003",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -167,7 +167,7 @@ services:
     command: ["./daprd",
       "-app-id", "ordering-backgroundtasks",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50004",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -192,7 +192,7 @@ services:
     command: ["./daprd",
       "-app-id", "ordering-signalrhub",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50009",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -217,7 +217,7 @@ services:
     command: ["./daprd",
       "-app-id", "payment-api",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50006",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -248,7 +248,7 @@ services:
     command: ["./daprd",
       "-app-id", "webshoppingagg",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50007",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
@@ -270,8 +270,9 @@ services:
     command: ["./daprd",
       "-app-id", "webshoppingapigw",
       "-app-port", "80",
-      "-placement-address", "placement:50000",
+      "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50008",
+#      "-allowed-origins", "http://localhost:5104,http://localhost:5107",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
