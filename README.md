@@ -25,9 +25,9 @@ eShopOnDapr runs in containers and requires Docker to run. There are various way
 
 > Support for Kubernetes deployments is on the roadmap.
 
-Note that it will take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://host.docker.internal:5107/hc-ui`.
+Note that it will take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://localhost:5107/hc-ui`.
 
-When all microservices are healthy, you can navigate to http://host.docker.internal:5104 to view the eShopOnDapr UI.
+When all microservices are healthy, you can navigate to http://localhost:5104 to view the eShopOnDapr UI.
 
 ## Roadmap
 
@@ -42,7 +42,7 @@ When all microservices are healthy, you can navigate to http://host.docker.inter
   - [ ] in .NET startup code
 - [x] Observability
 - [ ] Actor model
-- [ ] Bindings
+- [x] Bindings
 
 ### Attributions
 

@@ -11,6 +11,9 @@
 !.vscode/extensions.json
 *.code-workspace
 
+# Visual Studio for Mac
+.vs/*
+
 # User-specific files
 *.rsuser
 *.suo
