@@ -272,7 +272,6 @@ services:
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
       "-dapr-grpc-port", "50008",
-      "-allowed-origins", "http://localhost:5104,http://localhost:5107",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
