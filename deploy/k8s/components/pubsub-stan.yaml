@@ -1,0 +1,14 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: eshop
+spec:
+  type: pubsub.natsstreaming
+  metadata:
+  - name: natsURL
+    value: nats://stan:4222
+  - name: natsStreamingClusterID
+    value: eShopOnDapr
+  - name: subscriptionType
+    value: queue
