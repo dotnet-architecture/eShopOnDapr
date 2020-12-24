@@ -62,11 +62,11 @@ Finally, Visual Studio Code will ask you if you want to copy the .NET Core debug
 
 The debugger is now attached to your container and you can set breakpoints in the code of the selected .NET microservice.
 
-## Run eShopOnDapr in Kubernetes
+## Run eShopOnDapr on Kubernetes
 
-In the `/deploy/k8s` folder, you find Kubernetes manifest files for running eShopOnDapr in Kubernetes. Obviously, you need an operational Kubernetes cluster to run the app in. The manifest files provided are meant for deployment on your local machine. Therefore you need something like MiniKube or Docker Desktop with Kubernetes enabled on your machine. Follow the instructions of these products to install Kubernetes on your machine.
+The manifest files provided here are meant for deployment to a Kubernetes cluster running on your local machine. To run eShopOnDapr on Kubernetes, you first need to set up a Kubernetes cluster, such as MiniKube or Docker for Desktop. Next, you need to install Dapr into it. See the [*Install Dapr into a Kubernetes cluster how-to*](https://docs.dapr.io/getting-started/install-dapr-kubernetes/) for details.
 
-To start the application, you can use the `start-all.ps1` script in the folder. It uses `kubectl` - the Kubernetes CLI - to apply all the manifests to the Kubernetes cluster.
+To start the application in Kubernetes, run the `start-all.ps1` or `start-all.sh` script located in the `/deploy/k8s` folder. It uses `kubectl` - the Kubernetes CLI - to apply all the manifests to the Kubernetes cluster.
 
 Different parts of the application are exposed as NodePorts to the local machine. This is convenient for testing the application locally. The following diagram depicts how the application is running in Kubernetes:
 
@@ -80,3 +80,5 @@ Use the following URLs for testing the application:
 | http://localhost:30007 | Access the eShopOnDapr health dashboard |
 
 All access to backend APIs is routed through the API Gateway exposed on port `30050`. The Identity server is exposed on port `30008`. All URLs are configured accordingly in the different manifest files.
+
+To remove eShopOnDapr from your cluster, run the `stop-all.ps1` or `stop-all.sh` script located in the `/deploy/k8s` folder.
