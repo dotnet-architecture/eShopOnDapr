@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Dapr.Client;
-using Dapr.Client.Http;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
@@ -22,7 +22,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             return await _daprClient.InvokeMethodAsync<CatalogItem>(
                 DaprAppId,
                 $"api/v1/catalog/items/{id}",
-                new HTTPExtension { Verb = HTTPVerb.Get });
+                new HttpInvocationOptions { Method = HttpMethod.Get });
         }
 
         public async Task<IEnumerable<CatalogItem>> GetCatalogItemsAsync(IEnumerable<int> ids)
@@ -30,7 +30,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             return await _daprClient.InvokeMethodAsync<IEnumerable<CatalogItem>>(
                 DaprAppId,
                 "api/v1/catalog/items",
-                new HTTPExtension
+                new HttpInvocationOptions
                 { 
                     QueryString = new Dictionary<string, string>
                     {
@@ -38,7 +38,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
                         ["pageIndex"] = "1",
                         ["ids"] = string.Join(",", ids),
                     },
-                    Verb = HTTPVerb.Get 
+                    Method = HttpMethod.Get 
                 });
         }
     }

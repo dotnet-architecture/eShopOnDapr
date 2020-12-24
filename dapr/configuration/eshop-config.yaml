@@ -6,4 +6,5 @@ metadata:
 spec:
   tracing:
     samplingRate: "1"
-    stdout: false
++   zipkin:
++     endpointAddress: "http://zipkin:9411/api/v2/spans"
