@@ -10,7 +10,6 @@ kubectl delete `
     -f ./components/pubsub-redis.yaml `
     -f ./components/basket-statestore.yaml `
     -f ./components/sendmail.yaml `
-    -f ./components/zipkin.yaml `
     -f ./apigateway.yaml `
     -f ./identity.yaml `
     -f ./signalr.yaml `

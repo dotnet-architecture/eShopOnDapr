@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Dapr.Client;
-using Dapr.Client.Http;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
 using Microsoft.Net.Http.Headers;
 
@@ -23,9 +23,9 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             return await _daprClient.InvokeMethodAsync<BasketData>(
                 DaprAppId,
                 $"api/v1/basket/{id}",
-                new HTTPExtension
+                new HttpInvocationOptions
                 {
-                    Verb = HTTPVerb.Get,
+                    Method = HttpMethod.Get,
                     Headers = new Dictionary<string, string>
                     {
                         [HeaderNames.Authorization] = accessToken
@@ -39,7 +39,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
                 DaprAppId,
                 "api/v1/basket",
                 currentBasket,
-                new HTTPExtension
+                new HttpInvocationOptions
                 {
                     Headers = new Dictionary<string, string>
                     {

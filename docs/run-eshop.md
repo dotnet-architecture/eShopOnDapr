@@ -6,7 +6,7 @@ The root folder of the repository contains [Docker Compose](https://docs.docker.
 
 To start eShopOnDapr from the CLI, run the following command from the root folder:
 
-``` 
+```
 docker-compose up
 ```
 
@@ -56,7 +56,7 @@ Visual Studio Code supports attaching to containers for debugging. Once the appl
 
 Visual Studio Code will ask you to select a container group. Choose *eshopondapr*.
 
-Next, you can select the container you want to attach to. Select one of the .NET microservice containers. 
+Next, you can select the container you want to attach to. Select one of the .NET microservice containers.
 
 Finally, Visual Studio Code will ask you if you want to copy the .NET Core debugger to the container. Select *Yes*.
 

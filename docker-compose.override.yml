@@ -39,7 +39,6 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - PATH_BASE=/basket-api
       - PORT=80
-      - DAPR_GRPC_PORT=50001
     ports:
       - "5103:80"
       - "9103:81"
@@ -50,7 +49,6 @@ services:
       "-app-id", "basket-api",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50001",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -71,19 +69,16 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - PORT=80
       - PATH_BASE=/catalog-api
-      - DAPR_GRPC_PORT=50002
     ports:
       - "5101:80"
       - "9101:81"
-      - "3501:3500"
-      - "50002:50002"
+      - "50002:50001"
 
   catalog-api-dapr:
     command: ["./daprd",
       "-app-id", "catalog-api",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50002",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -128,18 +123,16 @@ services:
       - Serilog__MinimumLevel__Override__ordering-api=Verbose
       - PATH_BASE=/ordering-api
       - PORT=80
-      - DAPR_GRPC_PORT=50003
     ports:
       - "5102:80"
       - "9102:81"
-      - "50003:50003"
+      - "50003:50001"
 
   ordering-api-dapr:
     command: ["./daprd",
       "-app-id", "ordering-api",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50003",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -158,17 +151,15 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
-      - DAPR_GRPC_PORT=50004
     ports:
       - "5111:80"
-      - "50004:50004"
+      - "50004:50001"
 
   ordering-backgroundtasks-dapr:
     command: ["./daprd",
       "-app-id", "ordering-backgroundtasks",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50004",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -183,17 +174,15 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - identityUrl=http://identity-api
-      - DAPR_GRPC_PORT=50009
     ports:
       - "5112:80"
-      - "50009:50009"
+      - "50009:50001"
 
   ordering-signalrhub-dapr:
     command: ["./daprd",
       "-app-id", "ordering-signalrhub",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50009",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -208,17 +197,15 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling=Verbose
-      - DAPR_GRPC_PORT=50006
     ports:
       - "5108:80"
-      - "50006:50006"
+      - "50006:50001"
 
   payment-api-dapr:
     command: ["./daprd",
       "-app-id", "payment-api",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50006",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -239,17 +226,15 @@ services:
       - IdentityUrlHC=http://identity-api/hc
       - PaymentUrlHC=http://payment-api/hc
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
-      - DAPR_GRPC_PORT=50007
     ports:
       - "5121:80"
-      - "50007:50007"
+      - "50007:50001"
 
   webshoppingagg-dapr:
     command: ["./daprd",
       "-app-id", "webshoppingagg",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50007",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -264,14 +249,13 @@ services:
     - "5202:80"
     - "15202:8001"
     - "3500:3500"
-    - "50008:50008"
+    - "50008:50001"
 
   webshoppingapigw-dapr:
     command: ["./daprd",
       "-app-id", "webshoppingapigw",
       "-app-port", "80",
       # "-placement-host-address", "placement:50000",
-      "-dapr-grpc-port", "50008",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
