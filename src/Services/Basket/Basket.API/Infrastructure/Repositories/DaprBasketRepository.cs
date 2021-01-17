@@ -7,7 +7,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Reposit
 {
     public class DaprBasketRepository : IBasketRepository
     {
-        private const string StoreName = "eshop-basket-statestore";
+        private const string StoreName = "eshop-statestore";
 
         private readonly ILogger<DaprBasketRepository> _logger;
         private readonly DaprClient _dapr;

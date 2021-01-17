@@ -9,8 +9,6 @@
     using AspNetCore.Http;
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
-    using global::Ordering.API.Application.IntegrationEvents;
-    using global::Ordering.API.Application.IntegrationEvents.EventHandling;
     using global::Ordering.API.Infrastructure.Filters;
     using HealthChecks.UI.Client;
     using Infrastructure.AutofacModules;
@@ -26,13 +24,13 @@
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
     using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
+    using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Newtonsoft.Json.Converters;
-    using Ordering.Infrastructure;
 
     public class Startup
     {
@@ -198,17 +196,6 @@
                        ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                    );
 
-            services.AddDbContext<IntegrationEventLogContext>(options =>
-            {
-                options.UseSqlServer(configuration["ConnectionString"],
-                                     sqlServerOptionsAction: sqlOptions =>
-                                     {
-                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                                         //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
-                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                                     });
-            });
-
             return services;
         }
 
@@ -253,8 +240,6 @@
             services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
                 sp => (DbConnection c) => new IntegrationEventLogService(c));
 
-            services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
-
             return services;
         }
 
@@ -286,12 +271,6 @@
         public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<UserCheckoutAcceptedIntegrationEventHandler>();
-            services.AddTransient<GracePeriodConfirmedIntegrationEventHandler>();
-            services.AddTransient<OrderStockConfirmedIntegrationEventHandler>();
-            services.AddTransient<OrderStockRejectedIntegrationEventHandler>();
-            services.AddTransient<OrderPaymentFailedIntegrationEventHandler>();
-            services.AddTransient<OrderPaymentSucceededIntegrationEventHandler>();
 
             return services;
         }

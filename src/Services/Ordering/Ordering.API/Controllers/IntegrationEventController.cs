@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapr;
+using Dapr.Actors;
+using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Ordering.API.Application.IntegrationEvents.EventHandling;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.Extensions.Logging;
 using Ordering.API.Application.IntegrationEvents.Events;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
@@ -12,61 +16,114 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
     [ApiController]
     public class IntegrationEventController : ControllerBase
     {
-        private const string DAPR_PUBSUB_NAME = "pubsub";
+        private const string DaprPubSubName = "pubsub";
 
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ILogger<IntegrationEventController> _logger;
 
-        public IntegrationEventController(IServiceProvider serviceProvider)
+        public IntegrationEventController(IOrderRepository orderRepository, ILogger<IntegrationEventController> logger)
         {
-            _serviceProvider = serviceProvider;
+            _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpPost("UserCheckoutAccepted")]
-        [Topic(DAPR_PUBSUB_NAME, "UserCheckoutAcceptedIntegrationEvent")]
-        public async Task OrderStarted(UserCheckoutAcceptedIntegrationEvent @event)
+        [Topic(DaprPubSubName, "UserCheckoutAcceptedIntegrationEvent")]
+        public async Task Handle(UserCheckoutAcceptedIntegrationEvent integrationEvent)
         {
-            var handler = _serviceProvider.GetRequiredService<UserCheckoutAcceptedIntegrationEventHandler>();
-            await handler.Handle(@event);
-        }
+            if (integrationEvent.RequestId != Guid.Empty)
+            {
+                var order = new Order
+                {
+                    RequestId = integrationEvent.RequestId,
+                    OrderDate = DateTime.UtcNow,
+                    Address = new Address
+                    {
+                        Street = integrationEvent.Street,
+                        City = integrationEvent.City,
+                        ZipCode = integrationEvent.ZipCode,
+                        State = integrationEvent.State,
+                        Country = integrationEvent.Country
+                    },
+                    OrderStatus = OrderStatus.Submitted,
+                    BuyerId = integrationEvent.UserId,
+                    BuyerName = integrationEvent.UserName,
+                    PaymentMethodId = integrationEvent.CardTypeId,
+                    OrderItems = integrationEvent.Basket.Items
+                        .Select(item => new OrderItem
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = item.ProductName,
+                            UnitPrice = item.UnitPrice,
+                            Units = item.Quantity,
+                            PictureUrl = item.PictureUrl
+                        })
+                        .ToList()
+                };
 
-        [HttpPost("GracePeriodConfirmedIntegration")]
-        [Topic(DAPR_PUBSUB_NAME, "GracePeriodConfirmedIntegrationEvent")]
-        public async Task OrderStarted(GracePeriodConfirmedIntegrationEvent @event)
-        {
-            var handler = _serviceProvider.GetRequiredService<GracePeriodConfirmedIntegrationEventHandler>();
-            await handler.Handle(@event);
+                // TODO Why not set BuyerId from integrationEvent.Basket?
+                // Event
+                //AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,
+                //            cardSecurityNumber, cardHolderName, cardExpiration);
+
+                _logger.LogInformation("----- Creating Order - Order: {@Order}", order);
+
+                order = await _orderRepository.GetOrAddOrderAsync(order);
+
+                var orderingProcess = GetOrderingProcessActor(order.Id);
+                await orderingProcess.Start(-1, order.BuyerName, order.PaymentMethodId);
+            }
+            else
+            {
+                _logger.LogWarning("Invalid IntegrationEvent - RequestId is missing - {@IntegrationEvent}", integrationEvent);
+            }
         }
 
         [HttpPost("OrderStockConfirmed")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderStockConfirmedIntegrationEvent")]
-        public async Task OrderStarted(OrderStockConfirmedIntegrationEvent @event)
+        [Topic(DaprPubSubName, "OrderStockConfirmedIntegrationEvent")]
+        public Task Handle(OrderStockConfirmedIntegrationEvent integrationEvent)
         {
-            var handler = _serviceProvider.GetRequiredService<OrderStockConfirmedIntegrationEventHandler>();
-            await handler.Handle(@event);
+            var orderingProcess = GetOrderingProcessActor(integrationEvent.OrderId);
+
+            return orderingProcess.NotifyStockConfirmed();
         }
 
         [HttpPost("OrderStockRejected")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderStockRejectedIntegrationEvent")]
-        public async Task OrderStarted(OrderStockRejectedIntegrationEvent @event)
+        [Topic(DaprPubSubName, "OrderStockRejectedIntegrationEvent")]
+        public Task Handle(OrderStockRejectedIntegrationEvent integrationEvent)
         {
-            var handler = _serviceProvider.GetRequiredService<OrderStockRejectedIntegrationEventHandler>();
-            await handler.Handle(@event);
-        }
+            var orderingProcess = GetOrderingProcessActor(integrationEvent.OrderId);
 
-        [HttpPost("OrderPaymentFailed")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderPaymentFailedIntegrationEvent")]
-        public async Task OrderStarted(OrderPaymentFailedIntegrationEvent @event)
-        {
-            var handler = _serviceProvider.GetRequiredService<OrderPaymentFailedIntegrationEventHandler>();
-            await handler.Handle(@event);
+            var orderStockRejectedItems = integrationEvent.OrderStockItems
+                    .FindAll(c => !c.HasStock)
+                    .Select(c => c.ProductId)
+                    .ToList();
+
+            return orderingProcess.NotifyStockRejected(orderStockRejectedItems);
         }
 
         [HttpPost("OrderPaymentSucceeded")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderPaymentSucceededIntegrationEvent")]
-        public async Task OrderStarted(OrderPaymentSucceededIntegrationEvent @event)
+        [Topic(DaprPubSubName, "OrderPaymentSucceededIntegrationEvent")]
+        public Task Handle(OrderPaymentSucceededIntegrationEvent integrationEvent)
         {
-            var handler = _serviceProvider.GetRequiredService<OrderPaymentSucceededIntegrationEventHandler>();
-            await handler.Handle(@event);
+            var orderingProcess = GetOrderingProcessActor(integrationEvent.OrderId);
+
+            return orderingProcess.NotifyPaymentSucceeded();
+        }
+
+        [HttpPost("OrderPaymentFailed")]
+        [Topic(DaprPubSubName, "OrderPaymentFailedIntegrationEvent")]
+        public Task Handle(OrderPaymentFailedIntegrationEvent integrationEvent)
+        {
+            var orderingProcess = GetOrderingProcessActor(integrationEvent.OrderId);
+
+            return orderingProcess.NotifyPaymentFailed();
+        }
+
+        private static IOrderingProcessActor GetOrderingProcessActor(int orderId)
+        {
+            var actorId = new ActorId(orderId.ToString());
+            return ActorProxy.Create<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
         }
     }
 }

@@ -1,12 +1,6 @@
 ﻿using Autofac;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Queries;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Idempotency;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Repositories;
-using System.Reflection;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.AutofacModules
 {
@@ -25,26 +19,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Autof
 
         protected override void Load(ContainerBuilder builder)
         {
-
-            builder.Register(c => new OrderQueries(QueriesConnectionString))
-                .As<IOrderQueries>()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<BuyerRepository>()
-                .As<IBuyerRepository>()
-                .InstancePerLifetimeScope();
-
             builder.RegisterType<OrderRepository>()
                 .As<IOrderRepository>()
                 .InstancePerLifetimeScope();
-
-            builder.RegisterType<RequestManager>()
-               .As<IRequestManager>()
-               .InstancePerLifetimeScope();
-
-            builder.RegisterAssemblyTypes(typeof(CreateOrderCommandHandler).GetTypeInfo().Assembly)
-                .AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
-
         }
     }
 }

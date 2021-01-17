@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
-namespace Ordering.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityConfigurations
 {
-    class CardTypeEntityTypeConfiguration
-        : IEntityTypeConfiguration<CardType>
+    class CardTypeEntityTypeConfiguration : IEntityTypeConfiguration<CardType>
     {
         public void Configure(EntityTypeBuilder<CardType> cardTypesConfiguration)
         {

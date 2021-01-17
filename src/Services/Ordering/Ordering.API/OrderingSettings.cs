@@ -2,10 +2,9 @@
 {
     public class OrderingSettings
     {
-        public bool UseCustomizationData { get; set; }
-
         public string ConnectionString { get; set; }
 
+        // TODO Use
         public int GracePeriodTime { get; set; }
 
         public int CheckUpdateTime { get; set; }

@@ -33,6 +33,42 @@
     <Content Update="web.config;">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <None Remove="Pics\8.png" />
+    <None Remove="Pics\9.png" />
+    <None Remove="Pics\14.png" />
+    <None Remove="Pics\15.png" />
+    <None Remove="Pics\17.png" />
+    <None Remove="Pics\16.png" />
+    <None Remove="Pics\12.png" />
+    <None Remove="Pics\13.png" />
+    <None Remove="Pics\11.png" />
+    <None Remove="Pics\10.png" />
+    <None Remove="Pics\4.png" />
+    <None Remove="Pics\5.png" />
+    <None Remove="Pics\7.png" />
+    <None Remove="Pics\6.png" />
+    <None Remove="Pics\2.png" />
+    <None Remove="Pics\3.png" />
+    <None Remove="Pics\1.png" />
+    <None Remove="Pics\10.png" />
+    <None Remove="Pics\11.png" />
+    <None Remove="Pics\12.png" />
+    <None Remove="Pics\14.png" />
+    <None Remove="Pics\16.png" />
+    <None Remove="Pics\17.png" />
+    <None Remove="Pics\15.png" />
+    <None Remove="Pics\13.png" />
+    <Content Remove="Pics\10.png" />
+    <Content Remove="Pics\11.png" />
+    <Content Remove="Pics\12.png" />
+    <Content Remove="Pics\14.png" />
+    <Content Remove="Pics\__MACOSX\._17.png" />
+    <Content Remove="Pics\__MACOSX\._16.png" />
+    <Content Remove="Pics\__MACOSX\._15.png" />
+    <Content Remove="Pics\16.png" />
+    <Content Remove="Pics\17.png" />
+    <Content Remove="Pics\15.png" />
+    <Content Remove="Pics\13.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,7 +104,6 @@
 
   <ItemGroup>
     <None Update="Pics\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Setup\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

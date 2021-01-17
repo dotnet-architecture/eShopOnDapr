@@ -1,39 +1,43 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Catalog.API.Model;
+﻿//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Metadata.Builders;
+//using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure.EntityConfigurations
-{
-    class CatalogItemEntityTypeConfiguration
-        : IEntityTypeConfiguration<CatalogItem>
-    {
-        public void Configure(EntityTypeBuilder<CatalogItem> builder)
-        {
-            builder.ToTable("Catalog");
+//namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.EntityConfigurations
+//{
+//    class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
+//    {
+//        public void Configure(EntityTypeBuilder<Order> builder)
+//        {
+//            builder.ToTable("Order");
 
-            builder.Property(ci => ci.Id)
-                .UseHiLo("catalog_hilo")
-                .IsRequired();
+//            builder.Property(o => o.Id)
+//                .UseHiLo("catalog_hilo")
+//                .IsRequired();
 
-            builder.Property(ci => ci.Name)
-                .IsRequired(true)
-                .HasMaxLength(50);
+//            //builder.Property(o => o.BuyerId)
+//            //    .Has
+//            //    .IsRequired(true)
+//            //    .HasMaxLength(50);
 
-            builder.Property(ci => ci.Price)
-                .IsRequired(true);
+//            //builder.Property(o => o.BuyerName)
+//            //    .IsRequired(true)
+//            //    .HasMaxLength(50);
 
-            builder.Property(ci => ci.PictureFileName)
-                .IsRequired(false);
+//            //builder.Property(ci => ci.Price)
+//            //    .IsRequired(true);
 
-            builder.Ignore(ci => ci.PictureUri);
+//            //builder.Property(ci => ci.PictureFileName)
+//            //    .IsRequired(false);
 
-            builder.HasOne(ci => ci.CatalogBrand)
-                .WithMany()
-                .HasForeignKey(ci => ci.CatalogBrandId);
+//            //builder.Ignore(ci => ci.PictureUri);
 
-            builder.HasOne(ci => ci.CatalogType)
-                .WithMany()
-                .HasForeignKey(ci => ci.CatalogTypeId);
-        }
-    }
-}
+//            //builder.HasOne(ci => ci.CatalogBrand)
+//            //    .WithMany()
+//            //    .HasForeignKey(ci => ci.CatalogBrandId);
+
+//            //builder.HasOne(ci => ci.CatalogType)
+//            //    .WithMany()
+//            //    .HasForeignKey(ci => ci.CatalogTypeId);
+//        }
+//    }
+//}

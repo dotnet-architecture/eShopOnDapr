@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
-namespace Ordering.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityConfigurations
 {
-    class OrderStatusEntityTypeConfiguration
-        : IEntityTypeConfiguration<OrderStatus>
+    class OrderStatusEntityTypeConfiguration : IEntityTypeConfiguration<OrderStatus>
     {
         public void Configure(EntityTypeBuilder<OrderStatus> orderStatusConfiguration)
         {
@@ -15,7 +14,6 @@ namespace Ordering.Infrastructure.EntityConfigurations
             orderStatusConfiguration.HasKey(o => o.Id);
 
             orderStatusConfiguration.Property(o => o.Id)
-                .HasDefaultValue(1)
                 .ValueGeneratedNever()
                 .IsRequired();
 

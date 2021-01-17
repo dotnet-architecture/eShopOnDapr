@@ -32,8 +32,8 @@ export class OrdersService {
     }
 
     cancelOrder(orderNumber: number): Observable<any> {
-        let url = this.ordersUrl + '/o/api/v1/orders/cancel';
-        let data = { OrderNumber: orderNumber };
+        let url = this.ordersUrl + '/o/api/v1/orders/' + orderNumber + '/cancel';
+        let data = { };
 
         return this.service.putWithId(url, data).pipe<any>(tap(() => {
             return;

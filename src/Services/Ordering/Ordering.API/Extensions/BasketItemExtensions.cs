@@ -1,25 +1,23 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands.CreateOrderCommand;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
 namespace Ordering.API.Application.Models
 {
     public static class BasketItemExtensions
     {
-        public static IEnumerable<OrderItemDTO> ToOrderItemsDTO(this IEnumerable<BasketItem> basketItems)
+        public static IEnumerable<OrderItem> ToOrderItems(this IEnumerable<BasketItem> basketItems)
         {
             foreach (var item in basketItems)
             {
-                yield return item.ToOrderItemDTO();
+                yield return item.ToOrderItem();
             }
         }
 
-        public static OrderItemDTO ToOrderItemDTO(this BasketItem item)
+        public static OrderItem ToOrderItem(this BasketItem item)
         {
-            return new OrderItemDTO()
+            return new OrderItem()
             {
                 ProductId = item.ProductId,
                 ProductName = item.ProductName,

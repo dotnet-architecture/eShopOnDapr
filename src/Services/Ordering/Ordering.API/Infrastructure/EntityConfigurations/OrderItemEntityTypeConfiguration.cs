@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
-namespace Ordering.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityConfigurations
 {
     class OrderItemEntityTypeConfiguration
         : IEntityTypeConfiguration<OrderItem>
@@ -14,40 +14,38 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             orderItemConfiguration.HasKey(o => o.Id);
 
-            orderItemConfiguration.Ignore(b => b.DomainEvents);
-
             orderItemConfiguration.Property(o => o.Id)
                 .UseHiLo("orderitemseq");
 
-            orderItemConfiguration.Property<int>("OrderId")
-                .IsRequired();
+            //orderItemConfiguration.Property<int>("OrderId")
+            //    .IsRequired();
 
-            orderItemConfiguration.Property<int>("ProductId")
-                .IsRequired();
+            //orderItemConfiguration.Property<int>("ProductId")
+            //    .IsRequired();
 
-            orderItemConfiguration
-                .Property<string>("_productName")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("ProductName")
-                .IsRequired();
+            //orderItemConfiguration
+            //    .Property<string>("_productName")
+            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
+            //    .HasColumnName("ProductName")
+            //    .IsRequired();
 
-            orderItemConfiguration
-                .Property<decimal>("_unitPrice")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("UnitPrice")
-                .IsRequired();
+            //orderItemConfiguration
+            //    .Property<decimal>("_unitPrice")
+            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
+            //    .HasColumnName("UnitPrice")
+            //    .IsRequired();
 
-            orderItemConfiguration
-                .Property<int>("_units")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Units")
-                .IsRequired();
+            //orderItemConfiguration
+            //    .Property<int>("_units")
+            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
+            //    .HasColumnName("Units")
+            //    .IsRequired();
 
-            orderItemConfiguration
-                .Property<string>("_pictureUrl")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("PictureUrl")
-                .IsRequired(false);
+            //orderItemConfiguration
+            //    .Property<string>("_pictureUrl")
+            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
+            //    .HasColumnName("PictureUrl")
+            //    .IsRequired(false);
         }
     }
 }
