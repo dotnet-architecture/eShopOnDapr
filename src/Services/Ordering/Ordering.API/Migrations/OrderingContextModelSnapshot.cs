@@ -39,12 +39,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
 
             modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:HiLoSequenceName", "orderseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BuyerId")
                         .HasColumnType("nvarchar(max)");
@@ -58,21 +55,19 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("OrderStatusId")
-                        .HasColumnType("int");
+                    b.Property<int>("OrderNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:HiLoSequenceName", "orderseq")
+                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
-                    b.Property<int>("PaymentMethodId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RequestId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("OrderStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderStatusId");
-
-                    b.HasIndex("RequestId")
-                        .IsUnique();
+                    b.HasAlternateKey("OrderNumber");
 
                     b.ToTable("orders","ordering");
                 });
@@ -85,8 +80,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                         .HasAnnotation("SqlServer:HiLoSequenceName", "orderitemseq")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PictureUrl")
                         .HasColumnType("nvarchar(max)");
@@ -110,32 +105,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                     b.ToTable("orderItems","ordering");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderstatus","ordering");
-                });
-
             modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
                 {
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderStatus", "OrderStatus")
-                        .WithMany()
-                        .HasForeignKey("OrderStatusId");
-
                     b.OwnsOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Address", "Address", b1 =>
                         {
-                            b1.Property<int>("OrderId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
                                 .HasColumnType("nvarchar(max)");

@@ -8,18 +8,21 @@ namespace Ordering.API.Application.IntegrationEvents.Events
 {
     public class OrderStatusChangedToCancelledIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
+        public string Description { get; set; }
         public string BuyerName { get; set; }
 
         public OrderStatusChangedToCancelledIntegrationEvent()
         {
         }
 
-        public OrderStatusChangedToCancelledIntegrationEvent(int orderId, string orderStatus, string buyerName)
+        public OrderStatusChangedToCancelledIntegrationEvent(Guid orderId, string orderStatus,
+            string description, string buyerName)
         {
             OrderId = orderId;
             OrderStatus = orderStatus;
+            Description = description;
             BuyerName = buyerName;
         }
     }

@@ -3,76 +3,81 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using Microsoft.AspNetCore.Http;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ordering.API.Application.IntegrationEvents.Events;
+using Ordering.API.Application.Models;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 {
-    public interface IOrderingProcessActor : IActor
+    public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {
-        Task Start(int buyerId, string buyerName, int paymentMethodId);
-
-        Task NotifyStockConfirmed();
-
-        Task NotifyStockRejected(List<int> rejectedProductIds);
-
-        Task NotifyPaymentSucceeded();
-
-        Task NotifyPaymentFailed();
-
-        Task<bool> Cancel();
-
-        Task<bool> Ship();
-    }
-
-    public interface IOrderReadModel
-    {
-        Task<Order> UpdateOrderAsync(int orderId, Action<Order> updateOrder);
-    }
-
-    public class OrderingProcessState
-    {
-        public int OrderStatusId { get; set; }
-        public int BuyerId { get; set; }
-        public string BuyerName { get; set; }
-        public int PaymentMethodId { get; set; }
-    }
-
-    public class OrderingProcessActor : Actor, IOrderingProcessActor//, IRemindable
-    {
+        private const string OrderDetailsStateName = "OrderDetails";
         private const string OrderStatusStateName = "OrderStatus";
 
-        private readonly IOrderRepository _orderRepository;
-        private readonly IOrderReadModel _readModel;
+        private const string GracePeriodElapsedReminder = "GracePeriodElapsed";
+        private const string StockConfirmedReminder = "StockConfirmed";
+        private const string StockRejectedReminder = "StockRejected";
+        private const string PaymentSucceededReminder = "PaymentSucceeded";
+        private const string PaymentFailedReminder = "PaymentFailed";
+
         private readonly IEventBus _eventBus;
         private readonly ILogger<OrderingProcessActor> _logger;
 
         private int? _preMethodOrderStatusId;
 
-        public OrderingProcessActor(ActorHost host) : base(host)
+        public OrderingProcessActor(ActorHost host, IEventBus eventBus, ILogger<OrderingProcessActor> logger)
+            : base(host)
         {
+            logger.LogInformation("CREATING NEW ACTOR INSTANCE!");
+
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        private int OrderId => int.Parse(Id.GetId());
+        private Guid OrderId => Guid.Parse(Id.GetId());
 
-        public async Task Start(int buyerId, string buyerName, int paymentMethodId)
+        public async Task Submit(string userId, string userName, string street, string city,
+            string zipCode, string state, string country, CustomerBasket basket)
         {
-            var processState = new OrderingProcessState
+            var order = new Order
             {
-                OrderStatusId = OrderStatus.Submitted.Id,
-                BuyerId = buyerId,
-                BuyerName = buyerName,
-                PaymentMethodId = paymentMethodId
+                OrderDate = DateTime.UtcNow,
+                OrderStatus = OrderStatus.Submitted,
+                UserId = userId,
+                UserName = userName,
+                Address = new OrderAddress
+                {
+                    Street = street,
+                    City = city,
+                    ZipCode = zipCode,
+                    State = state,
+                    Country = country
+                },
+                OrderItems = basket.Items
+                    .Select(item => new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        ProductName = item.ProductName,
+                        UnitPrice = item.UnitPrice,
+                        Units = item.Quantity,
+                        PictureUrl = item.PictureUrl
+                    })
+                    .ToList()
             };
 
-            await StateManager.SetStateAsync("ProcessState", processState);
+            await StateManager.SetStateAsync(OrderDetailsStateName, order);
+            await StateManager.SetStateAsync(OrderStatusStateName, OrderStatus.Submitted);
 
-            await RegisterReminderAsync("GracePeriodConfirmed", null, TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(-1));
+            await RegisterReminderAsync(
+                GracePeriodElapsedReminder,
+                null,
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromMilliseconds(-1));
 
             // Add Integration event to clean the basket
             // TODO Let subscriber (Basket) use OrderStatusChangedToSubmittedIntegrationEvent
@@ -81,8 +86,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             await _eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(
                 OrderId,
                 OrderStatus.Submitted.Name,
-                processState.BuyerName));
-
+                userName));
         }
 
         public async Task NotifyStockConfirmed()
@@ -90,9 +94,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Validated);
             if (statusChanged)
             {
-                // Simulate a work time for validating the payment.
+                // Simulate a work time by setting a reminder.
                 await RegisterReminderAsync(
-                    "StockConfirmed",
+                    StockConfirmedReminder,
                     null,
                     TimeSpan.FromSeconds(10),
                     TimeSpan.FromMilliseconds(-1));
@@ -106,9 +110,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             {
                 var reminderState = JsonConvert.SerializeObject(rejectedProductIds);
 
-                // Simulate a work time for validating the payment.
+                // Simulate a work time by setting a reminder.
                 await RegisterReminderAsync(
-                    "StockRejected",
+                    StockRejectedReminder,
                     Encoding.UTF8.GetBytes(reminderState),
                     TimeSpan.FromSeconds(10),
                     TimeSpan.FromMilliseconds(-1));
@@ -120,8 +124,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
             {
-                // Simulate a work time for validating the payment.
-                await RegisterReminderAsync("PaymentSucceeded", null, TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(-1));
+                // Simulate a work time by setting a reminder.
+                await RegisterReminderAsync(
+                    PaymentSucceededReminder,
+                    null,
+                    TimeSpan.FromSeconds(10),
+                    TimeSpan.FromMilliseconds(-1));
             }
         }
 
@@ -130,8 +138,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
             {
-                // Simulate a work time for validating the payment.
-                await RegisterReminderAsync("PaymentSucceeded", null, TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(-1));
+                // Simulate a work time by setting a reminder.
+                await RegisterReminderAsync(
+                    PaymentFailedReminder,
+                    null,
+                    TimeSpan.FromSeconds(10),
+                    TimeSpan.FromMilliseconds(-1));
             }
         }
 
@@ -156,16 +168,13 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
             await StateManager.SetStateAsync(OrderStatusStateName, OrderStatus.Cancelled);
 
-            var order = await UpdateReadModelAsync((order) =>
-            {
-                order.OrderStatus = OrderStatus.Cancelled;
-                order.Description = $"The order was cancelled by buyer.";
-            });
+            var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Cancelled.Name,
-                order.BuyerName));
+                $"The order was cancelled by buyer.",
+                order.UserName));
 
             return true;
         }
@@ -175,16 +184,13 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Paid, OrderStatus.Shipped);
             if (statusChanged)
             {
-                var order = await UpdateReadModelAsync((order) =>
-                {
-                    order.OrderStatus = OrderStatus.Shipped;
-                    order.Description = $"The order was shipped.";
-                });
+                var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
                 await _eventBus.PublishAsync(new OrderStatusChangedToShippedIntegrationEvent(
-                    order.Id,
+                    OrderId,
                     OrderStatus.Shipped.Name,
-                    order.BuyerName));
+                    "The order was shipped.",
+                    order.UserName));
 
                 return true;
             }
@@ -192,107 +198,104 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             return false;
         }
 
-        //public async Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
-        //{
-        //    _logger.LogDebug($"Reminder '{reminderName}' fired for actor '{Id.GetId()}'.");
-
-        //    if (reminderName == REMINDER_GRACE_PERIOD_EXPIRED)
-        //    {
-        //        var orderId = await StateManager.GetStateAsync<int>("orderId");
-
-        //        var order = await _orderRepository.GetAsync(orderId);
-        //        order.status = "...";
-
-        //        _orderRepository.Update(order);
-
-        //        await _eventBus.PublishAsync(new OrderStatusChangedToAwaitingStockValidationIntegrationEvent());
-        //    }
-        //}
-
-        public async Task OnGracePeriodConfirmed()
+        public Task<Order> GetOrderDetails()
         {
+            return StateManager.GetStateAsync<Order>(OrderDetailsStateName); 
+        }
+
+        public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
+        {
+            _logger.LogInformation("Received {Actor}[{ActorId}] reminder: {Reminder}", nameof(OrderingProcessActor), OrderId, reminderName);
+
+            switch (reminderName)
+            {
+                case GracePeriodElapsedReminder: return OnGracePeriodElapsed();
+                case StockConfirmedReminder: return OnStockConfirmedSimulatedWorkDone();
+                case StockRejectedReminder:
+                    {
+                        var rejectedProductIds = JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state));
+                        return OnStockRejectedSimulatedWorkDone(rejectedProductIds);
+                    }
+                case PaymentSucceededReminder: return OnPaymentSucceededSimulatedWorkDone();
+                case PaymentFailedReminder: return OnPaymentFailedSimulatedWorkDone();
+            }
+
+            _logger.LogError("Unknown actor reminder {ReminderName}", reminderName);
+            return Task.CompletedTask;
+        }
+
+        public async Task OnGracePeriodElapsed()
+        {
+            _logger.LogInformation("OnGracePeriodElapsed");
+
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Submitted, OrderStatus.AwaitingStockValidation);
             if (statusChanged)
             {
-                var order = await UpdateReadModelAsync((order) =>
-                {
-                    order.OrderStatus = OrderStatus.AwaitingStockValidation;
-                });
+                var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
                 await _eventBus.PublishAsync(new OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
-                    order.Id,
+                    OrderId,
                     OrderStatus.AwaitingStockValidation.Name,
-                    order.BuyerName,
+                    "Grace period elapsed; waiting for stock validation.",
+                    order.UserName,
                     order.OrderItems
                         .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
             }
         }
 
-
         public async Task OnStockConfirmedSimulatedWorkDone()
         {
-            var order = await UpdateReadModelAsync((order) =>
-            {
-                order.OrderStatus = OrderStatus.Validated;
-                order.Description = "All the items were confirmed with available stock.";
-            });
+            _logger.LogInformation("OnStockConfirmedSimulatedWorkDone");
+
+            var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToValidatedIntegrationEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Validated.Name,
-                order.BuyerName,
+                "All the items were confirmed with available stock.",
+                order.UserName,
                 order.GetTotal()));
         }
 
-
         public async Task OnStockRejectedSimulatedWorkDone(List<int> rejectedProductIds)
         {
-            var order = await UpdateReadModelAsync((order) =>
-            {
-                var rejectedProductNames = order.OrderItems
-                    .Where(orderItem => rejectedProductIds.Contains(orderItem.ProductId))
-                    .Select(orderItem => orderItem.ProductName);
+            var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
-                var rejectedDescription = string.Join(", ", rejectedProductNames);
+            var rejectedProductNames = order.OrderItems
+                .Where(orderItem => rejectedProductIds.Contains(orderItem.ProductId))
+                .Select(orderItem => orderItem.ProductName);
 
-                order.OrderStatus = OrderStatus.Cancelled;
-                order.Description = $"The product items don't have stock: ({rejectedDescription}).";
-            });
+            var rejectedDescription = string.Join(", ", rejectedProductNames);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Cancelled.Name,
-                order.BuyerName));
+                $"The following product items don't have stock: ({rejectedDescription}).",
+                order.UserName));
         }
 
         public async Task OnPaymentSucceededSimulatedWorkDone()
         {
-            var order = await UpdateReadModelAsync((order) =>
-            {
-                order.OrderStatus = OrderStatus.Paid;
-                order.Description = "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"";
-            });
+            var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToPaidIntegrationEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Paid.Name,
-                order.BuyerName,
+                "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"",
+                order.UserName,
                 order.OrderItems
                     .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
         }
 
         public async Task OnPaymentFailedSimulatedWorkDone()
         {
-            var order = await UpdateReadModelAsync((order) =>
-            {
-                order.OrderStatus = OrderStatus.Cancelled;
-                order.Description = "The order was cancelled because payment failed.";
-            });
+            var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Cancelled.Name,
-                order.BuyerName));
+                "The order was cancelled because payment failed.",
+                order.UserName));
         }
 
         protected override async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)
@@ -337,10 +340,14 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             return true;
         }
 
-        private async Task<Order> UpdateReadModelAsync(Action<Order> updateOrder)
-        {
-            // TODO
-            throw new NotImplementedException();
-        }
+        //private async Task<Order> UpdateReadModelAsync(Action<Order> updateOrder)
+        //{
+        //    var order = await _orderRepository.GetOrderAsync(OrderId);
+        //    updateOrder(order);
+
+        //    await _orderRepository.UpdateOrderAsync(order);
+
+        //    return order;
+        //}
     }
 }

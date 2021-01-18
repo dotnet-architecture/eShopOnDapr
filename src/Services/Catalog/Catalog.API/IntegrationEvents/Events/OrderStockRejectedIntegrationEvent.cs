@@ -1,11 +1,12 @@
 ﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events
 {
     using BuildingBlocks.EventBus.Events;
+    using System;
     using System.Collections.Generic;
 
     public class OrderStockRejectedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
 
         public List<ConfirmedOrderStockItem> OrderStockItems { get; set; }
 
@@ -13,7 +14,7 @@
         {
         }
 
-        public OrderStockRejectedIntegrationEvent(int orderId,
+        public OrderStockRejectedIntegrationEvent(Guid orderId,
             List<ConfirmedOrderStockItem> orderStockItems)
         {
             OrderId = orderId;

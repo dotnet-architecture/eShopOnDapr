@@ -10,7 +10,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<OrderStatus> OrderStatus { get; set; }
         public DbSet<CardType> CardTypes { get; set; }
 
         public OrderingContext(DbContextOptions<OrderingContext> options) : base(options)
@@ -23,7 +22,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
 
             modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
         }
 

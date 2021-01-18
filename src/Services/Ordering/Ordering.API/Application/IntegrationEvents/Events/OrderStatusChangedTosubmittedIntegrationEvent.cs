@@ -1,14 +1,11 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
 namespace Ordering.API.Application.IntegrationEvents.Events
 {
     public class OrderStatusChangedToSubmittedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
         public string BuyerName { get; set; }
 
@@ -16,7 +13,8 @@ namespace Ordering.API.Application.IntegrationEvents.Events
         {
         }
 
-        public OrderStatusChangedToSubmittedIntegrationEvent(int orderId, string orderStatus, string buyerName)
+        public OrderStatusChangedToSubmittedIntegrationEvent(Guid orderId, string orderStatus,
+            string buyerName)
         {
             OrderId = orderId;
             OrderStatus = orderStatus;

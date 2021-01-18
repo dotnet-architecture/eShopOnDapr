@@ -22,9 +22,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         {
             return new OrderDto
             {
-                ordernumber = order.Id,
+                ordernumber = order.OrderNumber,
                 date = order.OrderDate,
-                status = order.OrderStatus.Name,
+                status = order.OrderStatus,
                 description = order.Description,
                 street = order.Address.Street,
                 city = order.Address.City,

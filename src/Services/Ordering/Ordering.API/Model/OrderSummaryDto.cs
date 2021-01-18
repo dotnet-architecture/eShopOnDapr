@@ -13,9 +13,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         {
             return new OrderSummaryDto
             {
-                ordernumber = orderSummary.Id,
+                ordernumber = orderSummary.OrderNumber,
                 date = orderSummary.OrderDate,
-                status = orderSummary.OrderStatus.Name,
+                status = orderSummary.OrderStatus,
                 total = orderSummary.Total
             };
         }

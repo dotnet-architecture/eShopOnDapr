@@ -62,8 +62,8 @@ export class SignalrService {
 
     private registerHandlers() {
         this._hubConnection.on('UpdatedOrderState', (msg) => {
-            console.log(`Order ${msg.orderId} updated to ${msg.status}`);
-            this.toastr.success('Updated to status: ' + msg.status, 'Order Id: ' + msg.orderId);
+            console.log(`Order ${msg.orderNumber} updated to ${msg.status}`);
+            this.toastr.success('Updated to status: ' + msg.status, 'Order Number: ' + msg.orderNumber);
             this.msgSignalrSource.next();
         });
     }

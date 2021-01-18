@@ -29,56 +29,17 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
 
-        [Route("test")]
-        [HttpPost]
-        public async Task<IActionResult> TestAsync()
-        {
-            var address = new Address
-            {
-                Street = "Goodeslaan 25",
-                ZipCode = "1852 ER",
-                City = "Heiloo",
-                State = "NH",
-                Country = "NL"
-            };
-
-            var order = new Order
-            {
-                BuyerId = "amolenk",
-                BuyerName = "Alexander Molenkamp",
-                Address = address,
-                OrderDate = DateTime.UtcNow,
-                OrderStatus = OrderStatus.Submitted,
-                OrderItems = new List<OrderItem>
-                {
-                    new OrderItem
-                    {
-                        ProductId = 1,
-                        ProductName = "Hoodie",
-                        UnitPrice = 10,
-                        Units = 1
-                    }
-                }
-            };
-
-            var result = await _orderRepository.GetOrAddOrderAsync(order);
-
-
-            return Ok(result.Id);
-        }
-
-
-        [Route("{orderId:int}/cancel")]
+        [Route("{orderNumber:int}/cancel")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CancelOrderAsync(int orderId, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> CancelOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
         {
             bool result = false;
 
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
-                var orderingProcessActor = GetOrderingProcessActor(orderId);
+                var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
                 result = await orderingProcessActor.Cancel();
             }
 
@@ -90,17 +51,17 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             return Ok();
         }
 
-        [Route("{orderId:int}/ship")]
+        [Route("{orderNumber:int}/ship")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ShipOrderAsync(int orderId, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> ShipOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
         {
             bool result = false;
 
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
-                var orderingProcessActor = GetOrderingProcessActor(orderId);
+                var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
                 result = await orderingProcessActor.Ship();
             }
 
@@ -112,15 +73,15 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             return Ok();
         }
 
-        [Route("{orderId:int}")]
+        [Route("{orderNumber:int}")]
         [HttpGet]
-        [ProducesResponseType(typeof(OrderDto),(int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Model.Order),(int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> GetOrderAsync(int orderId)
+        public async Task<ActionResult> GetOrderAsync(int orderNumber)
         {
             try
             {
-                var order = await _orderRepository.GetOrderAsync(orderId);
+                var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
 
                 return Ok(OrderDto.FromOrder(order));
             }
@@ -134,8 +95,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<OrderSummaryDto>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OrderSummaryDto>>> GetOrdersAsync()
         {
-            var userid = _identityService.GetUserIdentity();
-            var orders = await _orderRepository.GetOrdersFromBuyerAsync(userid);
+            var buyerId = _identityService.GetUserIdentity();
+            var orders = await _orderRepository.GetOrdersFromBuyerAsync(buyerId);
 
             return Ok(orders.Select(OrderSummaryDto.FromOrderSummary));
         }
@@ -150,9 +111,15 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             return Ok(cardTypes.Select(CardTypeDto.FromCardType));
         }
 
-        private static IOrderingProcessActor GetOrderingProcessActor(int orderId)
+        private async Task<IOrderingProcessActor> GetOrderingProcessActorAsync(int orderNumber)
         {
-            var actorId = new ActorId(orderId.ToString());
+            var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with order number {orderNumber} not found.");
+            }
+
+            var actorId = new ActorId(order.Id.ToString());
             return ActorProxy.Create<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
         }
     }

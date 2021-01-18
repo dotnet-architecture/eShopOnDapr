@@ -1,12 +1,14 @@
 ﻿namespace Ordering.API.Application.IntegrationEvents.Events
 {
+    using System;
     using System.Collections.Generic;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
     public class OrderStatusChangedToAwaitingStockValidationIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
+        public string Description { get; set; }
         public string BuyerName { get; set; }
         public IEnumerable<OrderStockItem> OrderStockItems { get; set; }
 
@@ -14,13 +16,14 @@
         {
         }
 
-        public OrderStatusChangedToAwaitingStockValidationIntegrationEvent(int orderId, string orderStatus, string buyerName,
-            IEnumerable<OrderStockItem> orderStockItems)
+        public OrderStatusChangedToAwaitingStockValidationIntegrationEvent(Guid orderId, string orderStatus,
+            string description, string buyerName, IEnumerable<OrderStockItem> orderStockItems)
         {
             OrderId = orderId;
-            OrderStockItems = orderStockItems;
             OrderStatus = orderStatus;
+            Description = description;
             BuyerName = buyerName;
+            OrderStockItems = orderStockItems;
         }
     }
 

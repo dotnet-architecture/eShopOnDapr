@@ -23,6 +23,7 @@
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
+    using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
     using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
     using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
     using Microsoft.Extensions.Configuration;
@@ -54,6 +55,13 @@
                 .AddCustomConfiguration(Configuration)
                 .AddEventBus(Configuration)
                 .AddCustomAuthentication(Configuration);
+
+            services.AddActors(options =>
+            {
+                options.Actors.RegisterActor<OrderingProcessActor>();
+            });
+
+            services.AddSignalR();
 
             var container = new ContainerBuilder();
             container.Populate(services);
@@ -96,6 +104,7 @@
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapSubscribeHandler();
+                endpoints.MapActorsHandlers();
                 endpoints.MapGet("/_proto/", async ctx =>
                 {
                     ctx.Response.ContentType = "text/plain";
@@ -119,6 +128,8 @@
                 {
                     Predicate = r => r.Name.Contains("self")
                 });
+
+                endpoints.MapHub<NotificationsHub>("/hub/notificationhub", options => options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransports.All);
             });
         }
 

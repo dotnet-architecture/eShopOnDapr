@@ -13,10 +13,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityCon
 
             orderConfiguration.HasKey(o => o.Id);
 
-            orderConfiguration.HasIndex(o => o.RequestId)
-                .IsUnique();
+            orderConfiguration.HasAlternateKey(o => o.OrderNumber);
 
-            orderConfiguration.Property(o => o.Id)
+            orderConfiguration.Property(o => o.OrderNumber)
                 .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
 
             orderConfiguration
@@ -26,23 +25,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityCon
                 });
 
             //orderConfiguration
-            //    .Property<int?>("_buyerId")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("BuyerId")
-            //    .IsRequired(false);
-
-            //orderConfiguration
-            //    .Property<DateTime>("_orderDate")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("OrderDate")
+            //    .Property(o => o.OrderStatus)
             //    .IsRequired();
 
-            //orderConfiguration
-            //    .Property<int>("_orderStatusId")
-            //    // .HasField("_orderStatusId")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("OrderStatusId")
-            //    .IsRequired();
+    //        orderConfiguration.HasOne(o => o.OrderStatus)
+    //.WithMany();
 
             //orderConfiguration
             //    .Property<int?>("_paymentMethodId")
@@ -73,10 +60,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityCon
             //    // .HasForeignKey("BuyerId");
             //    .HasForeignKey("_buyerId");
 
-            //orderConfiguration.HasOne(o => o.OrderStatus)
-            //    .WithMany()
-            //    // .HasForeignKey("OrderStatusId");
-            //    .HasForeignKey("_orderStatusId");
+
+            // .HasForeignKey("OrderStatusId");
+            //.HasForeignKey("_orderStatusId");
         }
     }
 }

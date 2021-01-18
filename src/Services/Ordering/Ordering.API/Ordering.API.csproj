@@ -64,8 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Actors\" />
     <Folder Include="Infrastructure\Repositories\" />
     <Folder Include="Infrastructure\EntityConfigurations\" />
   </ItemGroup>

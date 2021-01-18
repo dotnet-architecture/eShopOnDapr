@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using global::Ordering.API.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
@@ -36,10 +34,10 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
                         await context.SaveChangesAsync();
                     }
 
-                    if (!context.OrderStatus.Any())
-                    {
-                        context.OrderStatus.AddRange(GetPredefinedOrderStatus());
-                    }
+                    //if (!context.OrderStatus.Any())
+                    //{
+                    //    context.OrderStatus.AddRange(GetPredefinedOrderStatus());
+                    //}
 
                     await context.SaveChangesAsync();
                 }
@@ -56,18 +54,18 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
             };
         }
 
-        private IEnumerable<OrderStatus> GetPredefinedOrderStatus()
-        {
-            return new List<OrderStatus>()
-            {
-                OrderStatus.Submitted,
-                OrderStatus.AwaitingStockValidation,
-                OrderStatus.Validated,
-                OrderStatus.Paid,
-                OrderStatus.Shipped,
-                OrderStatus.Cancelled
-            };
-        }
+        //private IEnumerable<OrderStatusState> GetPredefinedOrderStatus()
+        //{
+        //    return new List<OrderStatusState>()
+        //    {
+        //        OrderStatusState.Submitted,
+        //        OrderStatusState.AwaitingStockValidation,
+        //        OrderStatusState.Validated,
+        //        OrderStatusState.Paid,
+        //        OrderStatusState.Shipped,
+        //        OrderStatusState.Cancelled
+        //    };
+        //}
 
         private AsyncRetryPolicy CreatePolicy(ILogger<OrderingContextSeed> logger, string prefix, int retries = 3)
         {

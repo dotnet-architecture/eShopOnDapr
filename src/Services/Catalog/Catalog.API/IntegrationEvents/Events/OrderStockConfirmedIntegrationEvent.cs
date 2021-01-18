@@ -1,15 +1,16 @@
 ﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events
 {
+    using System;
     using BuildingBlocks.EventBus.Events;
 
     public class OrderStockConfirmedIntegrationEvent : IntegrationEvent
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
 
         public OrderStockConfirmedIntegrationEvent()
         {
         }
 
-        public OrderStockConfirmedIntegrationEvent(int orderId) => OrderId = orderId;
+        public OrderStockConfirmedIntegrationEvent(Guid orderId) => OrderId = orderId;
     }
 }

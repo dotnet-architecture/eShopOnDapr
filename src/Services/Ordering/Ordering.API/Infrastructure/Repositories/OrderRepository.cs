@@ -19,38 +19,41 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repos
             _orderingContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
-        public async Task<Order> GetOrAddOrderAsync(Order order)
+        public async Task<Order> AddOrGetOrderAsync(Order order)
         {
             _orderingContext.Add(order);
 
             try
             {
                 await _orderingContext.SaveChangesAsync();
-
                 return order;
             }
             catch (DbUpdateException ex)
                when ((ex.InnerException as SqlException)?.Number == 2627)
             {
-                return await _orderingContext.Orders
-                    .Where(o => o.RequestId == order.RequestId)
-                    .Include(o => o.OrderStatus)
-                    .Include(o => o.OrderItems)
-                    .SingleOrDefaultAsync();
+                return await GetOrderByIdAsync(order.Id);
             }
         }
 
         public Task UpdateOrderAsync(Order order)
         {
             _orderingContext.Update(order);
+
             return _orderingContext.SaveChangesAsync();
         }
 
-        public Task<Order> GetOrderAsync(int orderId)
+        public Task<Order> GetOrderByIdAsync(Guid orderId)
         {
             return _orderingContext.Orders
                 .Where(o => o.Id == orderId)
-                .Include(o => o.OrderStatus)
+                .Include(o => o.OrderItems)
+                .SingleOrDefaultAsync();
+        }
+
+        public Task<Order> GetOrderByOrderNumberAsync(int orderNumber)
+        {
+            return _orderingContext.Orders
+                .Where(o => o.OrderNumber == orderNumber)
                 .Include(o => o.OrderItems)
                 .SingleOrDefaultAsync();
         }
@@ -59,9 +62,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repos
         {
             return await _orderingContext.Orders
                 .Where(o => o.BuyerId == buyerId)
+                .Include(o => o.OrderItems)
                 .Select(o => new OrderSummary
                 {
                     Id = o.Id,
+                    OrderNumber = o.OrderNumber,
                     OrderDate = o.OrderDate,
                     OrderStatus = o.OrderStatus,
                     Total = o.GetTotal()

@@ -33,47 +33,27 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orderstatus",
-                schema: "ordering",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 200, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_orderstatus", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "orders",
                 schema: "ordering",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
-                    RequestId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
+                    OrderNumber = table.Column<int>(nullable: false),
                     OrderDate = table.Column<DateTime>(nullable: false),
+                    OrderStatus = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Address_Street = table.Column<string>(nullable: true),
                     Address_City = table.Column<string>(nullable: true),
                     Address_State = table.Column<string>(nullable: true),
                     Address_Country = table.Column<string>(nullable: true),
                     Address_ZipCode = table.Column<string>(nullable: true),
-                    OrderStatusId = table.Column<int>(nullable: true),
                     BuyerId = table.Column<string>(nullable: true),
-                    BuyerName = table.Column<string>(nullable: true),
-                    PaymentMethodId = table.Column<int>(nullable: false)
+                    BuyerName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_orders_orderstatus_OrderStatusId",
-                        column: x => x.OrderStatusId,
-                        principalSchema: "ordering",
-                        principalTable: "orderstatus",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    table.UniqueConstraint("AK_orders_OrderNumber", x => x.OrderNumber);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,7 +62,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    OrderId = table.Column<int>(nullable: false),
+                    OrderId = table.Column<Guid>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     ProductName = table.Column<string>(nullable: true),
                     UnitPrice = table.Column<decimal>(nullable: false),
@@ -106,19 +86,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
                 schema: "ordering",
                 table: "orderItems",
                 column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_orders_OrderStatusId",
-                schema: "ordering",
-                table: "orders",
-                column: "OrderStatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_orders_RequestId",
-                schema: "ordering",
-                table: "orders",
-                column: "RequestId",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -133,10 +100,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "orders",
-                schema: "ordering");
-
-            migrationBuilder.DropTable(
-                name: "orderstatus",
                 schema: "ordering");
 
             migrationBuilder.DropSequence(
