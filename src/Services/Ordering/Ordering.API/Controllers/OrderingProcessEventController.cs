@@ -7,7 +7,7 @@ using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
 using Microsoft.Extensions.Logging;
-using Ordering.API.Application.IntegrationEvents.Events;
+using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 {

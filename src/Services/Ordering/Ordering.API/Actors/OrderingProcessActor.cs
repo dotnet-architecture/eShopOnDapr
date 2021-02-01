@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapr.Actors.Runtime;
-using Microsoft.AspNetCore.Http;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Ordering.API.Application.IntegrationEvents.Events;
-using Ordering.API.Application.Models;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 {
@@ -26,16 +25,17 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
         private const string PaymentFailedReminder = "PaymentFailed";
 
         private readonly IEventBus _eventBus;
+        private readonly IOptions<OrderingSettings> _settings;
         private readonly ILogger<OrderingProcessActor> _logger;
 
         private int? _preMethodOrderStatusId;
 
-        public OrderingProcessActor(ActorHost host, IEventBus eventBus, ILogger<OrderingProcessActor> logger)
+        public OrderingProcessActor(ActorHost host, IEventBus eventBus, IOptions<OrderingSettings> settings,
+            ILogger<OrderingProcessActor> logger)
             : base(host)
         {
-            logger.LogInformation("CREATING NEW ACTOR INSTANCE!");
-
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -76,7 +76,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             await RegisterReminderAsync(
                 GracePeriodElapsedReminder,
                 null,
-                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(_settings.Value.GracePeriodTime),
                 TimeSpan.FromMilliseconds(-1));
 
             // Add Integration event to clean the basket
@@ -226,8 +226,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         public async Task OnGracePeriodElapsed()
         {
-            _logger.LogInformation("OnGracePeriodElapsed");
-
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Submitted, OrderStatus.AwaitingStockValidation);
             if (statusChanged)
             {
@@ -245,8 +243,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         public async Task OnStockConfirmedSimulatedWorkDone()
         {
-            _logger.LogInformation("OnStockConfirmedSimulatedWorkDone");
-
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
             await _eventBus.PublishAsync(new OrderStatusChangedToValidatedIntegrationEvent(
@@ -339,15 +335,5 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
             return true;
         }
-
-        //private async Task<Order> UpdateReadModelAsync(Action<Order> updateOrder)
-        //{
-        //    var order = await _orderRepository.GetOrderAsync(OrderId);
-        //    updateOrder(order);
-
-        //    await _orderRepository.UpdateOrderAsync(order);
-
-        //    return order;
-        //}
     }
 }

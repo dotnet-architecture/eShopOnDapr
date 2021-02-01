@@ -14,7 +14,7 @@ using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class OrdersController : ControllerBase
     {

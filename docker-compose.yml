@@ -65,24 +65,6 @@ services:
     depends_on:
       - ordering-api
 
-  ordering-signalrhub:
-    image: ${REGISTRY:-eshop}/ordering.signalrhub:${PLATFORM:-linux}-${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Services/Ordering/Ordering.SignalrHub/Dockerfile
-    depends_on:
-      - basket-api
-      - catalog-api
-      - identity-api
-      - ordering-api
-      - sqldata
-
-  ordering-signalrhub-dapr:
-    image: "daprio/daprd:1.0.0-rc.2"
-    network_mode: "service:ordering-signalrhub"
-    depends_on:
-      - ordering-signalrhub
-
   payment-api:
     image: ${REGISTRY:-eshop}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
     build:

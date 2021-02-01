@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapr.Actors;
-using Ordering.API.Application.Models;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 {

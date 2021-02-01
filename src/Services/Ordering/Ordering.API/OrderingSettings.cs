@@ -4,9 +4,8 @@
     {
         public string ConnectionString { get; set; }
 
-        // TODO Use
         public int GracePeriodTime { get; set; }
 
-        public int CheckUpdateTime { get; set; }
+        public bool SendConfirmationEmail { get; set; }
     }
 }

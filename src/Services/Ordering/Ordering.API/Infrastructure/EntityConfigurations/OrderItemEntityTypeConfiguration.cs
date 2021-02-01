@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.EntityConfigurations
 {
     class OrderItemEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
     {
@@ -15,36 +14,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.EntityCon
 
             orderItemConfiguration.Property(o => o.Id)
                 .UseHiLo("orderitemseq");
-
-            //orderItemConfiguration.Property<int>("OrderId")
-            //    .IsRequired();
-
-            //orderItemConfiguration.Property<int>("ProductId")
-            //    .IsRequired();
-
-            //orderItemConfiguration
-            //    .Property<string>("_productName")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("ProductName")
-            //    .IsRequired();
-
-            //orderItemConfiguration
-            //    .Property<decimal>("_unitPrice")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("UnitPrice")
-            //    .IsRequired();
-
-            //orderItemConfiguration
-            //    .Property<int>("_units")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("Units")
-            //    .IsRequired();
-
-            //orderItemConfiguration
-            //    .Property<string>("_pictureUrl")
-            //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-            //    .HasColumnName("PictureUrl")
-            //    .IsRequired(false);
         }
     }
 }
