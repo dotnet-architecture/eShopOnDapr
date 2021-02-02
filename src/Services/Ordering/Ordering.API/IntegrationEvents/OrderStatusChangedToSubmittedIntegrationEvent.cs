@@ -7,6 +7,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
     {
         public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
+        public string BuyerId { get; set; }
         public string BuyerName { get; set; }
 
         public OrderStatusChangedToSubmittedIntegrationEvent()
@@ -14,10 +15,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
         }
 
         public OrderStatusChangedToSubmittedIntegrationEvent(Guid orderId, string orderStatus,
-            string buyerName)
+            string buyerId, string buyerName)
         {
             OrderId = orderId;
             OrderStatus = orderStatus;
+            BuyerId = buyerId;
             BuyerName = buyerName;
         }
     }

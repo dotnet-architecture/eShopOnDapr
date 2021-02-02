@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 
 namespace Basket.API.IntegrationEvents.EventHandling
 {
-    public class OrderStartedIntegrationEventHandler : IIntegrationEventHandler<OrderStartedIntegrationEvent>
+    public class OrderStatusChangedToSubmittedIntegrationEventHandler : IIntegrationEventHandler<OrderStatusChangedToSubmittedIntegrationEvent>
     {
         private readonly IBasketRepository _repository;
-        private readonly ILogger<OrderStartedIntegrationEventHandler> _logger;
+        private readonly ILogger<OrderStatusChangedToSubmittedIntegrationEventHandler> _logger;
 
-        public OrderStartedIntegrationEventHandler(
+        public OrderStatusChangedToSubmittedIntegrationEventHandler(
             IBasketRepository repository,
-            ILogger<OrderStartedIntegrationEventHandler> logger)
+            ILogger<OrderStatusChangedToSubmittedIntegrationEventHandler> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(OrderStartedIntegrationEvent @event)
+        public async Task Handle(OrderStatusChangedToSubmittedIntegrationEvent @event)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
             {
                 _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
 
-                await _repository.DeleteBasketAsync(@event.UserId.ToString());
+                await _repository.DeleteBasketAsync(@event.BuyerId);
             }
         }
     }

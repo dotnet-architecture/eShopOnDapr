@@ -20,7 +20,9 @@ using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Filters;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -59,6 +61,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
             });
 
             services.AddSignalR();
+
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IEmailService, EmailService>();
 
             var container = new ContainerBuilder();
             container.Populate(services);

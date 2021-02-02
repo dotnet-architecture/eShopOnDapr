@@ -79,13 +79,10 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 TimeSpan.FromSeconds(_settings.Value.GracePeriodTime),
                 TimeSpan.FromMilliseconds(-1));
 
-            // Add Integration event to clean the basket
-            // TODO Let subscriber (Basket) use OrderStatusChangedToSubmittedIntegrationEvent
-            //var orderStartedIntegrationEvent = new OrderStartedIntegrationEvent(integrationEvent.UserId);
-            //await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStartedIntegrationEvent);
             await _eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(
                 OrderId,
                 OrderStatus.Submitted.Name,
+                userId,
                 userName));
         }
 

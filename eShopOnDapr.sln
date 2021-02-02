@@ -61,7 +61,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", 
 		dapr\components\eshop-secretstore.json = dapr\components\eshop-secretstore.json
 		dapr\components\eshop-secretstore.yaml = dapr\components\eshop-secretstore.yaml
 		dapr\components\eshop-statestore.yaml = dapr\components\eshop-statestore.yaml
-		dapr\components\eshop-tracing.yaml = dapr\components\eshop-tracing.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configuration", "configuration", "{EDFC0510-8EC6-4E51-AE47-965E2599D9D0}"

@@ -107,11 +107,14 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             string description, string buyerName)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
-            order.OrderStatus = orderStatus;
-            order.Description = description;
+            if (order != null)
+            {
+                order.OrderStatus = orderStatus;
+                order.Description = description;
 
-            await _orderRepository.UpdateOrderAsync(order);
-            await SendNotificationAsync(order.OrderNumber, orderStatus, buyerName);
+                await _orderRepository.UpdateOrderAsync(order);
+                await SendNotificationAsync(order.OrderNumber, orderStatus, buyerName);
+            }
         }
 
         private Task SendNotificationAsync(int orderNumber, string orderStatus, string buyerName)

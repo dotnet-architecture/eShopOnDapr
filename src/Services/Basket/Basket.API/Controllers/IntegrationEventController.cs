@@ -23,9 +23,9 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
 
         [HttpPost("OrderStarted")]
         [Topic(DAPR_PUBSUB_NAME, "OrderStartedIntegrationEvent")]
-        public async Task OrderStarted(OrderStartedIntegrationEvent @event)
+        public async Task OrderStarted(OrderStatusChangedToSubmittedIntegrationEvent @event)
         {
-            var handler = _serviceProvider.GetRequiredService<OrderStartedIntegrationEventHandler>();
+            var handler = _serviceProvider.GetRequiredService<OrderStatusChangedToSubmittedIntegrationEventHandler>();
             await handler.Handle(@event);
         }
     }
