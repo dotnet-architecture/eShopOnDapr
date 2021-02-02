@@ -115,7 +115,6 @@ services:
       - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
       - identityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
-      - UseCustomizationData=True
       - CheckUpdateTime=30000
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -132,57 +131,8 @@ services:
     command: ["./daprd",
       "-app-id", "ordering-api",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
-      "-components-path", "/components",
-      "-config", "/configuration/eshop-config.yaml"
-      ]
-    volumes:
-      - "./dapr/components/:/components"
-      - "./dapr/configuration/:/configuration"
-
-  ordering-backgroundtasks:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
-      - UseCustomizationData=True
-      - CheckUpdateTime=30000
-      - GracePeriodTime=1
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - UseLoadTest=${USE_LOADTEST:-False}
-    ports:
-      - "5111:80"
-      - "50004:50001"
-
-  ordering-backgroundtasks-dapr:
-    command: ["./daprd",
-      "-app-id", "ordering-backgroundtasks",
-      "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
-      "-components-path", "/components",
-      "-config", "/configuration/eshop-config.yaml"
-      ]
-    volumes:
-      - "./dapr/components/:/components"
-      - "./dapr/configuration/:/configuration"
-
-  ordering-signalrhub:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - identityUrl=http://identity-api
-    ports:
-      - "5112:80"
-      - "50009:50001"
-
-  ordering-signalrhub-dapr:
-    command: ["./daprd",
-      "-app-id", "ordering-signalrhub",
-      "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
+      "-log-level", "debug",
+      "-placement-host-address", "dapr-placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -248,7 +198,6 @@ services:
     ports:
     - "5202:80"
     - "15202:8001"
-    - "3500:3500"
     - "50008:50001"
 
   webshoppingapigw-dapr:
@@ -289,24 +238,20 @@ services:
       - HealthChecksUI__HealthChecks__3__Uri=http://identity-api/hc
       - HealthChecksUI__HealthChecks__4__Name=Ordering API
       - HealthChecksUI__HealthChecks__4__Uri=http://ordering-api/hc
-      - HealthChecksUI__HealthChecks__5__Name=Ordering Background Tasks
-      - HealthChecksUI__HealthChecks__5__Uri=http://ordering-backgroundtasks/hc
-      - HealthChecksUI__HealthChecks__6__Name=Ordering SignalR Hub
-      - HealthChecksUI__HealthChecks__6__Uri=http://ordering-signalrhub/hc
-      - HealthChecksUI__HealthChecks__7__Name=Payment API
-      - HealthChecksUI__HealthChecks__7__Uri=http://payment-api/hc
-      - HealthChecksUI__HealthChecks__8__Name=Web Shopping Aggregator
-      - HealthChecksUI__HealthChecks__8__Uri=http://webshoppingagg/hc
-      - HealthChecksUI__HealthChecks__9__Name=Web SPA
-      - HealthChecksUI__HealthChecks__9__Uri=http://webspa/hc
+      - HealthChecksUI__HealthChecks__5__Name=Payment API
+      - HealthChecksUI__HealthChecks__5__Uri=http://payment-api/hc
+      - HealthChecksUI__HealthChecks__6__Name=Web Shopping Aggregator
+      - HealthChecksUI__HealthChecks__6__Uri=http://webshoppingagg/hc
+      - HealthChecksUI__HealthChecks__7__Name=Web SPA
+      - HealthChecksUI__HealthChecks__7__Uri=http://webspa/hc
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "5107:80"
 
-  # dapr-placement:
-  #   command: ["./placement", "-port", "50000", "-log-level", "debug"]
-  #   ports:
-  #     - "50000:50000"
+  dapr-placement:
+    command: ["./placement", "-port", "50000", "-log-level", "debug"]
+    ports:
+      - "50000:50000"
 
 volumes:
   eshop-sqldata:

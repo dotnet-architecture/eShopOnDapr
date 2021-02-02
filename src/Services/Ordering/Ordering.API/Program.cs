@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using System.IO;
+using System.Net;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System;
-using System.IO;
-using System.Net;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API
 {
@@ -42,8 +40,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
                     new OrderingContextSeed()
                         .SeedAsync(context, env, settings, logger)
                         .Wait();
-                })
-                .MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
+                });
 
                 Log.Information("Starting web host ({ApplicationContext})...", AppName);
                 host.Run();

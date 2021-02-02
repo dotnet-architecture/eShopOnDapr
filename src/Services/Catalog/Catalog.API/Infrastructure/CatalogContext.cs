@@ -22,7 +22,6 @@
         }     
     }
 
-
     public class CatalogContextDesignFactory : IDesignTimeDbContextFactory<CatalogContext>
     {
         public CatalogContext CreateDbContext(string[] args)

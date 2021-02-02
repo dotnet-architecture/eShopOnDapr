@@ -11,6 +11,7 @@
     <DockerfileContext>..\..\..\..</DockerfileContext>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Web.Shopping.HttpAggregator' " />
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>

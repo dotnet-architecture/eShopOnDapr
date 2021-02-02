@@ -77,7 +77,7 @@ static_resources:
                   prefix: "/hub/notificationhub"
                 route:
                   auto_host_rewrite: true
-                  cluster: signalr-hub
+                  cluster: ordering-api
                   timeout: 300s
               - name: "b-short"
                 match:
@@ -138,11 +138,11 @@ static_resources:
     - socket_address:
         address: catalog-api
         port_value: 80
-  - name: signalr-hub
+  - name: ordering-api
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: ordering-signalrhub
+        address: ordering-api
         port_value: 80

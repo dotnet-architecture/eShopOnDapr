@@ -1,65 +1,49 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Queries;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
-using Microsoft.Extensions.Logging;
-using Ordering.API.Application.Behaviors;
-using Ordering.API.Application.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
-    // [Authorize]
+    [Authorize]
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly IMediator _mediator;
-        private readonly IOrderQueries _orderQueries;
+        private readonly IOrderRepository _orderRepository;
         private readonly IIdentityService _identityService;
-        private readonly ILogger<OrdersController> _logger;
 
         public OrdersController(
-            IMediator mediator, 
-            IOrderQueries orderQueries, 
-            IIdentityService identityService,
-            ILogger<OrdersController> logger)
+            IOrderRepository orderRepository, 
+            IIdentityService identityService)
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _orderQueries = orderQueries ?? throw new ArgumentNullException(nameof(orderQueries));
+            _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [Route("cancel")]
+        [Route("{orderNumber:int}/cancel")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CancelOrderAsync([FromBody]CancelOrderCommand command, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> CancelOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
         {
-            bool commandResult = false;
+            bool result = false;
 
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
-                var requestCancelOrder = new IdentifiedCommand<CancelOrderCommand, bool>(command, guid);
-
-                _logger.LogInformation(
-                    "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-                    requestCancelOrder.GetGenericTypeName(),
-                    nameof(requestCancelOrder.Command.OrderNumber),
-                    requestCancelOrder.Command.OrderNumber,
-                    requestCancelOrder);
-
-                commandResult = await _mediator.Send(requestCancelOrder);
+                var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
+                result = await orderingProcessActor.Cancel();
             }
 
-            if (!commandResult)
+            if (!result)
             {
                 return BadRequest();
             }
@@ -67,29 +51,21 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             return Ok();
         }
 
-        [Route("ship")]
+        [Route("{orderNumber:int}/ship")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ShipOrderAsync([FromBody]ShipOrderCommand command, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> ShipOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
         {
-            bool commandResult = false;
+            bool result = false;
 
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
-                var requestShipOrder = new IdentifiedCommand<ShipOrderCommand, bool>(command, guid);
-
-                _logger.LogInformation(
-                    "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-                    requestShipOrder.GetGenericTypeName(),
-                    nameof(requestShipOrder.Command.OrderNumber),
-                    requestShipOrder.Command.OrderNumber,
-                    requestShipOrder);
-
-                commandResult = await _mediator.Send(requestShipOrder);
+                var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
+                result = await orderingProcessActor.Ship();
             }
 
-            if (!commandResult)
+            if (!result)
             {
                 return BadRequest();
             }
@@ -97,19 +73,17 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             return Ok();
         }
 
-        [Route("{orderId:int}")]
+        [Route("{orderNumber:int}")]
         [HttpGet]
-        [ProducesResponseType(typeof(Order),(int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Model.Order),(int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> GetOrderAsync(int orderId)
+        public async Task<ActionResult> GetOrderAsync(int orderNumber)
         {
             try
             {
-                //Todo: It's good idea to take advantage of GetOrderByIdQuery and handle by GetCustomerByIdQueryHandler
-                //var order customer = await _mediator.Send(new GetOrderByIdQuery(orderId));
-                var order = await _orderQueries.GetOrderAsync(orderId);
+                var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
 
-                return Ok(order);
+                return Ok(OrderDto.FromOrder(order));
             }
             catch
             {
@@ -118,37 +92,35 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<OrderSummary>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderSummary>>> GetOrdersAsync()
+        [ProducesResponseType(typeof(IEnumerable<OrderSummaryDto>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderSummaryDto>>> GetOrdersAsync()
         {
-            var userid = _identityService.GetUserIdentity();
-            var orders = await _orderQueries.GetOrdersFromUserAsync(Guid.Parse(userid));
+            var buyerId = _identityService.GetUserIdentity();
+            var orders = await _orderRepository.GetOrdersFromBuyerAsync(buyerId);
 
-            return Ok(orders);
+            return Ok(orders.Select(OrderSummaryDto.FromOrderSummary));
         }
 
         [Route("cardtypes")]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CardType>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<CardTypeDto>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<CardType>>> GetCardTypesAsync()
         {
-            var cardTypes = await _orderQueries.GetCardTypesAsync();
+            var cardTypes = await _orderRepository.GetCardTypesAsync();
 
-            return Ok(cardTypes);
+            return Ok(cardTypes.Select(CardTypeDto.FromCardType));
         }
 
-        [Route("draft")]
-        [HttpPost]
-        public async Task<ActionResult<OrderDraftDTO>> CreateOrderDraftFromBasketDataAsync([FromBody] CreateOrderDraftCommand createOrderDraftCommand)
+        private async Task<IOrderingProcessActor> GetOrderingProcessActorAsync(int orderNumber)
         {
-            _logger.LogInformation(
-                "----- Sending command: {CommandName} - {IdProperty}: {CommandId} ({@Command})",
-                createOrderDraftCommand.GetGenericTypeName(),
-                nameof(createOrderDraftCommand.BuyerId),
-                createOrderDraftCommand.BuyerId,
-                createOrderDraftCommand);
+            var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with order number {orderNumber} not found.");
+            }
 
-            return await _mediator.Send(createOrderDraftCommand);
+            var actorId = new ActorId(order.Id.ToString());
+            return ActorProxy.Create<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
         }
     }
 }

@@ -1,39 +1,37 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Common;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.IO;
-    using System.Reflection;
-    using AspNetCore.Http;
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
-    using global::Ordering.API.Application.IntegrationEvents;
-    using global::Ordering.API.Application.IntegrationEvents.EventHandling;
-    using global::Ordering.API.Infrastructure.Filters;
-    using HealthChecks.UI.Client;
-    using Infrastructure.AutofacModules;
-    using Infrastructure.Filters;
-    using Infrastructure.Services;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
-    using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.OpenApi.Models;
-    using Newtonsoft.Json.Converters;
-    using Ordering.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Filters;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 
+namespace Microsoft.eShopOnContainers.Services.Ordering.API
+{
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -43,7 +41,7 @@
 
         public IConfiguration Configuration { get; }
 
-        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
                 .AddHttpClient()
@@ -57,11 +55,18 @@
                 .AddEventBus(Configuration)
                 .AddCustomAuthentication(Configuration);
 
+            services.AddActors(options =>
+            {
+                options.Actors.RegisterActor<OrderingProcessActor>();
+            });
+
+            services.AddSignalR();
+
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IEmailService, EmailService>();
+
             var container = new ContainerBuilder();
             container.Populate(services);
-
-            container.RegisterModule(new MediatorModule());
-            container.RegisterModule(new ApplicationModule(Configuration["ConnectionString"]));
 
             return new AutofacServiceProvider(container.Build());
         }
@@ -98,6 +103,7 @@
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapSubscribeHandler();
+                endpoints.MapActorsHandlers();
                 endpoints.MapGet("/_proto/", async ctx =>
                 {
                     ctx.Response.ContentType = "text/plain";
@@ -121,6 +127,8 @@
                 {
                     Predicate = r => r.Name.Contains("self")
                 });
+
+                endpoints.MapHub<NotificationsHub>("/hub/notificationhub", options => options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransports.All);
             });
         }
 
@@ -198,17 +206,6 @@
                        ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
                    );
 
-            services.AddDbContext<IntegrationEventLogContext>(options =>
-            {
-                options.UseSqlServer(configuration["ConnectionString"],
-                                     sqlServerOptionsAction: sqlOptions =>
-                                     {
-                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                                         //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
-                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                                     });
-            });
-
             return services;
         }
 
@@ -253,8 +250,6 @@
             services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
                 sp => (DbConnection c) => new IntegrationEventLogService(c));
 
-            services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
-
             return services;
         }
 
@@ -286,12 +281,6 @@
         public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<UserCheckoutAcceptedIntegrationEventHandler>();
-            services.AddTransient<GracePeriodConfirmedIntegrationEventHandler>();
-            services.AddTransient<OrderStockConfirmedIntegrationEventHandler>();
-            services.AddTransient<OrderStockRejectedIntegrationEventHandler>();
-            services.AddTransient<OrderPaymentFailedIntegrationEventHandler>();
-            services.AddTransient<OrderPaymentSucceededIntegrationEventHandler>();
 
             return services;
         }

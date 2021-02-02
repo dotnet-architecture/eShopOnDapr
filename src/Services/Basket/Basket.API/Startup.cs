@@ -206,7 +206,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
         public static IServiceCollection AddEventBus(this IServiceCollection services)
         {
             services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<OrderStartedIntegrationEventHandler>();
+            services.AddTransient<OrderStatusChangedToSubmittedIntegrationEventHandler>();
 
             return services;
         }

@@ -9,13 +9,12 @@
     <LangVersion>preview</LangVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..\..</DockerfileContext>
+    <RootNamespace>Microsoft.eShopOnContainers.Services.Ordering.API</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Ordering.API' " />
   <ItemGroup>
     <Content Update="web.config;">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Setup\**\*;">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
@@ -24,8 +23,6 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\IntegrationEventLogEF\IntegrationEventLogEF.csproj" />   
     <ProjectReference Include="..\..\..\BuildingBlocks\WebHost\WebHost.Customization\WebHost.Customization.csproj" />
-    <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.csproj" />
-    <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +30,9 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.0.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="Dapr.AspNetCore" Version="1.0.0-rc02" />
+    <PackageReference Include="Dapr.Actors" Version="1.0.0-rc04" />
+    <PackageReference Include="Dapr.Actors.AspNetCore" Version="1.0.0-rc04" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.0.0-rc04" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />
@@ -65,9 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Setup\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Infrastructure\Repositories\" />
+    <Folder Include="Infrastructure\EntityConfigurations\" />
   </ItemGroup>
-
 </Project>

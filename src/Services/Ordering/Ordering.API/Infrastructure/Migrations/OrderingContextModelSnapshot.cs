@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
 
-namespace Ordering.API.Migrations
+namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderingContext))]
     partial class OrderingContextModelSnapshot : ModelSnapshot
@@ -18,37 +18,10 @@ namespace Ordering.API.Migrations
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("Relational:Sequence:.orderitemseq", "'orderitemseq', '', '1', '10', '', '', 'Int64', 'False'")
-                .HasAnnotation("Relational:Sequence:ordering.buyerseq", "'buyerseq', 'ordering', '1', '10', '', '', 'Int64', 'False'")
                 .HasAnnotation("Relational:Sequence:ordering.orderseq", "'orderseq', 'ordering', '1', '10', '', '', 'Int64', 'False'")
-                .HasAnnotation("Relational:Sequence:ordering.paymentseq", "'paymentseq', 'ordering', '1', '10', '', '', 'Int64', 'False'")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.Buyer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:HiLoSequenceName", "buyerseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
-
-                    b.Property<string>("IdentityGuid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdentityGuid")
-                        .IsUnique();
-
-                    b.ToTable("buyers","ordering");
-                });
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.CardType", b =>
+            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.CardType", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
@@ -64,94 +37,42 @@ namespace Ordering.API.Migrations
                     b.ToTable("cardtypes","ordering");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.PaymentMethod", b =>
+            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:HiLoSequenceName", "paymentseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
+                    b.Property<string>("BuyerId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_alias")
-                        .IsRequired()
-                        .HasColumnName("Alias")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                    b.Property<string>("BuyerName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_cardHolderName")
-                        .IsRequired()
-                        .HasColumnName("CardHolderName")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_cardNumber")
-                        .IsRequired()
-                        .HasColumnName("CardNumber")
-                        .HasColumnType("nvarchar(25)")
-                        .HasMaxLength(25);
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("_cardTypeId")
-                        .HasColumnName("CardTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("_expiration")
-                        .HasColumnName("Expiration")
-                        .HasColumnType("datetime2")
-                        .HasMaxLength(25);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("_cardTypeId");
-
-                    b.ToTable("paymentmethods","ordering");
-                });
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.Order", b =>
-                {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderNumber")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:HiLoSequenceName", "orderseq")
                         .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("OrderStatus")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("_buyerId")
-                        .HasColumnName("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("_orderDate")
-                        .HasColumnName("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("_orderStatusId")
-                        .HasColumnName("OrderStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("_paymentMethodId")
-                        .HasColumnName("PaymentMethodId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("_buyerId");
-
-                    b.HasIndex("_orderStatusId");
-
-                    b.HasIndex("_paymentMethodId");
+                    b.HasAlternateKey("OrderNumber");
 
                     b.ToTable("orders","ordering");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.OrderItem", b =>
+            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,27 +80,22 @@ namespace Ordering.API.Migrations
                         .HasAnnotation("SqlServer:HiLoSequenceName", "orderitemseq")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("_pictureUrl")
-                        .HasColumnName("PictureUrl")
+                    b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("_productName")
-                        .IsRequired()
-                        .HasColumnName("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("_unitPrice")
-                        .HasColumnName("UnitPrice")
+                    b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("_units")
-                        .HasColumnName("Units")
+                    b.Property<int>("Units")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -189,76 +105,12 @@ namespace Ordering.API.Migrations
                     b.ToTable("orderItems","ordering");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.OrderStatus", b =>
+            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderstatus","ordering");
-                });
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Idempotency.ClientRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("requests","ordering");
-                });
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.PaymentMethod", b =>
-                {
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.Buyer", null)
-                        .WithMany("PaymentMethods")
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.CardType", "CardType")
-                        .WithMany()
-                        .HasForeignKey("_cardTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.Order", b =>
-                {
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("_buyerId");
-
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.OrderStatus", "OrderStatus")
-                        .WithMany()
-                        .HasForeignKey("_orderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate.PaymentMethod", null)
-                        .WithMany()
-                        .HasForeignKey("_paymentMethodId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.OwnsOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.Address", "Address", b1 =>
+                    b.OwnsOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Address", "Address", b1 =>
                         {
-                            b1.Property<int>("OrderId")
-                                .HasColumnType("int");
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
                                 .HasColumnType("nvarchar(max)");
@@ -284,9 +136,9 @@ namespace Ordering.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.OrderItem", b =>
+            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderItem", b =>
                 {
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate.Order", null)
+                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
