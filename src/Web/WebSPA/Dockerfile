@@ -1,20 +1,16 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-RUN apt-get update -yq \
-    && apt-get install curl gnupg -yq \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
-    && apt-get install nodejs -yq
+ARG NODE_IMAGE=node:12.0
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM node as node-build
-WORKDIR /web/src
+FROM ${NODE_IMAGE} as node-build
+WORKDIR /web
 COPY src/Web/WebSPA/Client/package.json .
 COPY src/Web/WebSPA/Client/package-lock.json .
-RUN npm install
 COPY src/Web/WebSPA/Client .
-RUN npm run build:prod
+RUN npm i npm@6.14.11 -g && npm update && npm install && npm run build:prod
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
@@ -37,14 +33,13 @@ COPY ["eShopOnDapr.sln", "./"]
 RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebSPA/wwwroot/
+COPY --from=node-build /wwwroot /src/Web/WebSPA/wwwroot/
 WORKDIR /src/src/Web/WebSPA
-# RUN dotnet build "WebSPA.csproj" -c Release -o /app/build
+RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish --no-restore "WebSPA.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "WebSPA.dll"]
