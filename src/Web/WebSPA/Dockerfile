@@ -33,13 +33,15 @@ COPY ["eShopOnDapr.sln", "./"]
 RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
-COPY --from=node-build /wwwroot /src/Web/WebSPA/wwwroot/
 WORKDIR /src/src/Web/WebSPA
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
+WORKDIR /src/src/Web/WebSPA
+RUN dotnet publish --no-restore -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+COPY --from=node-build /wwwroot ./wwwroot/
 ENTRYPOINT ["dotnet", "WebSPA.dll"]

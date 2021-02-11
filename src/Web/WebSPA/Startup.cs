@@ -116,12 +116,8 @@ namespace eShopConContainers.WebSPA
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
-            // this will make the application to respond with the index.html and the rest of the assets present on the configured folder (at AddSpaStaticFiles() (wwwroot))
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -138,22 +134,7 @@ namespace eShopConContainers.WebSPA
                 });
             });
 
-            // Handles all still unnatended (by any other middleware) requests by returning the default page of the SPA (wwwroot/index.html).
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                // the root of the angular app. (Where the package.json lives)
-                spa.Options.SourcePath = "Client";
-
-                if (env.IsDevelopment())
-                { 
-
-                    // use the SpaServices extension method for angular, that will make the application to run "ng serve" for us, when in development.
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+            app.UseSpa(spa => {});
         }
 
         private void RegisterAppInsights(IServiceCollection services)
