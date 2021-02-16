@@ -7,6 +7,10 @@ version: '3.4'
 
 services:
 
+  rabbitmq:
+    ports:
+      - "5672:5672"
+
   redis:
     image: redis:alpine
     ports:
@@ -48,7 +52,6 @@ services:
     command: ["./daprd",
       "-app-id", "basket-api",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -78,7 +81,6 @@ services:
     command: ["./daprd",
       "-app-id", "catalog-api",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -155,7 +157,6 @@ services:
     command: ["./daprd",
       "-app-id", "payment-api",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -184,7 +185,6 @@ services:
     command: ["./daprd",
       "-app-id", "webshoppingagg",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
@@ -204,7 +204,6 @@ services:
     command: ["./daprd",
       "-app-id", "webshoppingapigw",
       "-app-port", "80",
-      # "-placement-host-address", "placement:50000",
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]

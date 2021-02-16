@@ -4,12 +4,8 @@ metadata:
   name: pubsub
   namespace: default
 spec:
-  type: pubsub.redis
+  type: pubsub.rabbitmq
+  version: v1
   metadata:
-  - name: redisHost
-    value: redis:6379
-  - name: redisPassword
-    secretKeyRef:
-      name: redisPassword
-auth:
-  secretStore: eshop-secretstore
+  - name: host
+    value: "amqp://rabbitmq:5672"
