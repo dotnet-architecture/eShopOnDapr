@@ -15,7 +15,7 @@ data:
   PATH_BASE: /catalog-api
   PicBaseUrl: http://localhost:30050/c/api/v1/catalog/items/[0]/pic/
   PORT: "80"
-  UseCustomizationData: "False"
+  UseCustomizationData: "True"
 
 ---
 

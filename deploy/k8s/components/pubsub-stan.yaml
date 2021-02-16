@@ -5,6 +5,7 @@ metadata:
   namespace: eshop
 spec:
   type: pubsub.natsstreaming
+  version: v1
   metadata:
   - name: natsURL
     value: nats://stan:4222

@@ -23,10 +23,6 @@ data:
   HealthChecksUI__HealthChecks__5__Uri: http://identity-api/hc
   HealthChecksUI__HealthChecks__6__Name: Payments HTTP Check
   HealthChecksUI__HealthChecks__6__Uri: http://payment-api/hc
-  HealthChecksUI__HealthChecks__7__Name: Ordering SignalRHub HTTP Check
-  HealthChecksUI__HealthChecks__7__Uri: http://ordering-signalrhub/hc
-  HealthChecksUI__HealthChecks__8__Name: Ordering HTTP Background Check
-  HealthChecksUI__HealthChecks__8__Uri: http://ordering-backgroundtasks/hc
   OrchestratorType: K8S
   PATH_BASE: /webstatus
 

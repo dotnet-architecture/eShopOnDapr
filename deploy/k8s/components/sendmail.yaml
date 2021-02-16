@@ -5,6 +5,7 @@ metadata:
   namespace: eshop
 spec:
   type: bindings.twilio.sendgrid
+  version: v1
   metadata:
   - name: apiKey
     value: "replace-with-your-sendgrid-api-key"
