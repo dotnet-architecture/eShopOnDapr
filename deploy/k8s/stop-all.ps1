@@ -7,7 +7,7 @@ kubectl delete `
     -f ./basket.yaml `
     -f ./payment.yaml `
     -f ./components/pubsub-rabbitmq.yaml `
-    -f ./components/basket-statestore.yaml `
+    -f ./components/statestore.yaml `
     -f ./components/sendmail.yaml `
     -f ./apigateway.yaml `
     -f ./identity.yaml `

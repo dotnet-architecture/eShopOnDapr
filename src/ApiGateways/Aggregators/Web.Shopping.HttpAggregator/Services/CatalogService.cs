@@ -1,45 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Dapr.Client;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
 {
     public class CatalogService : ICatalogService
     {
-        private const string DaprAppId = "catalog-api";
+        private readonly HttpClient _httpClient;
 
-        private readonly DaprClient _daprClient;
-
-        public CatalogService(DaprClient daprClient)
+        public CatalogService(HttpClient httpClient)
         {
-            _daprClient = daprClient;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task<CatalogItem> GetCatalogItemAsync(int id)
+        public Task<CatalogItem> GetCatalogItemAsync(int id)
         {
-            return await _daprClient.InvokeMethodAsync<CatalogItem>(
-                DaprAppId,
-                $"api/v1/catalog/items/{id}",
-                new HttpInvocationOptions { Method = HttpMethod.Get });
+            var requestUri = $"api/v1/catalog/items/{id}";
+        
+            return _httpClient.GetFromJsonAsync<CatalogItem>(requestUri);
         }
 
-        public async Task<IEnumerable<CatalogItem>> GetCatalogItemsAsync(IEnumerable<int> ids)
+        public Task<IEnumerable<CatalogItem>> GetCatalogItemsAsync(IEnumerable<int> ids)
         {
-            return await _daprClient.InvokeMethodAsync<IEnumerable<CatalogItem>>(
-                DaprAppId,
-                "api/v1/catalog/items",
-                new HttpInvocationOptions
-                { 
-                    QueryString = new Dictionary<string, string>
-                    {
-                        ["pageSize"] = "10",
-                        ["pageIndex"] = "1",
-                        ["ids"] = string.Join(",", ids),
-                    },
-                    Method = HttpMethod.Get 
-                });
+            var requestUri = $"api/v1/catalog/items?ids={string.Join(",", ids)}";
+        
+            return _httpClient.GetFromJsonAsync<IEnumerable<CatalogItem>>(requestUri);
         }
     }
 }

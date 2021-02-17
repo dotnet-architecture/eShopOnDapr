@@ -10,7 +10,7 @@ kubectl apply `
     -f ./identity.yaml `
     -f ./apigateway.yaml `
     -f ./components/pubsub-rabbitmq.yaml `
-    -f ./components/basket-statestore.yaml `
+    -f ./components/statestore.yaml `
     -f ./components/sendmail.yaml `
     -f ./catalog.yaml `
     -f ./ordering.yaml `

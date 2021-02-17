@@ -128,7 +128,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
                     Predicate = r => r.Name.Contains("self")
                 });
 
-                endpoints.MapHub<NotificationsHub>("/hub/notificationhub", options => options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransports.All);
+                endpoints.MapHub<NotificationsHub>("/hub/notificationhub",
+                    options => options.Transports = AspNetCore.Http.Connections.HttpTransportType.LongPolling);
             });
         }
 
