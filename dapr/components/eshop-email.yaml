@@ -5,6 +5,7 @@ metadata:
   namespace: default
 spec:
   type: bindings.twilio.sendgrid
+  version: v1
   metadata:
   - name: apiKey
     secretKeyRef:

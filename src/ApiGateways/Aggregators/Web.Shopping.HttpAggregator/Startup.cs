@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using Dapr.Client;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -42,7 +43,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             services.AddCustomMvc(Configuration)
                 .AddCustomAuthentication(Configuration)
                 .AddApplicationServices();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -170,9 +170,14 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
         }
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IBasketService, BasketService>();
-            services.AddScoped<ICatalogService, CatalogService>();
-            services.AddScoped<IOrderingService, OrderingService>();
+            services.AddSingleton<IBasketService, BasketService>(
+                _ => new BasketService(DaprClient.CreateInvokeHttpClient("basket-api")));
+
+            services.AddSingleton<ICatalogService, CatalogService>(
+                _ => new CatalogService(DaprClient.CreateInvokeHttpClient("catalog-api")));
+
+            services.AddSingleton<IOrderingService, OrderingService>(
+                _ => new OrderingService(DaprClient.CreateInvokeHttpClient("ordering-api")));
 
             return services;
         }

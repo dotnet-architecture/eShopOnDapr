@@ -1,51 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Dapr.Client;
 using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
-using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
 {
     public class BasketService : IBasketService
     {
-        private const string DaprAppId = "basket-api";
+        private readonly HttpClient _httpClient;
 
-        private readonly DaprClient _daprClient;
-
-        public BasketService(DaprClient daprClient)
+        public BasketService(HttpClient httpClient)
         {
-            _daprClient = daprClient;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
         public async Task<BasketData> GetById(string id, string accessToken)
         {
-            return await _daprClient.InvokeMethodAsync<BasketData>(
-                DaprAppId,
-                $"api/v1/basket/{id}",
-                new HttpInvocationOptions
-                {
-                    Method = HttpMethod.Get,
-                    Headers = new Dictionary<string, string>
-                    {
-                        [HeaderNames.Authorization] = accessToken
-                    }
-                });
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/basket/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<BasketData>();
         }
 
-        public Task UpdateAsync(BasketData currentBasket, string accessToken)
+        public async Task UpdateAsync(BasketData currentBasket, string accessToken)
         {
-            return _daprClient.InvokeMethodAsync(
-                DaprAppId,
-                "api/v1/basket",
-                currentBasket,
-                new HttpInvocationOptions
-                {
-                    Headers = new Dictionary<string, string>
-                    {
-                        [HeaderNames.Authorization] = accessToken
-                    }
-                });
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/basket")
+            {
+                Content = JsonContent.Create(currentBasket)
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
