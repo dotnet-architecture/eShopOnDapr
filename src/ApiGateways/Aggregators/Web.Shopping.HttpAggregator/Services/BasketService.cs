@@ -19,7 +19,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
         public async Task<BasketData> GetById(string id, string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/basket/{id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue(accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -33,7 +33,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             {
                 Content = JsonContent.Create(currentBasket)
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue(accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();

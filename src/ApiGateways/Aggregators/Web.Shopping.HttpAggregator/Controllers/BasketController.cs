@@ -65,7 +65,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
                 }
             }
 
-            await _basket.UpdateAsync(basket, authorization);
+            await _basket.UpdateAsync(basket, authorization.Substring("Bearer ".Length));
 
             return basket;
         }
