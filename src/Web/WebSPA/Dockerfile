@@ -7,9 +7,9 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebSPA/Client/package.json .
-COPY src/Web/WebSPA/Client/package-lock.json .
-COPY src/Web/WebSPA/Client .
+COPY src/Web/WebSPA/package.json .
+COPY src/Web/WebSPA/package-lock.json .
+COPY src/Web/WebSPA .
 RUN npm i npm@6.14.11 -g && npm update && npm install && npm run build:prod
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
@@ -33,15 +33,13 @@ COPY ["eShopOnDapr.sln", "./"]
 RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
+COPY --from=node-build /web/wwwroot /src/src/Web/WebSPA/wwwroot/
 WORKDIR /src/src/Web/WebSPA
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
-WORKDIR /src/src/Web/WebSPA
-RUN dotnet publish --no-restore -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY --from=node-build /wwwroot ./wwwroot/
 ENTRYPOINT ["dotnet", "WebSPA.dll"]
