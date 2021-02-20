@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -61,17 +58,11 @@ namespace eShopConContainers.WebSPA
 
             // Add controllers support and add a global AutoValidateAntiforgeryTokenFilter that will make the application check for an Antiforgery token on all "mutating" requests (POST, PUT, DELETE).
             // The AutoValidateAntiforgeryTokenFilter is an internal class registered when we register views, so we need to register controllers and views also.
-            services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
-
-            // Setup where the compiled version of our spa application will be, when in production. 
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "wwwroot";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,27 +72,6 @@ namespace eShopConContainers.WebSPA
             {
                 app.UseDeveloperExceptionPage();
             }
-
-
-            // Here we add Angular default Antiforgery cookie name on first load. https://angular.io/guide/http#security-xsrf-protection
-            // This cookie will be read by Angular app and its value will be sent back to the application as the header configured in .AddAntiforgery()
-            app.Use(next => context =>
-            {
-                string path = context.Request.Path.Value;
-
-                if (
-                    string.Equals(path, "/", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(path, "/index.html", StringComparison.OrdinalIgnoreCase))
-                {
-                    // The request token has to be sent as a JavaScript-readable cookie, 
-                    // and Angular uses it by default.
-                    var tokens = antiforgery.GetAndStoreTokens(context);
-                    context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
-                        new CookieOptions() { HttpOnly = false });
-                }
-
-                return next(context);
-            });
 
             //Seed Data
             WebContextSeed.Seed(app, env, loggerFactory);
@@ -114,10 +84,22 @@ namespace eShopConContainers.WebSPA
                 app.UsePathBase(pathBase);
             }
 
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
+                // Rewrite request to use app root
+                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
+                {
+                    context.Request.Path = "/index.html";
+                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
+                    await next();
+                }
+            });
+            
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -133,8 +115,6 @@ namespace eShopConContainers.WebSPA
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
             });
-
-            app.UseSpa(spa => {});
         }
 
         private void RegisterAppInsights(IServiceCollection services)
