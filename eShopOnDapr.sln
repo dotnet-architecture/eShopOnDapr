@@ -57,6 +57,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dapr", "dapr", "{B52FAD6A-7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{EE9EF69B-6FCD-4274-8857-8BD9382E29CB}"
 	ProjectSection(SolutionItems) = preProject
+		dapr\components\eshop-email.yaml = dapr\components\eshop-email.yaml
 		dapr\components\eshop-pubsub.yaml = dapr\components\eshop-pubsub.yaml
 		dapr\components\eshop-secretstore.json = dapr\components\eshop-secretstore.json
 		dapr\components\eshop-secretstore.yaml = dapr\components\eshop-secretstore.yaml
