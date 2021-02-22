@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -58,11 +61,17 @@ namespace eShopConContainers.WebSPA
 
             // Add controllers support and add a global AutoValidateAntiforgeryTokenFilter that will make the application check for an Antiforgery token on all "mutating" requests (POST, PUT, DELETE).
             // The AutoValidateAntiforgeryTokenFilter is an internal class registered when we register views, so we need to register controllers and views also.
-            services.AddControllers()
+            services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
+
+            // Setup where the compiled version of our spa application will be, when in production. 
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "wwwroot";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,22 +93,16 @@ namespace eShopConContainers.WebSPA
                 app.UsePathBase(pathBase);
             }
 
-            app.Use(async (context, next) =>
-            {
-                await next();
-
-                // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
-                // Rewrite request to use app root
-                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
-                {
-                    context.Request.Path = "/index.html";
-                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
-                    await next();
-                }
-            });
-            
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            // Use the SPA static hosting middleware is the Angular app is already built.
+            var useSpaStaticHosting = Directory.Exists("wwwroot");
+            if (useSpaStaticHosting)
+            {
+                app.UseSpaStaticFiles();
+            }
+
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -114,6 +117,22 @@ namespace eShopConContainers.WebSPA
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
+            });
+
+            // Handles all still unnatended (by any other middleware) requests by returning the default page of the SPA (wwwroot/index.html).
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                // the root of the angular app. (Where the package.json lives)
+                spa.Options.SourcePath = "Client";
+
+                if (!useSpaStaticHosting)
+                {
+                    // use the SpaServices extension method for angular, that will make the application to run "ng serve" for us, when in development.
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
             });
         }
 
