@@ -44,7 +44,7 @@ eShopOnDapr runs in containers and requires Docker to run. There are various way
 - [Run eShopOnDapr from the CLI](docs/run-eshop.md#run-eshopondapr-from-the-cli)
 - [Run eShopOnDapr from Visual Studio (best F5 debugging experience)](docs/run-eshop.md#run-eshopondapr-from-visual-studio)
 - [Run eShopOnDapr from Visual Studio Code (allows you to debug individual containers))](docs/run-eshop.md#run-eshopondapr-from-visual-studio-code)
-- [Run eShopOnDapr in Kubernetes](docs/run-eshop.md#run-eshopondapr-in-kubernetes)
+- [Run eShopOnDapr in Kubernetes](docs/run-eshop.md#run-eshopondapr-on-kubernetes)
 
 Note that it will take a little while to start all containers. eShopOnDapr includes a health UI that you can use to see if the containers are ready. You can access it at `http://localhost:5107/hc-ui`.
 
