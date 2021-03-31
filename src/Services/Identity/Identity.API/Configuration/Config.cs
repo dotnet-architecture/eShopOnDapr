@@ -38,6 +38,37 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
         {
             return new List<Client>
             {
+                // Blazor Client
+                new Client
+                {
+                    ClientId = "blazor",
+
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    RequireConsent = false,
+
+                    AllowedCorsOrigins = { "http://localhost:8003" },
+
+                    // where to redirect to after login
+                    RedirectUris = { "http://localhost:8003/authentication/login-callback" },
+
+                    // where to redirect to after logout
+                    PostLogoutRedirectUris = { "http://localhost:8003/authentication/logout-callback" },
+
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "orders",
+                        "basket",
+                        "webshoppingagg",
+                    },
+
+                    AlwaysIncludeUserClaimsInIdToken = true
+
+                },
                 // JavaScript Client
                 new Client
                 {
