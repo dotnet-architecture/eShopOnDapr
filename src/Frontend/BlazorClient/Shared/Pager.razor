@@ -1,0 +1,43 @@
+<div class="esh-pager">
+    <div class="container">
+        <article class="esh-pager-wrapper row">
+            <nav class="w-100">
+                <span id="Previous"
+                    class="esh-pager-item esh-pager-item--navigable @((PageIndex == 0) ? "is-disabled" : "")"
+                    aria-label="Previous"
+                    @onclick="@(() => OnClick.InvokeAsync(PageIndex - 1))">
+                    Previous
+                </span>
+
+                <span class="esh-pager-item">
+                    Showing @ItemCount of @TotalCount products - Page @(PageIndex + 1)/@PageCount
+                </span>
+
+                <span id="Next"
+                    class="esh-pager-item esh-pager-item--navigable @((PageIndex >= PageCount - 1) ? "is-disabled" : "")"
+                    aria-label="Next"
+                    @onclick="@(() => OnClick.InvokeAsync(PageIndex + 1))">
+                    Next
+                </span>
+            </nav>
+        </article>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int ItemCount { get; set; }
+
+    [Parameter]
+    public int TotalCount { get; set; }
+
+    [Parameter]
+    public int PageIndex { get; set; }
+
+    [Parameter]
+    public int PageCount { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnClick { get; set; }
+}
