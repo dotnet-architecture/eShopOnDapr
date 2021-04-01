@@ -1,22 +1,29 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-ARG NODE_IMAGE=node:12.0
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+ARG NODE_IMAGE=15.12.0-alpine3.12
+ARG NET_IMAGE=5.0-buster-slim
+FROM mcr.microsoft.com/dotnet/aspnet:${NET_IMAGE} AS base
 WORKDIR /app
 EXPOSE 80
-RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
-RUN apt-get install -y nodejs
+# install node
+RUN apt-get update -yq \
+    && apt-get install curl gnupg -yq \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && apt-get install nodejs -yq
 
-FROM ${NODE_IMAGE} as node-build
+FROM node:${NODE_IMAGE} as node-build
 WORKDIR /web
 COPY src/Web/WebSPA/package.json .
 COPY src/Web/WebSPA/package-lock.json .
 COPY src/Web/WebSPA .
 RUN npm i npm@6.14.11 -g && npm update && npm install && npm run build:prod
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
-RUN apt-get install -y nodejs
+FROM mcr.microsoft.com/dotnet/sdk:${NET_IMAGE} AS build
+# install node
+RUN apt-get update -yq \
+    && apt-get install curl gnupg -yq \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && apt-get install nodejs -yq
 WORKDIR /src
 
 # Create this "restore-solution" section by running ./Create-DockerfileSolutionRestore.ps1, to optimize build cache reuse
