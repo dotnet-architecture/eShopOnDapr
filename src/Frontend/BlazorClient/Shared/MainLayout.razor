@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
 
-<header class="esh-app-header esh-app-header-expanded" [ngClass]="{'esh-app-header':true, 'esh-app-header--expanded': router.url === '/catalog'}">
+@* TODO Only add esh-app-header--expanded if current page is Index *@
+<header class="esh-app-header @((true == true) ? "esh-app-header--expanded" : "")">
     <div class="esh-app-header-promo">
         <span class="esh-app-header-promo-title">All SUITS</span>
         <span class="esh-app-header-promo-subtitle">On sale this weekend</span>

@@ -34,7 +34,7 @@
 </section>
 
 <div class="container">
-    @if (results != null)
+    @if (results?.Count > 0)
     {
         <Pager ItemCount="@results.Data.Count()"
             TotalCount="@results.Count"
