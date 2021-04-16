@@ -71,12 +71,12 @@
 */
 
 
-/* :host {
+:host {
     display: flex;
     flex-direction: column;
     min-height: 100%;
     background-color: red;
-} */
+}
 
 .esh-app-header {
     background: url('/images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);

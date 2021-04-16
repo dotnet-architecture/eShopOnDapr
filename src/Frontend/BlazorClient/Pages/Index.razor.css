@@ -1,106 +1,161 @@
-/* 
-.esh-catalog-banner-height {
-    $banner-height: 260px;
-} */
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
 
+.esh-app-header {
+    background: url('/assets/images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);
+    background-size: 94rem, auto;
+    height: 13rem;
+    padding-top: 2.25rem;
+    position: relative;
+    transition: all 0.35s;
+}
+
+.esh-app-header--expanded {
+    background-position: center top;
+    background-size: 87rem, auto;
+    height: 29rem;
+}
+
+.esh-app-header--expanded .esh-app-header-promo {
+    opacity: 1;
+}
+
+.esh-app-header-brand {
+    height: auto;
+    width: 125px;
+}
+
+.esh-app-header-promo {
+    bottom: 3.5rem;
+    opacity: 0;
+    position: absolute;
+    text-align: center;
+    transition: all 0.35s;
+    width: 100%;
+}
+
+.esh-app-header-promo-title {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 5rem;
+    line-height: 5rem;
+    word-wrap: none;
+}
+
+@media screen and (min-width: 768px) {
+    .esh-app-header-promo-title {
+        font-size: 9rem;
+        line-height: 9rem;
+    }
+}
+
+.esh-app-header-promo-subtitle {
+    display: block;
+    color: #fff;
+    font-size: 1.5625rem;
+}
+
+.esh-app-footer {
+    background-color: #7979ac;
+    color: #fff;
+    font-size: 1rem;
+    display: flex;
+    height: 7rem;
+    margin-top: auto;
+}
+
+.esh-app-footer-brand {
+    height: auto;
+    width: 104px;
+}
 
 .esh-catalog-title {
     position: relative;
-    top: 7.5px;
+    top: 74.2857142857px;
 }
- 
-    /* $filter-height: 65px;
 
-    &-filters {
-        height: $filter-height;
-    }
+.esh-catalog-filters {
+    height: 65px;
+}
 
-    &-filters-wrapper {
-        padding-bottom: .5rem;
-        padding-top: .5rem;
-    }
+.esh-catalog-filters-wrapper {
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+}
 
-    &-filter-wrapper {
-        margin-right: .5rem;
-        position: relative;
+.esh-catalog-filter-wrapper {
+    margin-right: 0.5rem;
+    position: relative;
+}
 
-        &:after {
-            border-bottom: 1px solid $color-secondary;
-            border-right: 1px solid $color-secondary;
-            bottom: 1rem;
-            content: '';
-            height: .5rem;
-            pointer-events: none;
-            position: absolute;
-            right: .9rem;
-            transform: rotate(45deg);
-            width: .5rem;
-            z-index: 1;
-        }
-    }
+.esh-catalog-filter-wrapper:after {
+    border-bottom: 1px solid #292929;
+    border-right: 1px solid #292929;
+    bottom: 1rem;
+    content: '';
+    height: 0.5rem;
+    pointer-events: none;
+    position: absolute;
+    right: 0.9rem;
+    transform: rotate(45deg);
+    width: 0.5rem;
+    z-index: 1;
+}
 
-    &-filter {
-        appearance: none;
-        background-color: transparent;
-        border: solid 3px $color-secondary;
-        border-radius: 0;
-        cursor: pointer;
-        margin-right: 1rem;
-        min-width: 140px;
-        outline-color: $color-secondary;
-        padding-left: .5rem;
-        padding-right: 2rem;
+.esh-catalog-filter {
+    appearance: none;
+    background-color: transparent;
+    border: solid 3px #292929;
+    border-radius: 0;
+    cursor: pointer;
+    margin-right: 1rem;
+    min-width: 140px;
+    outline-color: #292929;
+    padding-left: 0.5rem;
+    padding-right: 2rem;
+}
 
-        option {
-            appearance: none;
-            border: unset;
+.esh-catalog-filter option {
+    appearance: none;
+    border: unset;
+}
 
-            &:hover {
-                background-color: $color-primary;
-                color: $color-brightest;
-                cursor: pointer;
-            }
+.esh-catalog-filter option:hover {
+    background-color: #0d2092;
+    color: #fff;
+    cursor: pointer;
+}
 
-            &:active {
-                background-color: $color-primary;
-                color: $color-brightest;
-            }
+.esh-catalog-filter option:active {
+    background-color: #0d2092;
+    color: #fff;
+}
 
-            &:focus {
-                background-color: $color-primary;
-                color: $color-brightest;
-            }
+.esh-catalog-filter option:focus {
+    background-color: #0d2092;
+    color: #fff;
+}
 
-            &:current {
-                background-color: $color-primary;
-                color: $color-brightest;
-            }
+.esh-catalog-filter option:current {
+    background-color: #0d2092;
+    color: #fff;
+}
 
-            &:selected {
-                background-color: $color-primary;
-                color: $color-brightest;
-            }
-        }
-    } */
+.esh-catalog-filter option:selected {
+    background-color: #0d2092;
+    color: #fff;
+}
 
-    /* &-label {
-        display: inline-block;
-        font-size: $font-size-m;
-        margin-bottom: 0;
-        position: relative;
-        z-index: 0;
-
-        // &:before {
-        //     color: $color-primary;
-        //     content: attr(data-title);
-        //     font-size: $font-size-s;
-        //     left: .7rem;
-        //     top: .2rem;
-        //     position: absolute;
-        //     text-transform: uppercase;
-        //     z-index: 1;
-        // }
-    } */
+.esh-catalog-label {
+    display: inline-block;
+    font-size: 1rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 0;
+}
 
 .esh-catalog-items {
     margin-top: 1rem;
@@ -113,16 +168,21 @@
 }
 
 .esh-catalog-item:hover {
-    background-color: white;
+    background-color: #fff;
 }
 
 .esh-catalog-item:hover .esh-catalog-thumbnail-icon {
     opacity: 1;
 }
 
-/* .esh-catalog-item.esh-catalog-thumbnail-icon {
-    opacity: 1;
-} */
+.esh-catalog-item.is-disabled {
+    background-color: unset;
+    cursor: default;
+}
+
+.esh-catalog-item.is-disabled .esh-catalog-thumbnail-icon {
+    display: none !important;
+}
 
 .esh-catalog-thumbnail-wrapper {
     background-color: #dbdede;
@@ -140,10 +200,10 @@
     opacity: 0;
     position: absolute;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: 3.5rem;
     z-index: 20;
-    transition: all .35s;
+    transition: all 0.35s;
 }
 
 .esh-catalog-thumbnail-icon-svg {
@@ -156,7 +216,7 @@
     left: 50%;
     position: absolute;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: auto;
     z-index: 10;
 }
@@ -181,5 +241,5 @@
 
 .esh-catalog-alert {
     margin-top: 10px;
-    color: white;
+    color: #fff;
 }

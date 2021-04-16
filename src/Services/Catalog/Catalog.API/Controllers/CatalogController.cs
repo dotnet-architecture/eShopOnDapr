@@ -175,6 +175,40 @@ namespace Microsoft.eShopOnContainers.Services.Catalog.API.Controllers
             return new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
         }
 
+        [HttpGet]
+        [Route("items2")]
+        [ProducesResponseType(typeof(PaginatedItemsViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<PaginatedItemsViewModel<CatalogItem>>> Items2Async(
+            [FromQuery] int typeId = -1,
+            [FromQuery] int brandId = -1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageIndex = 0)
+        {
+            var query = (IQueryable<CatalogItem>)_catalogContext.CatalogItems;
+
+            if (typeId > -1)
+            {
+                query = query.Where(ci => ci.CatalogTypeId == typeId);
+            }
+
+            if (brandId > -1)
+            {
+                query = query.Where(ci => ci.CatalogBrandId == brandId);
+            }
+
+            var totalItems = await query
+                .LongCountAsync();
+
+            var itemsOnPage = await query
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .ToListAsync();
+
+            itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
+
+            return new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
+        }
+
         // GET api/v1/[controller]/items/type/all/brand[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("items/type/all/brand/{catalogBrandId:int?}")]

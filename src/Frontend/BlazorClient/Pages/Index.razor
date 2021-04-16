@@ -5,32 +5,33 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-@* 
 <section class="esh-catalog-filters">
     <div class="container">
-        <div class="alert alert-warning esh-catalog-alert" role="alert" [hidden]="!errorReceived">
+        @* <div class="alert alert-warning esh-catalog-alert" role="alert" [hidden]="!errorReceived">
             Error requesting catalog products, please try later on
-        </div>
-        <div class="esh-catalog-filters-wrapper d-flex align-items-end  mt-3">
+        </div> *@
+        <div class="esh-catalog-filters-wrapper d-flex align-items-end mt-3">
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="brand">Brand</label>
-                <select class="esh-catalog-filter form-control" id="brand" (change)="onBrandFilterChanged($event, $event.target.value)">
-                    <option *ngFor="let brand of brands" [value]="brand.id">{{brand.brand}}</option>
+                <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChanged>
+                    @foreach (var brand in brands)
+                    {
+                        <option value=@brand.Id>@brand.Name</option>
+                    }
                 </select>
             </div>
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="type">Type</label>
-                <select class="esh-catalog-filter form-control" id="type" (change)="onTypeFilterChanged($event, $event.target.value)">
-                    <option *ngFor="let type of types" [value]="type.id">{{type.type}}</option>
+                <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChanged>
+                    @foreach (var type in types)
+                    {
+                        <option value=@type.Id>@type.Name</option>
+                    }
                 </select>
             </div>
-            <button 
-                type="button" 
-                class="btn btn-primary"
-                (click)="onFilterApplied($event)">Apply</button>
         </div>
     </div>
-</section> *@
+</section>
 
 <div class="container">
     @if (results != null)
@@ -39,7 +40,7 @@
             TotalCount="@results.Count"
             PageIndex="@results.PageIndex"
             PageCount="@results.PageCount"
-            OnClick="PageIndexChanged"/>
+            OnClick="OnPageIndexChanged"/>
 
         <div class="esh-catalog-items row">
             @foreach (var item in results.Data)
@@ -70,7 +71,7 @@
             TotalCount="@results.Count"
             PageIndex="@results.PageIndex"
             PageCount="@results.PageCount"
-            OnClick="PageIndexChanged"/>
+            OnClick="OnPageIndexChanged"/>
     }
     else
     {
@@ -80,25 +81,87 @@
 
 @code {
 
-    int pageIndex = 0;
-
     CatalogPage results;
+    IEnumerable<CatalogBrand> brands = Enumerable.Empty<CatalogBrand>();
+    IEnumerable<CatalogType> types = Enumerable.Empty<CatalogType>();
 
-    public async void PageIndexChanged(int newPageIndex)
+    int pageIndex = 0;
+    int brandId = -1;
+    int typeId = -1;
+
+    public async Task OnPageIndexChanged(int newPageIndex)
     {
         this.pageIndex = newPageIndex;
 
-        await RefreshItems();
+        await PopulateItems();
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        return RefreshItems();
+        await PopulateBrands();
+        await PopulateTypes();
+        await PopulateItems();
+
+        @* return Task.WhenAll(
+            PopulateBrands(),
+            PopulateItems()); *@
     }
 
-    private async Task RefreshItems()
+    private async Task OnBrandChanged(ChangeEventArgs e)
     {
-        results = await CatalogClient.GetPage(this.pageIndex);
+        this.brandId = int.Parse(e.Value.ToString());
+        this.pageIndex = 0;
+
+        PopulateItems();
+    }
+
+    private async Task OnTypeChanged(ChangeEventArgs e)
+    {
+        this.typeId = int.Parse(e.Value.ToString());
+        this.pageIndex = 0;
+
+        PopulateItems();
+    }
+
+    private async Task PopulateBrands()
+    {
+        var brands = new List<CatalogBrand>
+        {
+            new CatalogBrand { Id = -1, Name = "All" }
+        };
+
+        try
+        {
+            brands.AddRange(await CatalogClient.GetBrands());
+        }
+        catch
+        {
+        }
+
+        this.brands = brands;
+    }
+
+    private async Task PopulateTypes()
+    {
+        var types = new List<CatalogType>
+        {
+            new CatalogType { Id = -1, Name = "All" }
+        };
+
+        try
+        {
+            types.AddRange(await CatalogClient.GetTypes());
+        }
+        catch
+        {
+        }
+
+        this.types = types;
+    }
+
+    private async Task PopulateItems()
+    {
+        results = await CatalogClient.GetItems(this.brandId, this.typeId, this.pageIndex);
 
         StateHasChanged();
     }
