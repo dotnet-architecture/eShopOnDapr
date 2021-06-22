@@ -26,7 +26,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 
         [HttpPost("UserCheckoutAccepted")]
         [Topic(DaprPubSubName, "UserCheckoutAcceptedIntegrationEvent")]
-        public async Task Handle(UserCheckoutAcceptedIntegrationEvent integrationEvent)
+        public async Task HandleAsync(UserCheckoutAcceptedIntegrationEvent integrationEvent)
         {
             if (integrationEvent.RequestId != Guid.Empty)
             {
@@ -45,7 +45,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 
         [HttpPost("OrderStockConfirmed")]
         [Topic(DaprPubSubName, "OrderStockConfirmedIntegrationEvent")]
-        public Task Handle(OrderStockConfirmedIntegrationEvent integrationEvent)
+        public Task HandleAsync(OrderStockConfirmedIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)
                 .NotifyStockConfirmedAsync();
@@ -53,7 +53,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 
         [HttpPost("OrderStockRejected")]
         [Topic(DaprPubSubName, "OrderStockRejectedIntegrationEvent")]
-        public Task Handle(OrderStockRejectedIntegrationEvent integrationEvent)
+        public Task HandleAsync(OrderStockRejectedIntegrationEvent integrationEvent)
         {
             var outOfStockItems = integrationEvent.OrderStockItems
                 .FindAll(c => !c.HasStock)
@@ -66,7 +66,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 
         [HttpPost("OrderPaymentSucceeded")]
         [Topic(DaprPubSubName, "OrderPaymentSucceededIntegrationEvent")]
-        public Task Handle(OrderPaymentSucceededIntegrationEvent integrationEvent)
+        public Task HandleAsync(OrderPaymentSucceededIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)
                 .NotifyPaymentSucceededAsync();
@@ -74,7 +74,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
 
         [HttpPost("OrderPaymentFailed")]
         [Topic(DaprPubSubName, "OrderPaymentFailedIntegrationEvent")]
-        public Task Handle(OrderPaymentFailedIntegrationEvent integrationEvent)
+        public Task HandleAsync(OrderPaymentFailedIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)
                 .NotifyPaymentFailedAsync();
