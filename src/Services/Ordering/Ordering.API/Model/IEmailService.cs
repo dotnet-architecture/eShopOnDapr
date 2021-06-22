@@ -4,6 +4,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
 {
     public interface IEmailService
     {
-        Task SendOrderConfirmation(Order order);
+        Task SendOrderConfirmationAsync(Order order);
     }
 }

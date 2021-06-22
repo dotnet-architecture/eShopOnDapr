@@ -21,7 +21,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Servi
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendOrderConfirmation(Order order)
+        public Task SendOrderConfirmationAsync(Order order)
         {
             _logger.LogInformation("Sending order confirmation email for order {OrderId} to {UserName}.",
                 order.Id, order.BuyerName);
