@@ -40,7 +40,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
                 var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
-                result = await orderingProcessActor.Cancel();
+                result = await orderingProcessActor.CancelAsync();
             }
 
             if (!result)
@@ -62,7 +62,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
             {
                 var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
-                result = await orderingProcessActor.Ship();
+                result = await orderingProcessActor.ShipAsync();
             }
 
             if (!result)

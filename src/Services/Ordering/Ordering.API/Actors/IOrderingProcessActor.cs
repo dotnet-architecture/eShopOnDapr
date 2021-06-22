@@ -7,20 +7,21 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 {
     public interface IOrderingProcessActor : IActor
     {
-        Task Submit(string userId, string userName, string street, string city,
+        Task SubmitAsync(
+            string userId, string userName, string street, string city,
             string zipCode, string state, string country, CustomerBasket basket);
 
-        Task NotifyStockConfirmed();
+        Task NotifyStockConfirmedAsync();
 
-        Task NotifyStockRejected(List<int> rejectedProductIds);
+        Task NotifyStockRejectedAsync(List<int> rejectedProductIds);
 
-        Task NotifyPaymentSucceeded();
+        Task NotifyPaymentSucceededAsync();
 
-        Task NotifyPaymentFailed();
+        Task NotifyPaymentFailedAsync();
 
-        Task<bool> Cancel();
+        Task<bool> CancelAsync();
 
-        Task<bool> Ship();
+        Task<bool> ShipAsync();
 
         Task<Order> GetOrderDetails();
     }

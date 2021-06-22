@@ -41,7 +41,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         private Guid OrderId => Guid.Parse(Id.GetId());
 
-        public async Task Submit(string userId, string userName, string street, string city,
+        public async Task SubmitAsync(
+            string userId, string userName, string street, string city,
             string zipCode, string state, string country, CustomerBasket basket)
         {
             var order = new Order
@@ -86,7 +87,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 userName));
         }
 
-        public async Task NotifyStockConfirmed()
+        public async Task NotifyStockConfirmedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Validated);
             if (statusChanged)
@@ -100,7 +101,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }            
         }
 
-        public async Task NotifyStockRejected(List<int> rejectedProductIds)
+        public async Task NotifyStockRejectedAsync(List<int> rejectedProductIds)
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Cancelled);
             if (statusChanged)
@@ -116,7 +117,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task NotifyPaymentSucceeded()
+        public async Task NotifyPaymentSucceededAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
@@ -130,7 +131,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task NotifyPaymentFailed()
+        public async Task NotifyPaymentFailedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
@@ -144,7 +145,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task<bool> Cancel()
+        public async Task<bool> CancelAsync()
         {
             var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
             if (!orderStatus.HasValue)
@@ -176,7 +177,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             return true;
         }
 
-        public async Task<bool> Ship()
+        public async Task<bool> ShipAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Paid, OrderStatus.Shipped);
             if (statusChanged)
