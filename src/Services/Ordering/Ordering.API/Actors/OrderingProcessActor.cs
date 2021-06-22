@@ -202,22 +202,23 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
         {
-            _logger.LogInformation("Received {Actor}[{ActorId}] reminder: {Reminder}",
+            _logger.LogInformation(
+                "Received {Actor}[{ActorId}] reminder: {Reminder}",
                 nameof(OrderingProcessActor), OrderId, reminderName);
 
             return reminderName switch
             {
-                GracePeriodElapsedReminder => OnGracePeriodElapsed(),
-                StockConfirmedReminder => OnStockConfirmedSimulatedWorkDone(),
-                StockRejectedReminder => OnStockRejectedSimulatedWorkDone(
+                GracePeriodElapsedReminder => OnGracePeriodElapsedAsync(),
+                StockConfirmedReminder => OnStockConfirmedSimulatedWorkDoneAsync(),
+                StockRejectedReminder => OnStockRejectedSimulatedWorkDoneAsync(
                     JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state))),
-                PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDone(),
-                PaymentFailedReminder => OnPaymentFailedSimulatedWorkDone(),
+                PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDoneAsync(),
+                PaymentFailedReminder => OnPaymentFailedSimulatedWorkDoneAsync(),
                 _ => Task.CompletedTask 
             };
         }
 
-        public async Task OnGracePeriodElapsed()
+        public async Task OnGracePeriodElapsedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Submitted, OrderStatus.AwaitingStockValidation);
             if (statusChanged)
@@ -234,7 +235,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task OnStockConfirmedSimulatedWorkDone()
+        public async Task OnStockConfirmedSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -246,7 +247,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 order.GetTotal()));
         }
 
-        public async Task OnStockRejectedSimulatedWorkDone(List<int> rejectedProductIds)
+        public async Task OnStockRejectedSimulatedWorkDoneAsync(List<int> rejectedProductIds)
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -263,7 +264,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 order.UserName));
         }
 
-        public async Task OnPaymentSucceededSimulatedWorkDone()
+        public async Task OnPaymentSucceededSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -276,7 +277,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                     .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
         }
 
-        public async Task OnPaymentFailedSimulatedWorkDone()
+        public async Task OnPaymentFailedSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
