@@ -202,23 +202,19 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
         {
-            _logger.LogInformation("Received {Actor}[{ActorId}] reminder: {Reminder}", nameof(OrderingProcessActor), OrderId, reminderName);
+            _logger.LogInformation("Received {Actor}[{ActorId}] reminder: {Reminder}",
+                nameof(OrderingProcessActor), OrderId, reminderName);
 
-            switch (reminderName)
+            return reminderName switch
             {
-                case GracePeriodElapsedReminder: return OnGracePeriodElapsed();
-                case StockConfirmedReminder: return OnStockConfirmedSimulatedWorkDone();
-                case StockRejectedReminder:
-                    {
-                        var rejectedProductIds = JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state));
-                        return OnStockRejectedSimulatedWorkDone(rejectedProductIds);
-                    }
-                case PaymentSucceededReminder: return OnPaymentSucceededSimulatedWorkDone();
-                case PaymentFailedReminder: return OnPaymentFailedSimulatedWorkDone();
-            }
-
-            _logger.LogError("Unknown actor reminder {ReminderName}", reminderName);
-            return Task.CompletedTask;
+                GracePeriodElapsedReminder => OnGracePeriodElapsed(),
+                StockConfirmedReminder => OnStockConfirmedSimulatedWorkDone(),
+                StockRejectedReminder => OnStockRejectedSimulatedWorkDone(
+                    JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state))),
+                PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDone(),
+                PaymentFailedReminder => OnPaymentFailedSimulatedWorkDone(),
+                _ => Task.CompletedTask 
+            };
         }
 
         public async Task OnGracePeriodElapsed()
