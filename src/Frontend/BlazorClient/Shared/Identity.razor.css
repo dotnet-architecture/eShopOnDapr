@@ -1,0 +1,50 @@
+.esh-identity {
+    position: relative;
+}
+
+.esh-identity-section {
+    width: 100%;
+}
+
+.esh-identity-name {
+    font-size: 0.875rem;
+    display: inline-block;
+}
+
+.esh-identity-name--upper {
+    text-transform: uppercase;
+}
+
+.esh-identity-image {
+    height: auto;
+    width: 1.5rem;
+}
+
+.esh-identity-drop {
+    background: #fff;
+    height: 0;
+    min-width: 10rem;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 2.5rem;
+    transition: height 0.35s;
+}
+
+.esh-identity:hover .esh-identity-drop {
+    height: 5rem;
+}
+
+.esh-identity-item {
+    color: #0d2092;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 2.5rem;
+    padding: 0 1rem;
+    transition: all 0.35s;
+}
+
+.esh-identity-item:hover {
+    background-color: #f3f4f3;
+    color: #292929;
+}

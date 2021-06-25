@@ -1,0 +1,109 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<div class="esh-identity">
+
+    <AuthorizeView>
+        <NotAuthorized>
+            <section class="esh-identity-section">
+                <div class="u-cursor-pointer pt-2 pb-2" @onclick=@Login>
+                    <div class="esh-identity-name d-flex align-items-center">LOGIN 
+                        <img class="esh-identity-image ml-2" src="/images/user.svg">
+                    </div>
+                </div>
+            </section>
+        </NotAuthorized>
+        <Authorized>
+            <section class="esh-identity-section u-cursor-pointer pt-2 pb-2">
+                <div class="esh-identity-name">@context.User.Identity.Name</div>
+                <img class="esh-identity-image ml-2" src="/images/user.svg">
+            </section>
+
+            <section class="esh-identity-drop">
+                <div class="esh-identity-item" [routerLink]="['orders']">
+                    <div class="esh-identity-name">My orders</div>
+                </div>
+
+                <div class="esh-identity-item" @onclick=@BeginSignOut>
+                    <div class="esh-identity-name">Log Out</div>
+                </div>
+            </section>
+        </Authorized>
+    </AuthorizeView>
+
+
+</div>
+
+@code {
+
+    bool authenticated;
+    string username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        @* this.subscription = this.service.authenticationChallenge$.subscribe(res => {
+            this.authenticated = res;
+            this.userName = this.service.UserData.email;
+        });
+
+        if (window.location.hash) {
+            this.service.AuthorizedCallback();
+        }
+
+        console.log('identity component, checking authorized' + this.service.IsAuthorized);
+        this.authenticated = this.service.IsAuthorized;
+
+        if (this.authenticated) {
+            if (this.service.UserData)
+                this.userName = this.service.UserData.email;
+        } *@
+    }
+
+    private async Task Login(MouseEventArgs args)
+    {
+//                    <a href="authentication/login">Log in</a>
+        Navigation.NavigateTo("authentication/login");
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+
+    @* private async Task PopulateBrands()
+    {
+        var brands = new List<CatalogBrand>
+        {
+            new CatalogBrand { Id = -1, Name = "All" }
+        };
+
+        try
+        {
+            brands.AddRange(await CatalogClient.GetBrands());
+        }
+        catch
+        {
+        }
+
+        this.brands = brands;
+    } *@
+
+    @* logoutClicked(event: any) {
+        event.preventDefault();
+        console.log('Logout clicked');
+        this.logout();
+    }
+
+    login() {
+        this.service.Authorize();
+    }
+
+    logout() {
+        this.signalrService.stop();
+        this.service.Logoff();
+    } *@
+}

@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using eShopOnDapr.BlazorClient.Basket
+
+@inject LocalBasket Basket;
+
+@* <a class="esh-basketstatus pt-2 pb-2"
+   [ngClass]="{'is-disabled': badge < 1}"
+   [routerLink]="['basket']"> *@
+
+<a class="esh-basketstatus pt-2 pb-2">
+    <div class="esh-basketstatus-image ml-4 mr-1">
+        <img src="/images/cart.svg" />
+    </div>
+    <div class="esh-basketstatus-badge">
+        @Basket.TotalItemCount
+    </div>
+</a>
+
+@code {
+
+    protected override Task OnInitializedAsync()
+    {
+        Basket.ItemsChanged += (s, e) => StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+}
