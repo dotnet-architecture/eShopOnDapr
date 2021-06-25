@@ -1,6 +1,7 @@
 ﻿@page "/"
+@using eShopOnDapr.BlazorClient.Basket
 @using eShopOnDapr.BlazorClient.Catalog
-@* @inject BasketClient BasketClient *@
+@inject BasketClient Basket
 @inject CatalogClient CatalogClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -13,7 +14,7 @@
         <div class="esh-catalog-filters-wrapper d-flex align-items-end mt-3">
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="brand">Brand</label>
-                <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChanged>
+                <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChangedAsync>
                     @foreach (var brand in brands)
                     {
                         <option value=@brand.Id>@brand.Name</option>
@@ -22,7 +23,7 @@
             </div>
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="type">Type</label>
-                <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChanged>
+                <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChangedAsync>
                     @foreach (var type in types)
                     {
                         <option value=@type.Id>@type.Name</option>
@@ -40,14 +41,13 @@
             TotalCount="@results.Count"
             PageIndex="@results.PageIndex"
             PageCount="@results.PageCount"
-            OnClick="OnPageIndexChanged"/>
+            OnClick="OnPageIndexChangedAsync"/>
 
         <div class="esh-catalog-items row">
             @foreach (var item in results.Data)
             {
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    @* <div class="esh-catalog-item': true, 'is-disabled': !authenticated }" (click)="addToCart(item)"> *@
-                    <div class="esh-catalog-item">
+                    <div class="esh-catalog-item" @onclick="@(e => AddToBasketAsync(item))">
                         <div class="esh-catalog-thumbnail-wrapper">
                             <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
                                 <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
@@ -71,7 +71,7 @@
             TotalCount="@results.Count"
             PageIndex="@results.PageIndex"
             PageCount="@results.PageCount"
-            OnClick="OnPageIndexChanged"/>
+            OnClick="OnPageIndexChangedAsync"/>
     }
     else
     {
@@ -89,41 +89,41 @@
     int brandId = -1;
     int typeId = -1;
 
-    public async Task OnPageIndexChanged(int newPageIndex)
+    public async Task OnPageIndexChangedAsync(int newPageIndex)
     {
         this.pageIndex = newPageIndex;
 
-        await PopulateItems();
+        await PopulateItemsAsync();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await PopulateBrands();
-        await PopulateTypes();
-        await PopulateItems();
+        await PopulateBrandsAsync();
+        await PopulateTypesAsync();
+        await PopulateItemsAsync();
 
         @* return Task.WhenAll(
             PopulateBrands(),
             PopulateItems()); *@
     }
 
-    private async Task OnBrandChanged(ChangeEventArgs e)
+    private async Task OnBrandChangedAsync(ChangeEventArgs e)
     {
         this.brandId = int.Parse(e.Value.ToString());
         this.pageIndex = 0;
 
-        PopulateItems();
+        await PopulateItemsAsync();
     }
 
-    private async Task OnTypeChanged(ChangeEventArgs e)
+    private async Task OnTypeChangedAsync(ChangeEventArgs e)
     {
         this.typeId = int.Parse(e.Value.ToString());
         this.pageIndex = 0;
 
-        PopulateItems();
+        await PopulateItemsAsync();
     }
 
-    private async Task PopulateBrands()
+    private async Task PopulateBrandsAsync()
     {
         var brands = new List<CatalogBrand>
         {
@@ -132,7 +132,7 @@
 
         try
         {
-            brands.AddRange(await CatalogClient.GetBrands());
+            brands.AddRange(await CatalogClient.GetBrandsAsync());
         }
         catch
         {
@@ -141,7 +141,7 @@
         this.brands = brands;
     }
 
-    private async Task PopulateTypes()
+    private async Task PopulateTypesAsync()
     {
         var types = new List<CatalogType>
         {
@@ -150,7 +150,7 @@
 
         try
         {
-            types.AddRange(await CatalogClient.GetTypes());
+            types.AddRange(await CatalogClient.GetTypesAsync());
         }
         catch
         {
@@ -159,16 +159,17 @@
         this.types = types;
     }
 
-    private async Task PopulateItems()
+    private async Task PopulateItemsAsync()
     {
-        results = await CatalogClient.GetItems(this.brandId, this.typeId, this.pageIndex);
+        results = await CatalogClient.GetItemsAsync(this.brandId, this.typeId, this.pageIndex);
 
         StateHasChanged();
     }
 
-    //async Task AddToBasket(CatalogItem item)
-    //{
-     //   await JS.Confirm("Ok, added to basket (not really)");
-    //}
-
+    // TODO Not async!
+    private Task AddToBasketAsync(CatalogItem item)
+    {
+        return Task.CompletedTask;
+        //        Basket.AddItem(item.Id);
+    }
 }

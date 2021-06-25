@@ -1,7 +1,7 @@
 @inherits LayoutComponentBase
 
 @* TODO Only add esh-app-header--expanded if current page is Index *@
-<header class="esh-app-header @((true == true) ? "esh-app-header--expanded" : "")">
+<header class="esh-app-header">
     <div class="esh-app-header-promo">
         <span class="esh-app-header-promo-title">All SUITS</span>
         <span class="esh-app-header-promo-subtitle">On sale this weekend</span>
@@ -15,8 +15,8 @@
             </section>
 
             <section class="d-flex align-content-center justify-content-between">
-                <esh-identity></esh-identity>
-                @* <esh-basket-status *ngIf="Authenticated"></esh-basket-status> *@
+                <BasketStatus></BasketStatus>
+                <Identity></Identity>
             </section>
         </article>
     </div>

@@ -53,6 +53,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
                         return BadRequest($"Basket refers to a non-existing catalog item ({bitem.ProductId})");
                     }
 
+                    // TODO Don't really need Id=bitem.Id
                     basket.Items.Add(new BasketDataItem()
                     {
                         Id = bitem.Id,

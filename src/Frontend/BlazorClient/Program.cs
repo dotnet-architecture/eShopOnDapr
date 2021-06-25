@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using eShopOnDapr.BlazorClient.Basket;
 using eShopOnDapr.BlazorClient.Catalog;
 
 namespace eShopOnDapr.BlazorClient
@@ -21,11 +22,19 @@ namespace eShopOnDapr.BlazorClient
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             builder.Services.AddHttpClient<CatalogClient>(client => client.BaseAddress = new Uri("http://localhost:5202/c/api/v1/catalog/"));
+            builder.Services.AddHttpClient<BasketClient>(client => client.BaseAddress = new Uri("http://localhost:5202/b/api/v1/basket/"));
 
-            builder.Services.AddOidcAuthentication(options =>
+//            builder.Services.AddSingleton<StatefulBasket>(new StatefulBasket(new LocalStorageBasketStateProvider());
+
+            builder.Services.AddOidcAuthentication<ApplicationAuthenticationState>(options =>
             {
                 builder.Configuration.Bind("oidc", options.ProviderOptions);
             });
+
+            // Initialize shopping basket. TODO
+            //using var serviceProvider = builder.Services.BuildServiceProvider();
+            //var basketClient = serviceProvider.GetRequiredService<BasketClient>();
+            //await basketClient.InitializeAsync();
 
             await builder.Build().RunAsync();
         }

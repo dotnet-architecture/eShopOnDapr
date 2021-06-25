@@ -222,3 +222,45 @@ a, .btn-link {
     right: 0.75rem;
     top: 0.5rem;
 }
+
+/* Utilities */
+
+.u-text-uppercase {
+    text-transform: uppercase;
+}
+.u-cursor-pointer {
+    cursor: pointer;
+}
+.u-mb-4 {
+    margin-bottom: 4rem;
+}
+.u-mb-5 {
+    margin-bottom: 5rem;
+}
+.u-width-100 {
+    width: 100%;
+}
+.u-width-65 {
+    width: 65%;
+}
+.u-width-50 {
+    width: 50%;
+}
+.u-minwidth-unset {
+    min-width: unset !important;
+}
+.u-maxwidth-unset {
+    max-width: unset !important;
+}
+.u-background-brightest {
+    background-color: #fff;
+}
+.u-text-sm {
+    font-size: 0.875rem;
+}
+.u-text-lg {
+    font-size: 1.125rem;
+}
+.u-text-xl {
+    font-size: 1.25rem;
+}

@@ -74,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Envoy", "Envoy", "{589088F3
 		src\ApiGateways\Envoy\envoy.yaml = src\ApiGateways\Envoy\envoy.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorClient", "src\Frontend\BlazorClient\BlazorClient.csproj", "{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,10 @@ Global
 		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{250B824E-6A72-4D6E-8287-CC73F40410E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

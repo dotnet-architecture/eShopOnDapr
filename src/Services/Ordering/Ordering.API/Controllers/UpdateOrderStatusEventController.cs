@@ -55,7 +55,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             // Send a confirmation e-mail if enabled.
             if (settings.Value.SendConfirmationEmail)
             {
-                await emailService.SendOrderConfirmation(readModelOrder);
+                await emailService.SendOrderConfirmationAsync(readModelOrder);
             }
         }
 
