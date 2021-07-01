@@ -2,7 +2,7 @@
 
 namespace eShopOnDapr.BlazorClient.Basket
 {
-    public class CustomerBasket
+    public class CustomerBasket2
     {
         public string BuyerId { get; set; }
 

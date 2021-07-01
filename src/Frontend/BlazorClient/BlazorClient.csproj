@@ -5,7 +5,9 @@
     <RootNamespace>eShopOnDapr.BlazorClient</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'BlazorClient' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'BlazorClient' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
@@ -14,4 +16,14 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\images\delete.svg" />
+    <Content Remove="wwwroot\images\minus.svg" />
+    <Content Remove="wwwroot\images\plus.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\images\delete.svg" />
+    <None Include="wwwroot\images\minus.svg" />
+    <None Include="wwwroot\images\plus.svg" />
+  </ItemGroup>
 </Project>

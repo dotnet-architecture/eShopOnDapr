@@ -1,116 +1,60 @@
-.esh-catalog-title {
-    position: relative;
-    top: 74.2857142857px;
-}
-
-.esh-catalog-filters {
-    height: 65px;
-}
-
-.esh-catalog-filters-wrapper {
-    padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
-}
-
-.esh-catalog-filter-wrapper {
-    margin-right: 0.5rem;
-    position: relative;
-}
-
-.esh-catalog-filter-wrapper:after {
-    border-bottom: 1px solid #292929;
-    border-right: 1px solid #292929;
-    bottom: 1rem;
-    content: '';
-    height: 0.5rem;
-    pointer-events: none;
-    position: absolute;
-    right: 0.9rem;
-    transform: rotate(45deg);
-    width: 0.5rem;
-    z-index: 1;
-}
-
-.esh-catalog-filter {
-    appearance: none;
-    background-color: transparent;
-    border: solid 3px #292929;
-    border-radius: 0;
-    cursor: pointer;
-    margin-right: 1rem;
-    min-width: 140px;
-    outline-color: #292929;
-    padding-left: 0.5rem;
-    padding-right: 2rem;
-}
-
-.esh-catalog-filter option {
-    appearance: none;
-    border: unset;
-}
-
-.esh-catalog-filter option:hover {
-    background-color: #0d2092;
-    color: #fff;
-    cursor: pointer;
-}
-
-.esh-catalog-filter option:active {
-    background-color: #0d2092;
-    color: #fff;
-}
-
-.esh-catalog-filter option:focus {
-    background-color: #0d2092;
-    color: #fff;
-}
-
-.esh-catalog-filter option:current {
-    background-color: #0d2092;
-    color: #fff;
-}
-
-.esh-catalog-filter option:selected {
-    background-color: #0d2092;
-    color: #fff;
-}
-
-.esh-catalog-label {
-    display: inline-block;
-    font-size: 1rem;
-    margin-bottom: 0;
-    position: relative;
-    z-index: 0;
-}
-
-.esh-catalog-items {
-    margin-top: 1rem;
-}
-
-.esh-catalog-item {
-    cursor: pointer;
-    margin-bottom: 1.5rem;
-    width: 100%;
-}
-
-.esh-catalog-item:hover {
+.esh-basket-item {
     background-color: #fff;
+    margin-bottom: 1.5rem;
 }
 
-.esh-catalog-item:hover .esh-catalog-thumbnail-icon {
-    opacity: 1;
+.esh-basket-delete {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 2rem;
+    justify-content: center;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    transition: all 0.15s;
+    width: 2rem;
+    z-index: 20;
 }
 
-.esh-catalog-item.is-disabled {
-    background-color: unset;
+.esh-basket-delete:hover {
+    transform: scale(1.2);
+}
+
+.esh-basket-delete-svg {
+    height: auto;
+    width: 1.5rem;
+}
+
+.esh-basket-buttons {
+    width: 5rem;
+}
+
+.esh-basket-button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    height: 1.5rem;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.15s;
+    width: 1.5rem;
+    z-index: 20;
+}
+
+.esh-basket-button.is-disabled {
     cursor: default;
+    opacity: 0.3;
 }
 
-.esh-catalog-item.is-disabled .esh-catalog-thumbnail-icon {
-    display: none !important;
+.esh-basket-button-svg {
+    height: auto;
+    width: 1.5rem;
 }
 
-.esh-catalog-thumbnail-wrapper {
+.esh-basket-thumbnail-wrapper {
     background-color: #dbdede;
     height: 0;
     overflow: hidden;
@@ -118,54 +62,48 @@
     position: relative;
 }
 
-.esh-catalog-thumbnail-icon {
-    background-color: #0d2092;
-    border-radius: 50%;
-    height: 3.5rem;
-    left: 50%;
-    opacity: 0;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 3.5rem;
-    z-index: 20;
-    transition: all 0.35s;
-}
-
-.esh-catalog-thumbnail-icon-svg {
-    height: auto;
-    width: 1.5rem;
-}
-
-.esh-catalog-thumbnail {
+.esh-basket-thumbnail {
     height: 100%;
     left: 50%;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
     width: auto;
-    z-index: 10;
 }
 
-.esh-catalog-details {
-    height: 4rem;
-}
-
-.esh-catalog-name {
+.esh-basket-title {
     font-size: 1rem;
+    line-height: 3rem;
+    padding: 0 1rem;
     text-transform: uppercase;
 }
 
-.esh-catalog-price {
+.esh-basket-description {
+    min-height: 3rem;
+    padding: 0 1rem;
+}
+
+.esh-basket-quantity {
+    line-height: 1.5rem;
+    text-align: center;
+    width: 2rem;
+}
+
+.esh-basket-price {
     color: #0d2092;
-    font-size: 1rem;
+    width: 4rem;
 }
 
-.esh-catalog-price::before {
-    content: '$';
+.esh-basket-checkout {
+    background-color: #fff;
 }
 
-.esh-catalog-alert {
-    margin-top: 10px;
-    color: #fff;
+.esh-basket-checkout-title {
+    font-weight: 600;
+    text-align: center;
+}
+
+.esh-basket-input {
+    line-height: 1rem;
+    width: 100%;
 }

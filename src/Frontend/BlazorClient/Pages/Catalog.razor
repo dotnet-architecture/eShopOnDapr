@@ -1,10 +1,13 @@
 ﻿@page "/"
 @using eShopOnDapr.BlazorClient.Basket
 @using eShopOnDapr.BlazorClient.Catalog
-@inject BasketClient Basket
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject CustomerBasket _basket
 @inject CatalogClient CatalogClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject IAccessTokenProvider TokenProvider
 
 <section class="esh-catalog-filters">
     <div class="container">
@@ -47,7 +50,7 @@
             @foreach (var item in results.Data)
             {
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="esh-catalog-item" @onclick="@(e => AddToBasketAsync(item))">
+                    <div class="esh-catalog-item @(!_user.Identity.IsAuthenticated ? "is-disabled" : "")" @onclick="@(e => _basket.AddItemAsync(item))">
                         <div class="esh-catalog-thumbnail-wrapper">
                             <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
                                 <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
@@ -81,6 +84,8 @@
 
 @code {
 
+    // @(!_user.Identity.IsAuthenticated ? "is-disabled" : "")"
+
     CatalogPage results;
     IEnumerable<CatalogBrand> brands = Enumerable.Empty<CatalogBrand>();
     IEnumerable<CatalogType> types = Enumerable.Empty<CatalogType>();
@@ -88,16 +93,21 @@
     int pageIndex = 0;
     int brandId = -1;
     int typeId = -1;
+    private ClaimsPrincipal _user;
 
-    public async Task OnPageIndexChangedAsync(int newPageIndex)
-    {
-        this.pageIndex = newPageIndex;
-
-        await PopulateItemsAsync();
-    }
+    [CascadingParameter]
+    private Task<AuthenticationState> _authenticationStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await _authenticationStateTask;
+        _user = authenticationState.User;
+
+        Console.WriteLine("INIT CATALOG");
+        var token = await TokenProvider.RequestAccessToken();
+        @*if (token.TryGetToken(out IAccessTo))*@
+        Console.WriteLine("TOKEN: " + token.TryGetToken();
+
         await PopulateBrandsAsync();
         await PopulateTypesAsync();
         await PopulateItemsAsync();
@@ -106,6 +116,14 @@
             PopulateBrands(),
             PopulateItems()); *@
     }
+
+    public async Task OnPageIndexChangedAsync(int newPageIndex)
+    {
+        this.pageIndex = newPageIndex;
+
+        await PopulateItemsAsync();
+    }
+
 
     private async Task OnBrandChangedAsync(ChangeEventArgs e)
     {
@@ -164,12 +182,5 @@
         results = await CatalogClient.GetItemsAsync(this.brandId, this.typeId, this.pageIndex);
 
         StateHasChanged();
-    }
-
-    // TODO Not async!
-    private Task AddToBasketAsync(CatalogItem item)
-    {
-        return Task.CompletedTask;
-        //        Basket.AddItem(item.Id);
     }
 }

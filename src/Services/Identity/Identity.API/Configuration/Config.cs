@@ -66,6 +66,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                         "webshoppingagg",
                     },
 
+                    // TODO Probably not needed
                     AlwaysIncludeUserClaimsInIdToken = true
 
                 },

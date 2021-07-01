@@ -1,14 +1,11 @@
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
+using eShopOnDapr.BlazorClient.Basket;
+using eShopOnDapr.BlazorClient.Catalog;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using eShopOnDapr.BlazorClient.Basket;
-using eShopOnDapr.BlazorClient.Catalog;
 
 namespace eShopOnDapr.BlazorClient
 {
@@ -21,22 +18,34 @@ namespace eShopOnDapr.BlazorClient
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            builder.Services.AddHttpClient<CatalogClient>(client => client.BaseAddress = new Uri("http://localhost:5202/c/api/v1/catalog/"));
-            builder.Services.AddHttpClient<BasketClient>(client => client.BaseAddress = new Uri("http://localhost:5202/b/api/v1/basket/"));
+            builder.Services.AddTransient<ApiAuthorizationMessageHandler>();
 
-//            builder.Services.AddSingleton<StatefulBasket>(new StatefulBasket(new LocalStorageBasketStateProvider());
+            builder.Services.AddHttpClient<CatalogClient>(
+                client => client.BaseAddress = new Uri("http://localhost:5202/c/api/v1/catalog/"));
 
-            builder.Services.AddOidcAuthentication<ApplicationAuthenticationState>(options =>
+            builder.Services.AddHttpClient<ApiBasketClient>(
+                client => client.BaseAddress = new Uri("http://localhost:5202/b/api/v1/basket/"))
+                .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
+
+            builder.Services
+                .AddScoped<LocalStorageBasketClient>()
+                .AddScoped<CustomerBasket>();
+
+            builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("oidc", options.ProviderOptions);
+
+                options.ProviderOptions.DefaultScopes.Add("basket");
+
+                options.AuthenticationPaths.LogOutSucceededPath = "";
             });
 
-            // Initialize shopping basket. TODO
-            //using var serviceProvider = builder.Services.BuildServiceProvider();
-            //var basketClient = serviceProvider.GetRequiredService<BasketClient>();
-            //await basketClient.InitializeAsync();
+            var host = builder.Build();
 
-            await builder.Build().RunAsync();
+            var customerBasket = host.Services.GetRequiredService<CustomerBasket>();
+            await customerBasket.RefreshAsync();
+
+            await host.RunAsync();
         }
     }
 }

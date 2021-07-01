@@ -1,11 +1,5 @@
-:host {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-}
-
 .esh-app-header {
-    background: url('../images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);
+    background: url('/images/header.jpg') center -2.7rem no-repeat, linear-gradient(90deg, #7979ac 0%, #7979ac 35%, #0d2092 65%, #0d2092 100%);
     background-size: 94rem, auto;
     height: 13rem;
     padding-top: 2.25rem;
@@ -39,7 +33,7 @@
 
 .esh-app-header-promo-title {
     display: block;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, .7);
     font-size: 5rem;
     line-height: 5rem;
     word-wrap: none;

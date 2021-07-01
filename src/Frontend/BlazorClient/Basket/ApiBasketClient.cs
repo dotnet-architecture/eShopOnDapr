@@ -7,29 +7,39 @@ using System.Threading.Tasks;
 
 namespace eShopOnDapr.BlazorClient.Basket
 {
-    public class BasketClient
+    public class ApiBasketClient
     {
-        private readonly HttpClient httpClient;
+        private readonly HttpClient _httpClient;
 
-        public BasketClient(HttpClient httpClient)
+        public ApiBasketClient(HttpClient httpClient)
         {
-            this.httpClient = httpClient;
+            _httpClient = httpClient;
         }
 
-        public async Task InitializeAsync()
+        public async Task<IEnumerable<BasketItem>> LoadItemsAsync(string buyerId)
         {
-            Console.WriteLine("BasketClient.InitializeAsync");
+            Console.WriteLine("BASKET::LOAD (AUTH)");
 
-            await httpClient.GetFromJsonAsync<IEnumerable<BasketItem>>(string.Empty);
+            var basket = await _httpClient.GetFromJsonAsync<CustomerBasket2>(
+                buyerId);
+
+            return basket.Items;
         }
 
-        public async Task<Basket> SetBasket<Basket>(Basket basket)
+        public async Task SaveItemsAsync(
+            string buyerId, IEnumerable<BasketItem> items)
         {
-            var response = await httpClient.PostAsJsonAsync(string.Empty, basket);
+            var request = new CustomerBasket2
+            {
+                BuyerId = buyerId,
+                Items = items.ToList()
+            };
+
+            var response = await _httpClient.PostAsJsonAsync(string.Empty, request);
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<Basket>();
+//            return await response.Content.ReadFromJsonAsync<Basket>();
         }
     }
 }

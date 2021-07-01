@@ -1,49 +1,10 @@
 @page "/authentication/{action}"
-
-@using eShopOnDapr.BlazorClient
-@using eShopOnDapr.BlazorClient.Basket
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@inject BasketClient Basket
-@inject IJSRuntime JS
+<RemoteAuthenticatorView Action="@Action" />
 
-<RemoteAuthenticatorViewCore Action="@Action"
-                         TAuthenticationState="eShopOnDapr.BlazorClient.ApplicationAuthenticationState"
-                         AuthenticationState="AuthenticationState"
-                         OnLogInSucceeded="RestoreState"
-                         OnLogOutSucceeded="RestoreState" />
+@code {
 
-@code{
-    [Parameter] public string Action { get; set; }
-
-    public ApplicationAuthenticationState AuthenticationState { get; set; } = new();
-
-    protected async override Task OnInitializedAsync()
-    {
-        // TODO Only login?
-        if (RemoteAuthenticationActions.IsAction(RemoteAuthenticationActions.LogIn, Action)
-            || RemoteAuthenticationActions.IsAction(RemoteAuthenticationActions.LogOut, Action))
-        {
-            AuthenticationState.Id = Guid.NewGuid().ToString();
-
-            await JS.InvokeVoidAsync("sessionStorage.setItem",
-                AuthenticationState.Id, "foo");
-        }
-    }
-
-    private async Task RestoreState(ApplicationAuthenticationState state)
-    {
-        if (state.Id != null)
-        {
-            var locallyStoredState = await JS.InvokeAsync<string>(
-                "sessionStorage.getItem", state.Id);
-
-            if (locallyStoredState != null)
-            {
-                Console.WriteLine("Restored state: " + locallyStoredState);
-                //State.SetStateFromLocalStorage(locallyStoredState);
-                await JS.InvokeVoidAsync("sessionStorage.removeItem", state.Id);
-            }
-        }
-    }
+    [Parameter]
+    public string Action { get; set; }
 }

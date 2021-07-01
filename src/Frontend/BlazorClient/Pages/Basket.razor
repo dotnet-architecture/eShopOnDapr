@@ -1,168 +1,87 @@
-﻿@page "/"
+﻿@page "/basket"
 @using eShopOnDapr.BlazorClient.Basket
 @using eShopOnDapr.BlazorClient.Catalog
-@inject CustomerBasket _basket
-@inject CatalogClient CatalogClient
-@inject NavigationManager NavigationManager
-@inject IJSRuntime JS
+@inject CustomerBasket CustomerBasket
 
-<section class="esh-catalog-filters">
+<div class="esh-basket">
     <div class="container">
-        @* <div class="alert alert-warning esh-catalog-alert" role="alert" [hidden]="!errorReceived">
-            Error requesting catalog products, please try later on
-        </div> *@
-        <div class="esh-catalog-filters-wrapper d-flex align-items-end mt-3">
-            <div class="esh-catalog-filter-wrapper">
-                <label class="esh-catalog-label" for="brand">Brand</label>
-                <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChangedAsync>
-                    @foreach (var brand in brands)
-                    {
-                        <option value=@brand.Id>@brand.Name</option>
-                    }
-                </select>
+        <h1 class="mb-4 mt-5">[ Shopping Bag ]</h1>
+        <div *ngFor="let errorMessage of errorMessages">
+            <div class="esh-basket-items-margin-left1 row">
+                <div class="alert alert-warning" role="alert">&nbsp;{{errorMessage}}</div>
             </div>
-            <div class="esh-catalog-filter-wrapper">
-                <label class="esh-catalog-label" for="type">Type</label>
-                <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChangedAsync>
-                    @foreach (var type in types)
+        </div>
+
+        <div class="row">
+            <div class="col-6 col-md-8 col-lg-9">
+                <div class="esh-basket-items row">
+                    @foreach (var item in CustomerBasket.Items)
                     {
-                        <option value=@type.Id>@type.Name</option>
-                    }
-                </select>
+        <div class="col-12 col-md-6 col-lg-4">
+            <article class="esh-basket-item">
+                <div class="esh-basket-thumbnail-wrapper">
+                    <div class="esh-basket-delete" @onclick="@(() => CustomerBasket.RemoveItemAsync(item))">
+                        <img class="esh-basket-delete-svg" src="images/delete.svg" />
+                    </div>
+                    <img class="esh-basket-thumbnail" src="@item.PictureUrl" />
+                </div>
+                <div class="esh-basket-title">@item.ProductName</div>
+                <div class="esh-basket-description divider d-flex align-items-center justify-content-between">
+                    <div class="">$ @item.UnitPrice</div>
+                    <div class="esh-basket-buttons d-flex justify-content-center">
+                        <button class="esh-basket-button @(item.Quantity == 1 ? "is-disabled" : "")"
+                                @onclick="@(() => CustomerBasket.SetItemQuantityAsync(item, item.Quantity - 1))">
+                            <img class="esh-basket-button-svg"
+                                 src="images/minus.svg" />
+                        </button>
+                        <div class="esh-basket-quantity">@item.Quantity</div>
+                        <button class="esh-basket-button"
+                                @onclick="@(() => CustomerBasket.SetItemQuantityAsync(item, item.Quantity + 1))">
+                            <img class="esh-basket-button-svg"
+                                 src="images/plus.svg" />
+                        </button>
+                    </div>
+                    <div class="esh-basket-price text-right">$ @CustomerBasket.GetFormattedTotalPrice()</div>
+                </div>
+                @if (item.OldUnitPrice > 0)
+                {
+                    <div class="">
+                        &nbsp;Note that the price of this article changed in our Catalog. The old price when you originally added it to the basket was $ {{item.oldUnitPrice}}
+                    </div>
+                }
+            </article>
+        </div>}
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="esh-basket-checkout p-4">
+                    <h2 class="esh-basket-checkout-title">Your shopping bag</h2>
+                    <div class="mb-3 u-text-sm">(@CustomerBasket.TotalItemCount items)</div>
+
+                    <div class="d-flex justify-content-between align-items-center font-weight-bolder">
+                        <div>TOTAL</div>
+                        <div>$ @CustomerBasket.GetFormattedTotalPrice()</div>
+                    </div>
+                </div>
+
+                <div class="divider u-background-brightest p-4">
+                    <div>
+                        <button class="btn btn-primary u-width-100 u-minwidth-unset" (click)="checkOut($event)">Checkout</button>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <NavLink class="btn btn-secondary u-width-100 u-minwidth-unset" href="/">Continue Shopping</NavLink>
+                </div>
             </div>
         </div>
     </div>
-</section>
-
-<div class="container">
-    @if (results?.Count > 0)
-    {
-        <Pager ItemCount="@results.Data.Count()"
-            TotalCount="@results.Count"
-            PageIndex="@results.PageIndex"
-            PageCount="@results.PageCount"
-            OnClick="OnPageIndexChangedAsync"/>
-
-        <div class="esh-catalog-items row">
-            @foreach (var item in results.Data)
-            {
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="esh-catalog-item" @onclick="@(e => _basket.AddItemAsync(item.Id))">
-                        <div class="esh-catalog-thumbnail-wrapper">
-                            <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
-                                <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
-                            </div>
-                            <img class="esh-catalog-thumbnail" src="@item.PictureUri" />
-                        </div>
-                        <div class="esh-catalog-details d-flex justify-content-between align-items-center">
-                            <div class="esh-catalog-name ml-3">
-                                <span>@item.Name</span>
-                            </div>
-                            <div class="esh-catalog-price mr-3">
-                                <span>@item.GetFormattedPrice()</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <Pager ItemCount="@results.Data.Count()"
-            TotalCount="@results.Count"
-            PageIndex="@results.PageIndex"
-            PageCount="@results.PageCount"
-            OnClick="OnPageIndexChangedAsync"/>
-    }
-    else
-    {
-        <span>THERE ARE NO RESULTS THAT MATCH YOUR SEARCH</span>
-    }
 </div>
+
 
 @code {
 
-    CatalogPage results;
-    IEnumerable<CatalogBrand> brands = Enumerable.Empty<CatalogBrand>();
-    IEnumerable<CatalogType> types = Enumerable.Empty<CatalogType>();
-
-    int pageIndex = 0;
-    int brandId = -1;
-    int typeId = -1;
-
-    public async Task OnPageIndexChangedAsync(int newPageIndex)
+    protected override void OnInitialized()
     {
-        this.pageIndex = newPageIndex;
-
-        await PopulateItemsAsync();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await PopulateBrandsAsync();
-        await PopulateTypesAsync();
-        await PopulateItemsAsync();
-
-        @* return Task.WhenAll(
-            PopulateBrands(),
-            PopulateItems()); *@
-    }
-
-    private async Task OnBrandChangedAsync(ChangeEventArgs e)
-    {
-        this.brandId = int.Parse(e.Value.ToString());
-        this.pageIndex = 0;
-
-        await PopulateItemsAsync();
-    }
-
-    private async Task OnTypeChangedAsync(ChangeEventArgs e)
-    {
-        this.typeId = int.Parse(e.Value.ToString());
-        this.pageIndex = 0;
-
-        await PopulateItemsAsync();
-    }
-
-    private async Task PopulateBrandsAsync()
-    {
-        var brands = new List<CatalogBrand>
-        {
-            new CatalogBrand { Id = -1, Name = "All" }
-        };
-
-        try
-        {
-            brands.AddRange(await CatalogClient.GetBrandsAsync());
-        }
-        catch
-        {
-        }
-
-        this.brands = brands;
-    }
-
-    private async Task PopulateTypesAsync()
-    {
-        var types = new List<CatalogType>
-        {
-            new CatalogType { Id = -1, Name = "All" }
-        };
-
-        try
-        {
-            types.AddRange(await CatalogClient.GetTypesAsync());
-        }
-        catch
-        {
-        }
-
-        this.types = types;
-    }
-
-    private async Task PopulateItemsAsync()
-    {
-        results = await CatalogClient.GetItemsAsync(this.brandId, this.typeId, this.pageIndex);
-
-        StateHasChanged();
+        CustomerBasket.ItemsChanged += (s, e) => StateHasChanged();
     }
 }

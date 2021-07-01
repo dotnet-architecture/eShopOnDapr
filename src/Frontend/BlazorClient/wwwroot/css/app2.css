@@ -247,3 +247,9 @@ h2 {
     font-weight: 400;
     text-transform: uppercase;
 }
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
