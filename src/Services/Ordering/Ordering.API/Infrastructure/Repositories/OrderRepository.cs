@@ -73,11 +73,5 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repos
                 })
                 .ToListAsync();
         }
-
-        public async Task<IEnumerable<CardType>> GetCardTypesAsync()
-        {
-            return await _orderingContext.CardTypes
-                .ToListAsync();
-        }
     }
 }
