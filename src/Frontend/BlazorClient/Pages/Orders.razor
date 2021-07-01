@@ -1,166 +1,51 @@
-﻿@page "/checkout"
+﻿@page "/orders"
 @attribute [Authorize]
-@inject UserInfo UserInfo  
+@inject UserInfo UserInfo
 @inject CustomerBasket UserBasket
 @inject NavigationManager NavigationManager
 
-<div class="container">
-    <h1 class="mb-4 mt-5">[ Checkout ]</h1>
-    @if (_error != null)
-    {
-        <div class="alert" role="alert">
-            Not possible to create a new order, please try later. @_error
+<div class="esh-orders">
+    <div class="container">
+        <h1 class="mb-4 mt-5">[ Order List ]</h1>
+        <div class="esh-orders-alert alert" role="alert" [hidden]="!errorReceived">
+            Error requesting order list, please try later on
         </div>
-    }
-    <EditForm Model="@_orderForm" OnValidSubmit="@OnValidSubmitAsync">
-        <DataAnnotationsValidator />
-        <section class="u-background-brightest p-5">
-            <h2 class="mb-4">Shipping Address</h2>
-            <div class="row">
-                <div class="col-6">
-                    <div class="form-group">
-                        <label>Address</label>
-                        <InputText @bind-Value="@_orderForm.Street"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="Address" />
-                        <ValidationMessage For="@(() => _orderForm.Street)" />
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <label>City</label>
-                        <InputText @bind-Value="@_orderForm.City"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="City" />
-                        <ValidationMessage For="@(() => _orderForm.City)" />
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <label>State</label>
-                        <InputText @bind-Value="@_orderForm.State"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="State" />
-                        <ValidationMessage For="@(() => _orderForm.State)" />
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <label>Country</label>
-                        <InputText @bind-Value="@_orderForm.Country"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="Country" />
-                        <ValidationMessage For="@(() => _orderForm.Country)" />
-                    </div>
-                </div>
-            </div>
-            <h2 class="mt-5 mb-4">Payment method</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Card number</label>
-                        <InputText @bind-Value="@_orderForm.CardNumber"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="000000000000000" />
-                        <ValidationMessage For="@(() => _orderForm.CardNumber)" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Cardholder name</label>
-                        <InputText @bind-Value="@_orderForm.CardHolderName"
-                                   class="form-control form-input w-100 u-maxwidth-unset"
-                                   placeholder="Card holder" />
-                        <ValidationMessage For="@(() => _orderForm.CardHolderName)" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Expiration date</label>
-                        <InputText @bind-Value="@_orderForm.CardExpirationDate"
-                                   class="form-control form-input w-50 u-maxwidth-unset"
-                                   placeholder="MM/YY" />
-                        <ValidationMessage For="@(() => _orderForm.CardExpirationDate)" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Security code</label>
-                        <InputText @bind-Value="@_orderForm.CardSecurityCode"
-                                   class="form-control form-input w-50 u-maxwidth-unset"
-                                   placeholder="000" />
-                        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
-                    </div>
-                </div>
-            </div>
 
-            <h2 class="mt-5 mb-4">Order details</h2>
-            @foreach (var item in UserBasket.Items)
-            {
-                <article class="divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
-                    <div class="esh-orders_new-thumbnail-container">
-                        <div class="esh-orders_new-thumbnail-wrapper">
-                            <img class="esh-orders_new-thumbnail" src="@item.PictureUrl">
-                        </div>
-                    </div>
-                    <div class="row w-100 ml-3">
-                        <div class="col-6">@item.ProductName</div>
-                        <div class="col-2">$ @item.GetFormattedPrice()</div>
-                        <div class="col-2">@item.Quantity</div>
-                        <div class="col-2 text-right">$ @item.GetFormattedTotalPrice()</div>
-                    </div>
-                </article>
-            }
+        <div class="esh-orders-wrapper">
+            <article class="esh-orders-titles row">
+                <section class="col-1"></section>
+                <section class="col-3">Date</section>
+                <section class="col-2">Total</section>
+                <section class="col-2">Status</section>
+                <section class="col-2"></section>
+                <section class="col-2"></section>
+            </article>
 
-            <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
-                <div>Total</div>
-                <div class="ml-3">$ @UserBasket.GetFormattedTotalPrice()</div>
-            </div>
+            <article class="esh-orders-item divider row"
+                     *ngFor="let order of orders">
+                <section class="col-1">{{order.ordernumber}}</section>
+                <section class="col-3">{{order.date | date:'short'}}</section>
+                <section class="col-2">${{order.total}}</section>
+                <section class="col-2">{{order.status}}</section>
+                <section class="col-2">
+                    <a *ngIf="order.status === 'Submitted'" (click)="cancelOrder(order.ordernumber)" class="esh-orders-link u-cursor-pointer">Cancel</a>
+                </section>
+                <section class="col-2">
+                    <a class="esh-orders-link" routerLink="/orders/{{order.ordernumber}}">Details</a>
+                </section>
+            </article>
 
-            <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">
-                <a class="btn btn-secondary" href="/basket">Back to basket</a>
-
-                <button class="btn btn-primary ml-3" [disabled]="!newOrderForm.valid || isOrderProcessing" type="submit">Place Order</button>
-            </div>
-        </section>
-    </EditForm>
+            <aside class="d-flex justify-content-end mt-5 pr-5">
+                <a class="btn btn-secondary" routerLink="/catalog">Continue Shopping</a>
+            </aside>
+        </div>
+    </div>
 </div>
 
 @code {
 
-    private OrderForm _orderForm;
-    private string _error;
-
     protected override void OnInitialized()
     {
-        _orderForm = new OrderForm
-        {
-            Email = UserInfo.Email,
-            Street = UserInfo.Street,
-            City = UserInfo.City,
-            State = UserInfo.State,
-            Country = UserInfo.Country,
-            CardNumber = UserInfo.CardNumber,
-            CardHolderName = UserInfo.CardHolderName,
-            CardExpirationDate = UserInfo.CardExpirationDate,
-            CardSecurityCode = UserInfo.CardSecurityNumber
-        };
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        Console.WriteLine("Submit!!: " + _orderForm.Email);
-
-        try
-        {
-            await UserBasket.CheckoutAsync(_orderForm);
-
-            NavigationManager.NavigateTo("/");
-        }
-        catch (Exception ex)
-        {
-            _error = ex.Message;
-        }
     }
 
 }

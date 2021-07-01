@@ -8,8 +8,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
     public interface IOrderingProcessActor : IActor
     {
         Task SubmitAsync(
-            string userId, string userName, string street, string city,
-            string zipCode, string state, string country, CustomerBasket basket);
+            string buyerId, string buyerEmail, string street, string city, string state,
+            string country, CustomerBasket basket);
 
         Task NotifyStockConfirmedAsync();
 

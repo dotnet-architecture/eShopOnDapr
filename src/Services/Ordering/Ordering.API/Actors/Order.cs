@@ -10,8 +10,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
         public OrderStatus OrderStatus { get; set; }
         public string Description { get; set; }
         public OrderAddress Address { get; set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
+        public string BuyerId { get; set; }
+        public string BuyerEmail { get; set; }
         public List<OrderItem> OrderItems { get; set; }
 
         public decimal GetTotal()

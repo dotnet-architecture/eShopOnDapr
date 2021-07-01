@@ -9,21 +9,21 @@
         public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
         public string Description { get; set; }
-        public string BuyerName { get; set; }
         public IEnumerable<OrderStockItem> OrderStockItems { get; set; }
+        public string BuyerId { get; set; }
 
         public OrderStatusChangedToPaidIntegrationEvent()
         {
         }
 
         public OrderStatusChangedToPaidIntegrationEvent(Guid orderId, string orderStatus,
-            string description, string buyerName, IEnumerable<OrderStockItem> orderStockItems)
+            string description, IEnumerable<OrderStockItem> orderStockItems, string buyerId)
         {
             OrderId = orderId;
             Description = description;
             OrderStatus = orderStatus;
-            BuyerName = buyerName;
             OrderStockItems = orderStockItems;
+            BuyerId = buyerId;
         }
     }
 }

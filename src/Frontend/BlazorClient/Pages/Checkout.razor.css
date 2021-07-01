@@ -1,0 +1,34 @@
+.esh-orders_new-titles {
+    padding-bottom: 1rem;
+    padding-top: 2rem;
+}
+
+.esh-orders_new-item {
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.esh-orders_new-thumbnail-container {
+    width: 10rem;
+}
+
+.esh-orders_new-thumbnail-wrapper {
+    background-color: #dbdede;
+    height: 0;
+    overflow: hidden;
+    padding-top: 100%;
+    position: relative;
+}
+
+.esh-orders_new-thumbnail {
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+}
+
+.esh-orders_new-buttons {
+    margin-top: 5rem;
+}

@@ -42,20 +42,19 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
         private Guid OrderId => Guid.Parse(Id.GetId());
 
         public async Task SubmitAsync(
-            string userId, string userName, string street, string city,
-            string zipCode, string state, string country, CustomerBasket basket)
+            string buyerId, string buyerEmail, string street, string city, string state,
+            string country, CustomerBasket basket)
         {
             var order = new Order
             {
                 OrderDate = DateTime.UtcNow,
                 OrderStatus = OrderStatus.Submitted,
-                UserId = userId,
-                UserName = userName,
+                BuyerId = buyerId,
+                BuyerEmail = buyerEmail,
                 Address = new OrderAddress
                 {
                     Street = street,
                     City = city,
-                    ZipCode = zipCode,
                     State = state,
                     Country = country
                 },
@@ -83,8 +82,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             await _eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(
                 OrderId,
                 OrderStatus.Submitted.Name,
-                userId,
-                userName));
+                buyerId,
+                buyerEmail));
         }
 
         public async Task NotifyStockConfirmedAsync()
@@ -172,7 +171,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 $"The order was cancelled by buyer.",
-                order.UserName));
+                order.BuyerId));
 
             return true;
         }
@@ -188,7 +187,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                     OrderId,
                     OrderStatus.Shipped.Name,
                     "The order was shipped.",
-                    order.UserName));
+                    order.BuyerId));
 
                 return true;
             }
@@ -230,9 +229,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                     OrderId,
                     OrderStatus.AwaitingStockValidation.Name,
                     "Grace period elapsed; waiting for stock validation.",
-                    order.UserName,
                     order.OrderItems
-                        .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
+                        .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units)),
+                    order.BuyerId));
             }
         }
 
@@ -244,8 +243,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Validated.Name,
                 "All the items were confirmed with available stock.",
-                order.UserName,
-                order.GetTotal()));
+                order.GetTotal(),
+                order.BuyerId));
         }
 
         public async Task OnStockRejectedSimulatedWorkDoneAsync(List<int> rejectedProductIds)
@@ -262,7 +261,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 $"The following product items don't have stock: ({rejectedDescription}).",
-                order.UserName));
+                order.BuyerId));
         }
 
         public async Task OnPaymentSucceededSimulatedWorkDoneAsync()
@@ -273,9 +272,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Paid.Name,
                 "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"",
-                order.UserName,
                 order.OrderItems
-                    .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
+                    .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units)),
+                order.BuyerId));
         }
 
         public async Task OnPaymentFailedSimulatedWorkDoneAsync()
@@ -286,7 +285,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 "The order was cancelled because payment failed.",
-                order.UserName));
+                order.BuyerId));
         }
 
         protected override async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)

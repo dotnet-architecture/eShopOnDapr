@@ -19,6 +19,7 @@ COPY ["src/Services/Ordering/Ordering.API/Ordering.API.csproj", "src/Services/Or
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
 COPY ["src/Web/WebSPA/WebSPA.csproj", "src/Web/WebSPA/"]
 COPY ["src/Web/WebStatus/WebStatus.csproj", "src/Web/WebStatus/"]
+COPY ["src/Frontend/BlazorClient/BlazorClient.csproj", "src/Frontend/BlazorClient/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
 

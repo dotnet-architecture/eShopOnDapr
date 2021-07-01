@@ -18,5 +18,6 @@ namespace eShopOnDapr.BlazorClient.Basket
         public string PictureUrl { get; set; }
 
         public string GetFormattedPrice() => UnitPrice.ToString("0.00");
+        public string GetFormattedTotalPrice() => (UnitPrice * Quantity).ToString("0.00");
     }
 }

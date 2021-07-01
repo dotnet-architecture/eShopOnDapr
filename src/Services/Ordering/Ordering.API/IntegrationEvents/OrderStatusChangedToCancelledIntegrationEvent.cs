@@ -8,19 +8,19 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
         public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
         public string Description { get; set; }
-        public string BuyerName { get; set; }
+        public string BuyerId { get; set; }
 
         public OrderStatusChangedToCancelledIntegrationEvent()
         {
         }
 
         public OrderStatusChangedToCancelledIntegrationEvent(Guid orderId, string orderStatus,
-            string description, string buyerName)
+            string description, string buyerId)
         {
             OrderId = orderId;
             OrderStatus = orderStatus;
             Description = description;
-            BuyerName = buyerName;
+            BuyerId = buyerId;
         }
     }
 }

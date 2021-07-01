@@ -8,6 +8,5 @@ namespace Basket.API.IntegrationEvents.Events
         public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
         public string BuyerId { get; set; }
-        public string BuyerName { get; set; }
     }
 }

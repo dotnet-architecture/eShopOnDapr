@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using eShopOnDapr.BlazorClient.Ordering;
 
 namespace eShopOnDapr.BlazorClient.Basket
 {
@@ -26,6 +27,14 @@ namespace eShopOnDapr.BlazorClient.Basket
             return basket.Items;
         }
 
+        public async Task<IEnumerable<BasketItem>> GetItemsAsync(string buyerId)
+        {
+            var basket = await _httpClient.GetFromJsonAsync<CustomerBasket2>(
+                buyerId);
+
+            return basket.Items;
+        }
+
         public async Task SaveItemsAsync(
             string buyerId, IEnumerable<BasketItem> items)
         {
@@ -40,6 +49,13 @@ namespace eShopOnDapr.BlazorClient.Basket
             response.EnsureSuccessStatusCode();
 
 //            return await response.Content.ReadFromJsonAsync<Basket>();
+        }
+
+        public async Task CheckoutAsync(BasketCheckout basketCheckout)
+        {
+            var response = await _httpClient.PostAsJsonAsync("checkout", basketCheckout);
+
+            response.EnsureSuccessStatusCode();
         }
     }
 }

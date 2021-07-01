@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace eShopOnDapr.BlazorClient.Ordering
+namespace eShopOnDapr.BlazorClient
 {
     public class UserInfo
     {
@@ -18,7 +18,25 @@ namespace eShopOnDapr.BlazorClient.Ordering
                 ?? throw new ArgumentNullException(nameof(authenticationStateProvider));
         }
 
-        public string BuyerId => _claims?["sub"];
+        public string Id => _claims?["sub"];
+
+        public string Email => _claims?["email"];
+
+        public string City => _claims?["address_city"];
+
+        public string Country => _claims?["address_country"];
+
+        public string State => _claims?["address_state"];
+
+        public string Street => _claims?["address_street"];
+
+        public string CardNumber => _claims?["card_number"];
+
+        public string CardHolderName => _claims?["card_holder"];
+
+        public string CardExpirationDate => _claims?["card_expiration"];
+
+        public string CardSecurityNumber => _claims?["card_security_number"];
 
         public async Task LoadUserInfoAsync()
         {

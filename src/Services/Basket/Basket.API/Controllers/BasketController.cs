@@ -59,8 +59,11 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
         {
             var userId = _identityService.GetUserIdentity();
 
-            basketCheckout.RequestId = (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty) ?
-                guid : basketCheckout.RequestId;
+            // TODO Fix request id
+            requestId = Guid.NewGuid().ToString();
+            //basketCheckout.RequestId = Guid.Parse(requestId);
+            //.TryParse(requestId, out Guid guid) && guid != Guid.Empty) ?
+              //  guid : basketCheckout.RequestId;
 
             var basket = await _repository.GetBasketAsync(userId);
 
@@ -69,23 +72,18 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
                 return BadRequest();
             }
 
-            var userName = this.HttpContext.User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
-
             var eventMessage = new UserCheckoutAcceptedIntegrationEvent(
                 userId,
-                userName,
+                basketCheckout.UserEmail,
                 basketCheckout.City,
                 basketCheckout.Street,
                 basketCheckout.State,
                 basketCheckout.Country,
-                basketCheckout.ZipCode,
                 basketCheckout.CardNumber,
                 basketCheckout.CardHolderName,
                 basketCheckout.CardExpiration,
                 basketCheckout.CardSecurityNumber,
-                basketCheckout.CardTypeId,
-                basketCheckout.Buyer,
-                basketCheckout.RequestId,
+                Guid.NewGuid(),
                 basket);
 
             // Once basket is checkout, sends an integration event to

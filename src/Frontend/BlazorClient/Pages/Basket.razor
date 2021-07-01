@@ -1,7 +1,7 @@
 ﻿@page "/basket"
 @using eShopOnDapr.BlazorClient.Basket
-@using eShopOnDapr.BlazorClient.Catalog
 @inject CustomerBasket CustomerBasket
+@inject NavigationManager NavigationManager
 
 <div class="esh-basket">
     <div class="container">
@@ -45,10 +45,9 @@
                 </div>
                 @if (item.OldUnitPrice > 0)
                 {
-                    <div class="">
-                        &nbsp;Note that the price of this article changed in our Catalog. The old price when you originally added it to the basket was $ {{item.oldUnitPrice}}
-                    </div>
-                }
+<div class="">
+    &nbsp;Note that the price of this article changed in our Catalog. The old price when you originally added it to the basket was $ {{item.oldUnitPrice}}
+</div>                }
             </article>
         </div>}
                 </div>
@@ -66,7 +65,7 @@
 
                 <div class="divider u-background-brightest p-4">
                     <div>
-                        <button class="btn btn-primary u-width-100 u-minwidth-unset" (click)="checkOut($event)">Checkout</button>
+                        <button class="btn btn-primary u-width-100 u-minwidth-unset" @onclick=@Checkout>Checkout</button>
                     </div>
                 </div>
                 <div class="p-4">
@@ -83,5 +82,10 @@
     protected override void OnInitialized()
     {
         CustomerBasket.ItemsChanged += (s, e) => StateHasChanged();
+    }
+
+    private void Checkout()
+    {
+        NavigationManager.NavigateTo("checkout");
     }
 }

@@ -11,6 +11,5 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         Task<Order> AddOrGetOrderAsync(Order order);
         Task UpdateOrderAsync(Order order);
         Task<IEnumerable<OrderSummary>> GetOrdersFromBuyerAsync(string buyerId);
-        Task<IEnumerable<CardType>> GetCardTypesAsync();
     }
 }

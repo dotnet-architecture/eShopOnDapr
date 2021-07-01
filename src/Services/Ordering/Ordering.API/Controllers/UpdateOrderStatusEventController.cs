@@ -49,8 +49,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             readModelOrder = await _orderRepository.AddOrGetOrderAsync(readModelOrder);
 
             // Send a SignalR notification to the client.
-            await SendNotificationAsync(readModelOrder.OrderNumber, integrationEvent.OrderStatus,
-                integrationEvent.BuyerName);
+            await SendNotificationAsync(readModelOrder.OrderNumber, integrationEvent.OrderStatus, integrationEvent.BuyerId);
 
             // Send a confirmation e-mail if enabled.
             if (settings.Value.SendConfirmationEmail)
@@ -66,7 +65,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToValidated")]
@@ -76,7 +75,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToPaid")]
@@ -86,7 +85,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToShipped")]
@@ -96,7 +95,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToCancelled")]
@@ -106,11 +105,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         private async Task UpdateReadModelAndSendNotificationAsync(
-            Guid orderId, string orderStatus, string description, string buyerName)
+            Guid orderId, string orderStatus, string description, string buyerId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order != null)
@@ -119,15 +118,15 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
                 order.Description = description;
 
                 await _orderRepository.UpdateOrderAsync(order);
-                await SendNotificationAsync(order.OrderNumber, orderStatus, buyerName);
+                await SendNotificationAsync(order.OrderNumber, orderStatus, buyerId);
             }
         }
 
         private Task SendNotificationAsync(
-            int orderNumber, string orderStatus, string buyerName)
+            int orderNumber, string orderStatus, string buyerId)
         {
             return _hubContext.Clients
-                .Group(buyerName)
+                .Group(buyerId)
                 .SendAsync("UpdatedOrderState", new { OrderNumber = orderNumber, Status = orderStatus });
         }
     }

@@ -35,7 +35,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Reposit
 
             await state.SaveAsync();
 
-            _logger.LogInformation("Basket item persisted succesfully.");
+            _logger.LogInformation("Basket item persisted successfully.");
 
             return await GetBasketAsync(basket.BuyerId);
         }

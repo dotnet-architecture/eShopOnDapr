@@ -33,8 +33,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
                 var orderingProcess = GetOrderingProcessActor(integrationEvent.RequestId);
 
                 await orderingProcess.SubmitAsync(
-                    integrationEvent.UserId, integrationEvent.UserName,
-                    integrationEvent.Street, integrationEvent.City, integrationEvent.ZipCode,
+                    integrationEvent.UserId, integrationEvent.UserEmail, integrationEvent.Street, integrationEvent.City,
                     integrationEvent.State, integrationEvent.Country, integrationEvent.Basket);
             }
             else

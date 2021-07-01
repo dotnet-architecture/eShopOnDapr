@@ -105,9 +105,10 @@
 
         Console.WriteLine("INIT CATALOG");
         var token = await TokenProvider.RequestAccessToken();
-        @*if (token.TryGetToken(out IAccessTo))*@
-        Console.WriteLine("TOKEN: " + token.TryGetToken();
-
+        if (token.TryGetToken(out AccessToken t))
+        {
+            Console.WriteLine("TOKEN: " + t.Value);
+        }
         await PopulateBrandsAsync();
         await PopulateTypesAsync();
         await PopulateItemsAsync();

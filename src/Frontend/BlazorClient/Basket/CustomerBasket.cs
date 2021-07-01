@@ -3,25 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using eShopOnDapr.BlazorClient.Catalog;
+using eShopOnDapr.BlazorClient.Ordering;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace eShopOnDapr.BlazorClient.Basket
 {
+    // TODO Rename to UserBasket, remove auth state stuff
     public class CustomerBasket
     {
+        private readonly UserInfo _userInfo;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly ApiBasketClient _apiBasketClient;
         private string _buyerId;
 
         public CustomerBasket(
+            UserInfo userInfo,
             AuthenticationStateProvider authenticationStateProvider,
             ApiBasketClient apiBasketClient)
         {
+            _userInfo = userInfo ?? throw new ArgumentNullException(nameof(UserInfo));
             _authenticationStateProvider = authenticationStateProvider
                 ?? throw new ArgumentNullException(nameof(authenticationStateProvider));
             _apiBasketClient = apiBasketClient
                 ?? throw new ArgumentNullException(nameof(apiBasketClient));
 
+            // TODO Do this in global auth thingie
             authenticationStateProvider.AuthenticationStateChanged += async _ => await RefreshAsync();
 //                AuthenticationStateProvider_AuthenticationStateChanged;
         }
@@ -47,10 +54,19 @@ namespace eShopOnDapr.BlazorClient.Basket
             _buyerId = await GetBuyerIdAsync();
             if (_buyerId.Length > 0)
             {
-                Items = (await _apiBasketClient.LoadItemsAsync(_buyerId))
-                    .ToList();
+                Console.WriteLine("BuyerId: " + _buyerId);
 
-                OnItemsChanged(EventArgs.Empty);
+                try
+                {
+                    Items = (await _apiBasketClient.LoadItemsAsync(_buyerId))
+                        .ToList();
+
+                    OnItemsChanged(EventArgs.Empty);
+                }
+                catch (AccessTokenNotAvailableException)
+                {
+                    Console.WriteLine("AccessTokenNotAvailableException");
+                }
             }
         }
 
@@ -106,22 +122,42 @@ namespace eShopOnDapr.BlazorClient.Basket
             }
         }
 
+        public Task CheckoutAsync(OrderForm orderForm)
+        {
+            var basketCheckout = new BasketCheckout
+            {
+                UserEmail = orderForm.Email,
+                Street = orderForm.Street,
+                City = orderForm.City,
+                State = orderForm.State,
+                Country = orderForm.Country,
+                CardNumber = orderForm.CardNumber,
+                CardHolderName = orderForm.CardHolderName,
+                CardExpirationDate = CardExpirationDate.Parse(orderForm.CardExpirationDate),
+                CardSecurityCode = orderForm.CardSecurityCode
+            };
+
+            return _apiBasketClient.CheckoutAsync(basketCheckout);
+        }
+
         private async Task<string> GetBuyerIdAsync()
         {
-            var authenticationState =
-                await _authenticationStateProvider.GetAuthenticationStateAsync();
+            return _userInfo.Id ?? string.Empty;
 
-            if (authenticationState.User.Identity.IsAuthenticated)
-            {
-                var subjectClaim = authenticationState.User.Claims.FirstOrDefault(
-                    claim => claim.Type == "sub");
-                if (subjectClaim != null)
-                {
-                    return subjectClaim.Value;
-                }
-            }
+            //var authenticationState =
+            //    await _authenticationStateProvider.GetAuthenticationStateAsync();
 
-            return string.Empty;
+            //if (authenticationState.User.Identity.IsAuthenticated)
+            //{
+            //    var subjectClaim = authenticationState.User.Claims.FirstOrDefault(
+            //        claim => claim.Type == "sub");
+            //    if (subjectClaim != null)
+            //    {
+            //        return subjectClaim.Value;
+            //    }
+            //}
+
+            //return string.Empty;
         }
 
         private void OnItemsChanged(EventArgs e)

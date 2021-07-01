@@ -29,7 +29,8 @@ namespace eShopOnDapr.BlazorClient
 
             builder.Services
                 .AddScoped<LocalStorageBasketClient>()
-                .AddScoped<CustomerBasket>();
+                .AddScoped<CustomerBasket>()
+                .AddScoped<UserInfo>();
 
             builder.Services.AddOidcAuthentication(options =>
             {
@@ -41,6 +42,9 @@ namespace eShopOnDapr.BlazorClient
             });
 
             var host = builder.Build();
+
+            var userInfo = host.Services.GetRequiredService<UserInfo>();
+            await userInfo.LoadUserInfoAsync();
 
             var customerBasket = host.Services.GetRequiredService<CustomerBasket>();
             await customerBasket.RefreshAsync();

@@ -22,8 +22,14 @@
     <Content Remove="wwwroot\images\plus.svg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Ordering\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="wwwroot\images\delete.svg" />
     <None Include="wwwroot\images\minus.svg" />
     <None Include="wwwroot\images\plus.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ordering\" />
   </ItemGroup>
 </Project>
