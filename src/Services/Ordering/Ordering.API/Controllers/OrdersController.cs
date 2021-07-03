@@ -7,7 +7,9 @@ using Dapr.Actors;
 using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
+using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
 using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
@@ -18,13 +20,17 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
+        private readonly OrderingDbContext _context;
+
         private readonly IOrderRepository _orderRepository;
         private readonly IIdentityService _identityService;
 
         public OrdersController(
+            OrderingDbContext context,
             IOrderRepository orderRepository, 
             IIdentityService identityService)
         {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
@@ -79,36 +85,42 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult> GetOrderAsync(int orderNumber)
         {
-            try
-            {
-                var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
+            var buyerId = _identityService.GetUserIdentity();
 
-                return Ok(OrderDto.FromOrder(order));
-            }
-            catch
+            var order = await _context.Orders
+                .Where(o => o.BuyerId == buyerId && o.OrderNumber == orderNumber)
+                .Include(o => o.OrderItems)
+                .SingleOrDefaultAsync();
+
+            if (order != null)
             {
-                return NotFound();
+                return Ok(order);
             }
+
+            return NotFound();
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<OrderSummaryDto>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderSummaryDto>>> GetOrdersAsync()
+        [ProducesResponseType(typeof(IEnumerable<OrderSummary>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderSummary>>> GetOrdersAsync()
         {
             var buyerId = _identityService.GetUserIdentity();
-            var orders = await _orderRepository.GetOrdersFromBuyerAsync(buyerId);
 
-            return Ok(orders.Select(OrderSummaryDto.FromOrderSummary));
-        }
+            var orders = await _context.Orders
+                .Where(o => o.BuyerId == buyerId)
+                .Include(o => o.OrderItems)
+                .Select(o => new OrderSummary
+                {
+                    Id = o.Id,
+                    OrderNumber = o.OrderNumber,
+                    OrderDate = o.OrderDate,
+                    OrderStatus = o.OrderStatus,
+                    Total = o.GetTotal()
+                })
+                .OrderByDescending(o => o.OrderNumber)
+                .ToListAsync();
 
-        [Route("cardtypes")]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CardTypeDto>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<CardType>>> GetCardTypesAsync()
-        {
-            var cardTypes = await _orderRepository.GetCardTypesAsync();
-
-            return Ok(cardTypes.Select(CardTypeDto.FromCardType));
+            return Ok(orders);
         }
 
         private async Task<IOrderingProcessActor> GetOrderingProcessActorAsync(int orderNumber)

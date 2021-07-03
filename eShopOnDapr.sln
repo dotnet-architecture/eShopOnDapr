@@ -74,7 +74,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Envoy", "Envoy", "{589088F3
 		src\ApiGateways\Envoy\envoy.yaml = src\ApiGateways\Envoy\envoy.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorClient", "src\Frontend\BlazorClient\BlazorClient.csproj", "{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorClient", "src\Frontend\BlazorClient\BlazorClient.csproj", "{5FA56AA7-34BF-4CA9-B539-5565AC7D3575}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

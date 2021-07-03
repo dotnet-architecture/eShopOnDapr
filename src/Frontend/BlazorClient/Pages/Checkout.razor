@@ -1,7 +1,6 @@
 ﻿@page "/checkout"
 @attribute [Authorize]
-@inject UserInfo UserInfo  
-@inject CustomerBasket UserBasket
+@inject UserBasket UserBasket
 @inject NavigationManager NavigationManager
 
 <div class="container">
@@ -105,16 +104,16 @@
                     </div>
                     <div class="row w-100 ml-3">
                         <div class="col-6">@item.ProductName</div>
-                        <div class="col-2">$ @item.GetFormattedPrice()</div>
+                        <div class="col-2">$@item.GetFormattedPrice()</div>
                         <div class="col-2">@item.Quantity</div>
-                        <div class="col-2 text-right">$ @item.GetFormattedTotalPrice()</div>
+                        <div class="col-2 text-right">$@item.GetFormattedTotalPrice()</div>
                     </div>
                 </article>
             }
 
             <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
                 <div>Total</div>
-                <div class="ml-3">$ @UserBasket.GetFormattedTotalPrice()</div>
+                <div class="ml-3">$@UserBasket.GetFormattedTotalPrice()</div>
             </div>
 
             <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">
@@ -131,20 +130,27 @@
     private OrderForm _orderForm;
     private string _error;
 
-    protected override void OnInitialized()
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await authenticationStateTask;
+        var claims = authenticationState.User.Claims
+            .ToDictionary(c => c.Type, c => c.Value);
+
         _orderForm = new OrderForm
         {
-            Email = UserInfo.Email,
-            Street = UserInfo.Street,
-            City = UserInfo.City,
-            State = UserInfo.State,
-            Country = UserInfo.Country,
-            CardNumber = UserInfo.CardNumber,
-            CardHolderName = UserInfo.CardHolderName,
-            CardExpirationDate = UserInfo.CardExpirationDate,
-            CardSecurityCode = UserInfo.CardSecurityNumber
-        };
+            Email = claims["email"],
+            Street = claims["address_street"],
+            City = claims["address_city"],
+            State = claims["address_state"],
+            Country = claims["address_country"],
+            CardNumber = claims["card_number"],
+            CardHolderName = claims["card_holder"],
+            CardExpirationDate = claims["card_expiration"],
+            CardSecurityCode = claims["card_security_number"]
+        };        
     }
 
     private async Task OnValidSubmitAsync()

@@ -4,15 +4,16 @@ using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
 {
-    public class OrderingContext : DbContext
+    public sealed class OrderingDbContext : DbContext
     {
-        public const string DEFAULT_SCHEMA = "ordering";
-
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
-        public OrderingContext(DbContextOptions<OrderingContext> options) : base(options)
+        public OrderingDbContext(DbContextOptions<OrderingDbContext> options)
+            : base(options)
         {
+            // No need for change tracking.
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

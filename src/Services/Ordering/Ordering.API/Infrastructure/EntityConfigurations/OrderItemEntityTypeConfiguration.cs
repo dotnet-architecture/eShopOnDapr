@@ -8,7 +8,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Entit
     {
         public void Configure(EntityTypeBuilder<OrderItem> orderItemConfiguration)
         {
-            orderItemConfiguration.ToTable("orderItems", OrderingContext.DEFAULT_SCHEMA);
+            orderItemConfiguration.ToTable("OrderItems");
 
             orderItemConfiguration.HasKey(o => o.Id);
 

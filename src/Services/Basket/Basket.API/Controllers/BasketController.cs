@@ -35,24 +35,29 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
             _eventBus = eventBus;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<CustomerBasket>> GetBasketByIdAsync(string id)
+        public async Task<ActionResult<CustomerBasket>> GetBasketAsync()
         {
-            var basket = await _repository.GetBasketAsync(id);
+            var userId = _identityService.GetUserIdentity();
 
-            return Ok(basket ?? new CustomerBasket(id));
+            var basket = await _repository.GetBasketAsync(userId);
+
+            return Ok(basket ?? new CustomerBasket(userId));
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<CustomerBasket>> UpdateBasketAsync([FromBody]CustomerBasket value)
         {
+            var userId = _identityService.GetUserIdentity();
+
+            value.BuyerId = userId;
+
             return Ok(await _repository.UpdateBasketAsync(value));
         }
 
-        [Route("checkout")]
-        [HttpPost]
+        [HttpPost("checkout")]
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CheckoutAsync([FromBody]BasketCheckout basketCheckout, [FromHeader(Name = "x-requestid")] string requestId)
@@ -87,7 +92,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
                 basket);
 
             // Once basket is checkout, sends an integration event to
-            // ordering.api to convert basket to order and proceeds with
+            // ordering.api to convert basket to order and proceed with
             // order creation process
             try
             {
@@ -104,11 +109,13 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
         }
 
         // DELETE api/values/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         public async Task DeleteBasketByIdAsync(string id)
         {
-            await _repository.DeleteBasketAsync(id);
+            var userId = _identityService.GetUserIdentity();
+
+            await _repository.DeleteBasketAsync(userId);
         }
     }
 }

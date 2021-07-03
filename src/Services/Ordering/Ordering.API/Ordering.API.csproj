@@ -64,6 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Infrastructure\Migrations\" />
     <Folder Include="Infrastructure\Repositories\" />
     <Folder Include="Infrastructure\EntityConfigurations\" />
   </ItemGroup>

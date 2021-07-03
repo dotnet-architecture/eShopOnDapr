@@ -10,9 +10,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repos
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly OrderingContext _orderingContext;
+        private readonly OrderingDbContext _orderingContext;
 
-        public OrderRepository(OrderingContext orderingContext)
+        public OrderRepository(OrderingDbContext orderingContext)
         {
             _orderingContext = orderingContext ?? throw new ArgumentNullException(nameof(orderingContext));
 

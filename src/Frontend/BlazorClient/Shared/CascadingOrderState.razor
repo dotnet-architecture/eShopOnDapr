@@ -1,0 +1,68 @@
+﻿@inject IAccessTokenProvider AccessTokenProvider;
+
+<CascadingValue Value="_orderState">
+    @ChildContent
+</CascadingValue>
+
+@code {
+
+    private HubConnection _hubConnection;
+    private OrderState _orderState;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var authenticationState = await AuthenticationStateTask;
+        if (authenticationState.User.Identity.IsAuthenticated)
+        {
+            await ConnectToNotificationHub();
+        }
+    }
+
+    private async Task ConnectToNotificationHub()
+    {
+        if (_hubConnection == null || _hubConnection.State == HubConnectionState.Disconnected)
+        {
+            // TODO config
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5202/hub/notificationhub", options =>
+                {
+                    options.AccessTokenProvider = GetAccessTokenAsync;
+                })
+                .WithAutomaticReconnect()
+                .Build();
+
+            _hubConnection.On<OrderState>("UpdatedOrderState", OnUpdatedOrderState);
+
+            await _hubConnection.StartAsync();
+        }
+    }
+
+    private async Task<string> GetAccessTokenAsync()
+    {
+        var accessTokenResult = await AccessTokenProvider.RequestAccessToken();
+        if (accessTokenResult.TryGetToken(out AccessToken accessToken))
+        {
+            return accessToken.Value;
+        }
+
+        // TODO
+        return string.Empty;
+    }
+
+    private void OnUpdatedOrderState(OrderState orderState)
+    {
+        Console.WriteLine(">>>>>>>>>>>> OnUpdatedOrderState");
+
+        // Set cascading parameter to let descendants know that the order state
+        // has changed.
+        _orderState = orderState;
+
+        StateHasChanged();
+    }
+}

@@ -1,22 +1,48 @@
 @using eShopOnDapr.BlazorClient.Basket
-
-@inject CustomerBasket CustomerBasket
+@inject UserBasket UserBasket
 
 <div>
-    <a class="esh-basketstatus pt-2 pb-2 @(CustomerBasket.TotalItemCount < 1 ? "is-disabled" : "")" href="basket">
+    <a class="esh-basketstatus pt-2 pb-2 @(UserBasket.TotalItemCount < 1 ? "is-disabled" : "")" href="basket">
         <div class="esh-basketstatus-image ml-4 mr-1">
             <img src="/images/cart.svg" />
         </div>
         <div class="esh-basketstatus-badge">
-            @CustomerBasket.TotalItemCount
+            @UserBasket.TotalItemCount
         </div>
     </a>
 </div>
 
 @code {
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     protected override void OnInitialized()
     {
-        CustomerBasket.ItemsChanged += (s, e) => StateHasChanged();
+        UserBasket.ItemsChanged += (s, e) => StateHasChanged();
     }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+
+        if (authenticationState.User.Identity.IsAuthenticated)
+        {
+            await LoadBasketAsync();
+        }
+    }
+
+    private async Task LoadBasketAsync()
+    {
+        try
+        {
+            await UserBasket.LoadAsync();
+        }
+        catch (AccessTokenNotAvailableException)
+        {
+            Console.WriteLine("AccessTokenNotAvailableException");
+//            RedirectToLogin();
+        }
+    }
+
 }

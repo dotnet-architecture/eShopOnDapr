@@ -1,0 +1,16 @@
+@inject NavigationManager NavigationManager
+
+@code {
+
+    [CascadingParameter]
+    private OrderState OrderState { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (OrderState != null)
+        {
+            Console.WriteLine("TOAST: " + OrderState.Status);
+        }
+    }
+
+}

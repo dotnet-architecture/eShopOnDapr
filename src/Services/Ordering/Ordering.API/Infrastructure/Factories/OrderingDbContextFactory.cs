@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Factories
 {
-    public class OrderingDbContextFactory : IDesignTimeDbContextFactory<OrderingContext>
+    public class OrderingDbContextFactory : IDesignTimeDbContextFactory<OrderingDbContext>
     {
-        public OrderingContext CreateDbContext(string[] args)
+        public OrderingDbContext CreateDbContext(string[] args)
         {
             var config = new ConfigurationBuilder()
                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
@@ -16,11 +16,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Facto
                .AddEnvironmentVariables()
                .Build();
 
-            var optionsBuilder = new DbContextOptionsBuilder<OrderingContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<OrderingDbContext>();
 
             optionsBuilder.UseSqlServer(config["ConnectionString"], sqlServerOptionsAction: o => o.MigrationsAssembly("Ordering.API"));
 
-            return new OrderingContext(optionsBuilder.Options);
+            return new OrderingDbContext(optionsBuilder.Options);
         }
     }
 }

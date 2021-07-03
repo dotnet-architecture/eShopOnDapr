@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -10,13 +11,16 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
     {
         public override async Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, Context.User.Identity.Name);
+            var userId = Context.User.Claims.First(c => c.Type == "sub").Value;
+            var userId2 = Context.UserIdentifier;
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.User.Identity.Name);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.UserIdentifier);
             await base.OnDisconnectedAsync(ex);
         }
     }

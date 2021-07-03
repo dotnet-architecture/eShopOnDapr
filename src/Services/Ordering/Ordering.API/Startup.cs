@@ -195,7 +195,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddEntityFrameworkSqlServer()
-                   .AddDbContext<OrderingContext>(options =>
+                   .AddDbContext<OrderingDbContext>(options =>
                    {
                        options.UseSqlServer(configuration["ConnectionString"],
                            sqlServerOptionsAction: sqlOptions =>

@@ -8,39 +8,28 @@ using eShopOnDapr.BlazorClient.Ordering;
 
 namespace eShopOnDapr.BlazorClient.Basket
 {
-    public class ApiBasketClient
+    public class BasketClient
     {
         private readonly HttpClient _httpClient;
 
-        public ApiBasketClient(HttpClient httpClient)
+        public BasketClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<BasketItem>> LoadItemsAsync(string buyerId)
+        public async Task<IEnumerable<BasketItem>> GetItemsAsync()
         {
-            Console.WriteLine("BASKET::LOAD (AUTH)");
-
             var basket = await _httpClient.GetFromJsonAsync<CustomerBasket2>(
-                buyerId);
+                string.Empty);
 
             return basket.Items;
         }
 
-        public async Task<IEnumerable<BasketItem>> GetItemsAsync(string buyerId)
-        {
-            var basket = await _httpClient.GetFromJsonAsync<CustomerBasket2>(
-                buyerId);
-
-            return basket.Items;
-        }
-
-        public async Task SaveItemsAsync(
-            string buyerId, IEnumerable<BasketItem> items)
+        public async Task SaveItemsAsync(IEnumerable<BasketItem> items)
         {
             var request = new CustomerBasket2
             {
-                BuyerId = buyerId,
+//                BuyerId = buyerId,
                 Items = items.ToList()
             };
 

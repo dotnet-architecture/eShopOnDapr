@@ -164,8 +164,3 @@
 .esh-catalog-price::before {
     content: '$';
 }
-
-.esh-catalog-alert {
-    margin-top: 10px;
-    color: #fff;
-}

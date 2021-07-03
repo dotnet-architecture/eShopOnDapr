@@ -8,7 +8,7 @@ using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
 
 namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migrations
 {
-    [DbContext(typeof(OrderingContext))]
+    [DbContext(typeof(OrderingDbContext))]
     partial class OrderingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -18,24 +18,8 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
                 .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("Relational:Sequence:.orderitemseq", "'orderitemseq', '', '1', '10', '', '', 'Int64', 'False'")
-                .HasAnnotation("Relational:Sequence:ordering.orderseq", "'orderseq', 'ordering', '1', '10', '', '', 'Int64', 'False'")
+                .HasAnnotation("Relational:Sequence:.orderseq", "'orderseq', '', '1', '10', '', '', 'Int64', 'False'")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.CardType", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("cardtypes","ordering");
-                });
 
             modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
                 {
@@ -43,10 +27,10 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BuyerId")
+                    b.Property<string>("BuyerEmail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BuyerName")
+                    b.Property<string>("BuyerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -59,7 +43,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:HiLoSequenceName", "orderseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "ordering")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
                     b.Property<string>("OrderStatus")
@@ -69,7 +52,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
 
                     b.HasAlternateKey("OrderNumber");
 
-                    b.ToTable("orders","ordering");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderItem", b =>
@@ -102,7 +85,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("orderItems","ordering");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
@@ -124,12 +107,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migra
                             b1.Property<string>("Street")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("ZipCode")
-                                .HasColumnType("nvarchar(max)");
-
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("orders");
+                            b1.ToTable("Orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");

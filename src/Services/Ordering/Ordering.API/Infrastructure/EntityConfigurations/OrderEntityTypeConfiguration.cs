@@ -8,14 +8,14 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Entit
     {
         public void Configure(EntityTypeBuilder<Order> orderConfiguration)
         {
-            orderConfiguration.ToTable("orders", OrderingContext.DEFAULT_SCHEMA);
+            orderConfiguration.ToTable("Orders");
 
             orderConfiguration.HasKey(o => o.Id);
 
             orderConfiguration.HasAlternateKey(o => o.OrderNumber);
 
             orderConfiguration.Property(o => o.OrderNumber)
-                .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
+                .UseHiLo("orderseq");
 
             orderConfiguration
                 .OwnsOne(o => o.Address, a =>

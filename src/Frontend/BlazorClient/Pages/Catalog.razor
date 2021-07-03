@@ -3,7 +3,7 @@
 @using eShopOnDapr.BlazorClient.Catalog
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject CustomerBasket _basket
+@inject UserBasket _basket
 @inject CatalogClient CatalogClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -11,7 +11,7 @@
 
 <section class="esh-catalog-filters">
     <div class="container">
-        @* <div class="alert alert-warning esh-catalog-alert" role="alert" [hidden]="!errorReceived">
+        @* <div class="alert alert-warning" role="alert" [hidden]="!errorReceived">
             Error requesting catalog products, please try later on
         </div> *@
         <div class="esh-catalog-filters-wrapper d-flex align-items-end mt-3">

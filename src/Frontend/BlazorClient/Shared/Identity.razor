@@ -7,7 +7,7 @@
     <AuthorizeView>
         <NotAuthorized>
             <section class="esh-identity-section">
-                <div class="u-cursor-pointer pt-2 pb-2" @onclick=@LoginAsync>
+                <div class="u-cursor-pointer pt-2 pb-2" @onclick=@Login>
                     <div class="esh-identity-name d-flex align-items-center">LOGIN 
                         <img class="esh-identity-image ml-2" src="/images/user.svg">
                     </div>
@@ -21,7 +21,7 @@
             </section>
 
             <section class="esh-identity-drop">
-                <div class="esh-identity-item" [routerLink]="['orders']">
+                <div class="esh-identity-item" @onclick=@ViewOrders>
                     <div class="esh-identity-name">My orders</div>
                 </div>
 
@@ -35,9 +35,38 @@
 
 @code {
 
-    private void LoginAsync(MouseEventArgs args)
+    // TODO Clean up
+
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        return LogUserAuthenticationState();
+    }
+
+    private async Task LogUserAuthenticationState()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"User {user.Identity.Name} is authenticated.");
+        }
+        else
+        {
+            Console.WriteLine("User is NOT authenticated.");
+        }
+    }
+
+    private void Login(MouseEventArgs args)
     {
         Navigation.NavigateTo("authentication/login");
+    }
+
+    private void ViewOrders(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("orders");
     }
 
     private async Task BeginSignOutAsync(MouseEventArgs args)

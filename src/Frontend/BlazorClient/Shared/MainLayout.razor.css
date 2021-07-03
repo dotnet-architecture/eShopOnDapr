@@ -52,6 +52,10 @@
     font-size: 1.5625rem;
 }
 
+.esh-app-header-logo {
+    position: relative;
+}
+
 .esh-app-footer {
     background-color: #7979ac;
     color: #fff;

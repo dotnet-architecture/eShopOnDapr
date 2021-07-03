@@ -31,7 +31,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
                 var host = BuildWebHost(configuration, args);
 
                 Log.Information("Applying migrations ({ApplicationContext})...", AppName);
-                host.MigrateDbContext<OrderingContext>((context, services) =>
+                host.MigrateDbContext<OrderingDbContext>((context, services) =>
                 {
                     var env = services.GetService<IWebHostEnvironment>();
                     var settings = services.GetService<IOptions<OrderingSettings>>();

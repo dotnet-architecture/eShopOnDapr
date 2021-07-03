@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -8,10 +8,18 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'BlazorClient' ">
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <Content Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
@@ -28,8 +36,5 @@
     <None Include="wwwroot\images\delete.svg" />
     <None Include="wwwroot\images\minus.svg" />
     <None Include="wwwroot\images\plus.svg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ordering\" />
   </ItemGroup>
 </Project>
