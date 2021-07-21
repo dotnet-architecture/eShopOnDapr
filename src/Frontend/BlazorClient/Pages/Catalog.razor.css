@@ -1,3 +1,7 @@
+h2 {
+    margin-top: 24px;
+}
+
 .esh-catalog-title {
     position: relative;
     top: 74.2857142857px;
@@ -163,4 +167,9 @@
 
 .esh-catalog-price::before {
     content: '$';
+}
+
+.esh-catalog-alert {
+    margin-top: 10px;
+    color: #fff;
 }

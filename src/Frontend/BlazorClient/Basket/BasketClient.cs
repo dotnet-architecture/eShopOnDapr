@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -19,30 +18,35 @@ namespace eShopOnDapr.BlazorClient.Basket
 
         public async Task<IEnumerable<BasketItem>> GetItemsAsync()
         {
-            var basket = await _httpClient.GetFromJsonAsync<CustomerBasket2>(
-                string.Empty);
+            var basket = await _httpClient.GetFromJsonAsync<BasketData>(
+                "b/api/v1/basket/");
 
             return basket.Items;
         }
 
-        public async Task SaveItemsAsync(IEnumerable<BasketItem> items)
+        public async Task<IEnumerable<BasketItem>> SaveItemsAsync(IEnumerable<BasketItem> items)
         {
-            var request = new CustomerBasket2
+            var request = new BasketData
             {
-//                BuyerId = buyerId,
                 Items = items.ToList()
             };
 
-            var response = await _httpClient.PostAsJsonAsync(string.Empty, request);
+            // Save items is a request to the Aggregator service.
+            var response = await _httpClient.PostAsJsonAsync(
+                "/api/v1/basket/",
+                request);
 
             response.EnsureSuccessStatusCode();
 
-//            return await response.Content.ReadFromJsonAsync<Basket>();
+            var basketData = await response.Content.ReadFromJsonAsync<BasketData>();
+            return basketData.Items;
         }
 
         public async Task CheckoutAsync(BasketCheckout basketCheckout)
         {
-            var response = await _httpClient.PostAsJsonAsync("checkout", basketCheckout);
+            var response = await _httpClient.PostAsJsonAsync(
+                "b/api/v1/basket/checkout",
+                basketCheckout);
 
             response.EnsureSuccessStatusCode();
         }

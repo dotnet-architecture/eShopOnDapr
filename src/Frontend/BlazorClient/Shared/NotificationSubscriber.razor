@@ -1,4 +1,5 @@
 ﻿@inject IAccessTokenProvider AccessTokenProvider;
+@inject NavigationManager NavigationManager;
 
 <CascadingValue Value="_orderState">
     @ChildContent
@@ -51,14 +52,13 @@
             return accessToken.Value;
         }
 
-        // TODO
+        NavigationManager.NavigateTo("authentication/login");
+
         return string.Empty;
     }
 
     private void OnUpdatedOrderState(OrderState orderState)
     {
-        Console.WriteLine(">>>>>>>>>>>> OnUpdatedOrderState");
-
         // Set cascading parameter to let descendants know that the order state
         // has changed.
         _orderState = orderState;

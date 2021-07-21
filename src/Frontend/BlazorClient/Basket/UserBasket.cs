@@ -54,18 +54,14 @@ namespace eShopOnDapr.BlazorClient.Basket
                 });
             }
 
-            await _basketClient.SaveItemsAsync(Items);
-
-            OnItemsChanged(EventArgs.Empty);
+            await SaveItemsAsync();
         }
 
         public async Task RemoveItemAsync(BasketItem item)
         {
             Items.Remove(item);
 
-            await _basketClient.SaveItemsAsync(Items);
-
-            OnItemsChanged(EventArgs.Empty);
+            await SaveItemsAsync();
         }
 
         public async Task SetItemQuantityAsync(BasketItem item, int quantity)
@@ -74,9 +70,7 @@ namespace eShopOnDapr.BlazorClient.Basket
             {
                 item.Quantity = quantity;
 
-                await _basketClient.SaveItemsAsync(Items);
-
-                OnItemsChanged(EventArgs.Empty);
+                await SaveItemsAsync();
             }
         }
 
@@ -99,6 +93,15 @@ namespace eShopOnDapr.BlazorClient.Basket
 
             // Drop basket.
             Items.Clear();
+            OnItemsChanged(EventArgs.Empty);
+        }
+
+        private async Task SaveItemsAsync()
+        {
+            var verifiedItems = await _basketClient.SaveItemsAsync(Items);
+
+            Items = verifiedItems.ToList();
+
             OnItemsChanged(EventArgs.Empty);
         }
 

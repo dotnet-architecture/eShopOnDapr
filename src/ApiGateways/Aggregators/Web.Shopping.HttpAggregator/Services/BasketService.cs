@@ -16,17 +16,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task<BasketData> GetById(string id, string accessToken)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/basket/{id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadFromJsonAsync<BasketData>();
-        }
-
         public async Task UpdateAsync(BasketData currentBasket, string accessToken)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/basket")

@@ -1,5 +1,7 @@
 ﻿@page "/checkout"
 @attribute [Authorize]
+@implements IDisposable
+
 @inject UserBasket UserBasket
 @inject NavigationManager NavigationManager
 
@@ -119,7 +121,7 @@
             <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">
                 <a class="btn btn-secondary" href="/basket">Back to basket</a>
 
-                <button class="btn btn-primary ml-3" [disabled]="!newOrderForm.valid || isOrderProcessing" type="submit">Place Order</button>
+                <button class="btn btn-primary ml-3" type="submit">Place Order</button>
             </div>
         </section>
     </EditForm>
@@ -150,18 +152,30 @@
             CardHolderName = claims["card_holder"],
             CardExpirationDate = claims["card_expiration"],
             CardSecurityCode = claims["card_security_number"]
-        };        
+        };
+
+        // If the user presses reload on the page, the UserBasket items are
+        // loaded asynchronously. The page may show before the items are loaded
+        // so subscribe to any changes to update the page.
+        UserBasket.ItemsChanged += OnBasketItemsChanged;
+    }
+
+    private void OnBasketItemsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
     }
 
     private async Task OnValidSubmitAsync()
     {
-        Console.WriteLine("Submit!!: " + _orderForm.Email);
-
         try
         {
             await UserBasket.CheckoutAsync(_orderForm);
 
             NavigationManager.NavigateTo("/orders");
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
         }
         catch (Exception ex)
         {
@@ -169,4 +183,8 @@
         }
     }
 
+    void IDisposable.Dispose()
+    {
+        UserBasket.ItemsChanged -= OnBasketItemsChanged;
+    }
 }

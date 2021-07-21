@@ -1,8 +1,5 @@
 ﻿@page "/"
-@using eShopOnDapr.BlazorClient.Basket
-@using eShopOnDapr.BlazorClient.Catalog
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
 @inject UserBasket _basket
 @inject CatalogClient CatalogClient
 @inject NavigationManager NavigationManager
@@ -11,14 +8,19 @@
 
 <section class="esh-catalog-filters">
     <div class="container">
-        @* <div class="alert alert-warning" role="alert" [hidden]="!errorReceived">
-            Error requesting catalog products, please try later on
-        </div> *@
+
+        @if (_error != null)
+        {
+            <div class="alert" role="alert">
+                Error requesting catalog items, please try later. @_error
+            </div>
+        }
+
         <div class="esh-catalog-filters-wrapper d-flex align-items-end mt-3">
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="brand">Brand</label>
                 <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChangedAsync>
-                    @foreach (var brand in brands)
+                    @foreach (var brand in _brands)
                     {
                         <option value=@brand.Id>@brand.Name</option>
                     }
@@ -27,7 +29,7 @@
             <div class="esh-catalog-filter-wrapper">
                 <label class="esh-catalog-label" for="type">Type</label>
                 <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChangedAsync>
-                    @foreach (var type in types)
+                    @foreach (var type in _types)
                     {
                         <option value=@type.Id>@type.Name</option>
                     }
@@ -38,19 +40,19 @@
 </section>
 
 <div class="container">
-    @if (results?.Count > 0)
+    @if (_catalogPage?.Count > 0)
     {
-        <Pager ItemCount="@results.Data.Count()"
-            TotalCount="@results.Count"
-            PageIndex="@results.PageIndex"
-            PageCount="@results.PageCount"
+        <Pager ItemCount="@_catalogPage.Data.Count()"
+            TotalCount="@_catalogPage.Count"
+            PageIndex="@_catalogPage.PageIndex"
+            PageCount="@_catalogPage.PageCount"
             OnClick="OnPageIndexChangedAsync"/>
 
         <div class="esh-catalog-items row">
-            @foreach (var item in results.Data)
+            @foreach (var item in _catalogPage.Data)
             {
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="esh-catalog-item @(!_user.Identity.IsAuthenticated ? "is-disabled" : "")" @onclick="@(e => _basket.AddItemAsync(item))">
+                    <div class="esh-catalog-item @(!_isAuthenticated ? "is-disabled" : "")" @onclick="@(e => OnCatalogItemClickAsync(item))">
                         <div class="esh-catalog-thumbnail-wrapper">
                             <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
                                 <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
@@ -70,79 +72,85 @@
             }
         </div>
 
-        <Pager ItemCount="@results.Data.Count()"
-            TotalCount="@results.Count"
-            PageIndex="@results.PageIndex"
-            PageCount="@results.PageCount"
+        <Pager ItemCount="@_catalogPage.Data.Count()"
+            TotalCount="@_catalogPage.Count"
+            PageIndex="@_catalogPage.PageIndex"
+            PageCount="@_catalogPage.PageCount"
             OnClick="OnPageIndexChangedAsync"/>
     }
-    else
+    else if (_catalogPage != null)
     {
-        <span>THERE ARE NO RESULTS THAT MATCH YOUR SEARCH</span>
+        <h2>THERE ARE NO RESULTS THAT MATCH YOUR SEARCH</h2>
     }
 </div>
 
 @code {
 
-    // @(!_user.Identity.IsAuthenticated ? "is-disabled" : "")"
+    private CatalogPage _catalogPage;
+    private IEnumerable<CatalogBrand> _brands = Enumerable.Empty<CatalogBrand>();
+    private IEnumerable<CatalogType> _types = Enumerable.Empty<CatalogType>();
 
-    CatalogPage results;
-    IEnumerable<CatalogBrand> brands = Enumerable.Empty<CatalogBrand>();
-    IEnumerable<CatalogType> types = Enumerable.Empty<CatalogType>();
+    private int _pageIndex = 0;
+    private int _brandId = -1;
+    private int _typeId = -1;
 
-    int pageIndex = 0;
-    int brandId = -1;
-    int typeId = -1;
-    private ClaimsPrincipal _user;
+    private bool _isAuthenticated;
+    private string _error;
 
     [CascadingParameter]
     private Task<AuthenticationState> _authenticationStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var authenticationState = await _authenticationStateTask;
-        _user = authenticationState.User;
-
-        Console.WriteLine("INIT CATALOG");
-        var token = await TokenProvider.RequestAccessToken();
-        if (token.TryGetToken(out AccessToken t))
-        {
-            Console.WriteLine("TOKEN: " + t.Value);
-        }
-        await PopulateBrandsAsync();
-        await PopulateTypesAsync();
-        await PopulateItemsAsync();
-
-        @* return Task.WhenAll(
-            PopulateBrands(),
-            PopulateItems()); *@
+        await Task.WhenAll(
+            LoadBrandsAsync(),
+            LoadTypesAsync(),
+            LoadItemsAsync(),
+            _authenticationStateTask.ContinueWith(task =>
+            {
+                _isAuthenticated = task.Result.User.Identity.IsAuthenticated;
+            }));
     }
 
     public async Task OnPageIndexChangedAsync(int newPageIndex)
     {
-        this.pageIndex = newPageIndex;
+        _pageIndex = newPageIndex;
 
-        await PopulateItemsAsync();
+        await LoadItemsAsync();
     }
-
 
     private async Task OnBrandChangedAsync(ChangeEventArgs e)
     {
-        this.brandId = int.Parse(e.Value.ToString());
-        this.pageIndex = 0;
+        _brandId = int.Parse(e.Value.ToString());
+        _pageIndex = 0;
 
-        await PopulateItemsAsync();
+        await LoadItemsAsync();
     }
 
     private async Task OnTypeChangedAsync(ChangeEventArgs e)
     {
-        this.typeId = int.Parse(e.Value.ToString());
-        this.pageIndex = 0;
+        _typeId = int.Parse(e.Value.ToString());
+        _pageIndex = 0;
 
-        await PopulateItemsAsync();
+        await LoadItemsAsync();
     }
 
-    private async Task PopulateBrandsAsync()
+    private async Task OnCatalogItemClickAsync(CatalogItem item)
+    {
+        if (_isAuthenticated)
+        {
+            try
+            {
+                await _basket.AddItemAsync(item);
+            }
+            catch (AccessTokenNotAvailableException ex)
+            {
+                ex.Redirect();
+            }
+        }
+    }
+
+    private async Task LoadBrandsAsync()
     {
         var brands = new List<CatalogBrand>
         {
@@ -155,12 +163,13 @@
         }
         catch
         {
+            // If call fails, we'll just have the 'All' selection.
         }
 
-        this.brands = brands;
+        _brands = brands;
     }
 
-    private async Task PopulateTypesAsync()
+    private async Task LoadTypesAsync()
     {
         var types = new List<CatalogType>
         {
@@ -173,15 +182,23 @@
         }
         catch
         {
+            // If call fails, we'll just have the 'All' selection.
         }
 
-        this.types = types;
+        _types = types;
     }
 
-    private async Task PopulateItemsAsync()
+    private async Task LoadItemsAsync()
     {
-        results = await CatalogClient.GetItemsAsync(this.brandId, this.typeId, this.pageIndex);
-
-        StateHasChanged();
+        try
+        {
+            _catalogPage = await CatalogClient.GetItemsAsync(_brandId, _typeId, _pageIndex);
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _catalogPage = null;
+            _error = ex.Message;
+        }
     }
 }

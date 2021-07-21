@@ -16,13 +16,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public Task<CatalogItem> GetCatalogItemAsync(int id)
-        {
-            var requestUri = $"api/v1/catalog/items/{id}";
-        
-            return _httpClient.GetFromJsonAsync<CatalogItem>(requestUri);
-        }
-
         public Task<IEnumerable<CatalogItem>> GetCatalogItemsAsync(IEnumerable<int> ids)
         {
             var requestUri = $"api/v1/catalog/items?ids={string.Join(",", ids)}";

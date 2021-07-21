@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.Toast;
 using eShopOnDapr.BlazorClient.Basket;
 using eShopOnDapr.BlazorClient.Catalog;
 using eShopOnDapr.BlazorClient.Ordering;
@@ -26,7 +27,7 @@ namespace eShopOnDapr.BlazorClient
                 client => client.BaseAddress = new Uri("http://localhost:5202/c/api/v1/catalog/"));
 
             builder.Services.AddHttpClient<BasketClient>(
-                client => client.BaseAddress = new Uri("http://localhost:5202/b/api/v1/basket/"))
+                client => client.BaseAddress = new Uri("http://localhost:5202/"))
                 .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<OrderClient>(
@@ -34,7 +35,7 @@ namespace eShopOnDapr.BlazorClient
                 .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
             builder.Services
-                .AddScoped<LocalStorageBasketClient>()
+                .AddBlazoredToast()
                 .AddScoped<UserBasket>();
 
             builder.Services.AddOidcAuthentication(options =>
@@ -43,6 +44,7 @@ namespace eShopOnDapr.BlazorClient
 
                 options.ProviderOptions.DefaultScopes.Add("basket");
                 options.ProviderOptions.DefaultScopes.Add("orders");
+                options.ProviderOptions.DefaultScopes.Add("webshoppingagg");
 
                 options.AuthenticationPaths.LogOutSucceededPath = "";
             });

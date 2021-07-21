@@ -26,9 +26,11 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(BasketData), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync([FromBody] UpdateBasketRequest data, [FromHeader] string authorization)
+        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync(
+            [FromBody] UpdateBasketRequest data,
+            [FromHeader] string authorization)
         {
-            var basket = new BasketData(data.BuyerId);
+            var basket = new BasketData();
 
             if (data.Items != null && data.Items.Any())
             {
@@ -53,10 +55,8 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
                         return BadRequest($"Basket refers to a non-existing catalog item ({bitem.ProductId})");
                     }
 
-                    // TODO Don't really need Id=bitem.Id
                     basket.Items.Add(new BasketDataItem()
                     {
-                        Id = bitem.Id,
                         ProductId = catalogItem.Id,
                         ProductName = catalogItem.Name,
                         PictureUrl = catalogItem.PictureUri,

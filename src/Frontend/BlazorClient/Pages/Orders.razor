@@ -78,6 +78,10 @@
         {
             _orders = await OrderClient.GetOrdersAsync();
         }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
         catch (Exception ex)
         {
             _error = ex.Message;

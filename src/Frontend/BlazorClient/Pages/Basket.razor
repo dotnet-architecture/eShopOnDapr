@@ -1,55 +1,55 @@
 ﻿@page "/basket"
-@using eShopOnDapr.BlazorClient.Basket
+@attribute [Authorize]
+@implements IDisposable
+
 @inject UserBasket UserBasket
 @inject NavigationManager NavigationManager
 
 <div class="esh-basket">
     <div class="container">
         <h1 class="mb-4 mt-5">[ Shopping Bag ]</h1>
-        <div *ngFor="let errorMessage of errorMessages">
-            <div class="esh-basket-items-margin-left1 row">
-                <div class="alert alert-warning" role="alert">&nbsp;{{errorMessage}}</div>
+
+        @if (_error != null)
+        {
+            <div class="alert" role="alert">
+                Error updating basket, please try later. @_error
             </div>
-        </div>
+        }
 
         <div class="row">
             <div class="col-6 col-md-8 col-lg-9">
                 <div class="esh-basket-items row">
                     @foreach (var item in UserBasket.Items)
                     {
-        <div class="col-12 col-md-6 col-lg-4">
-            <article class="esh-basket-item">
-                <div class="esh-basket-thumbnail-wrapper">
-                    <div class="esh-basket-delete" @onclick="@(() => UserBasket.RemoveItemAsync(item))">
-                        <img class="esh-basket-delete-svg" src="images/delete.svg" />
-                    </div>
-                    <img class="esh-basket-thumbnail" src="@item.PictureUrl" />
-                </div>
-                <div class="esh-basket-title">@item.ProductName</div>
-                <div class="esh-basket-description divider d-flex align-items-center justify-content-between">
-                    <div class="">$@item.UnitPrice</div>
-                    <div class="esh-basket-buttons d-flex justify-content-center">
-                        <button class="esh-basket-button @(item.Quantity == 1 ? "is-disabled" : "")"
-                                @onclick="@(() => UserBasket.SetItemQuantityAsync(item, item.Quantity - 1))">
-                            <img class="esh-basket-button-svg"
-                                 src="images/minus.svg" />
-                        </button>
-                        <div class="esh-basket-quantity">@item.Quantity</div>
-                        <button class="esh-basket-button"
-                                @onclick="@(() => UserBasket.SetItemQuantityAsync(item, item.Quantity + 1))">
-                            <img class="esh-basket-button-svg"
-                                 src="images/plus.svg" />
-                        </button>
-                    </div>
-                    <div class="esh-basket-price text-right">$@UserBasket.GetFormattedTotalPrice()</div>
-                </div>
-                @if (item.OldUnitPrice > 0)
-                {
-<div class="">
-    &nbsp;Note that the price of this article changed in our Catalog. The old price when you originally added it to the basket was $ {{item.oldUnitPrice}}
-</div>                }
-            </article>
-        </div>}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <article class="esh-basket-item">
+                                <div class="esh-basket-thumbnail-wrapper">
+                                    <div class="esh-basket-delete" @onclick="@(() => RemoveItemAsync(item))">
+                                        <img class="esh-basket-delete-svg" src="images/delete.svg" />
+                                    </div>
+                                    <img class="esh-basket-thumbnail" src="@item.PictureUrl" />
+                                </div>
+                                <div class="esh-basket-title">@item.ProductName</div>
+                                <div class="esh-basket-description divider d-flex align-items-center justify-content-between">
+                                    <div class="">$@item.UnitPrice</div>
+                                    <div class="esh-basket-buttons d-flex justify-content-center">
+                                        <button class="esh-basket-button @(item.Quantity == 1 ? "is-disabled" : "")"
+                                                @onclick="@(() => SetItemQuantityAsync(item, item.Quantity - 1))">
+                                            <img class="esh-basket-button-svg"
+                                                 src="images/minus.svg" />
+                                        </button>
+                                        <div class="esh-basket-quantity">@item.Quantity</div>
+                                        <button class="esh-basket-button"
+                                                @onclick="@(() => SetItemQuantityAsync(item, item.Quantity + 1))">
+                                            <img class="esh-basket-button-svg"
+                                                 src="images/plus.svg" />
+                                        </button>
+                                    </div>
+                                    <div class="esh-basket-price text-right">$@item.GetFormattedTotalPrice()</div>
+                                </div>
+                            </article>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="col-6 col-md-4 col-lg-3">
@@ -79,13 +79,65 @@
 
 @code {
 
+    private string _error;
+
     protected override void OnInitialized()
     {
-        UserBasket.ItemsChanged += (s, e) => StateHasChanged();
+        // If the user presses reload on the page, the UserBasket items are
+        // loaded asynchronously. The page may show before the items are loaded
+        // so subscribe to any changes to update the page.
+        UserBasket.ItemsChanged += OnBasketItemsChanged;
+    }
+
+    private void OnBasketItemsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private async Task RemoveItemAsync(BasketItem item)
+    {
+        try
+        {
+            await UserBasket.RemoveItemAsync(item);
+            _error = null;
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private async Task SetItemQuantityAsync(BasketItem item, int quantity)
+    {
+        try
+        {
+            await UserBasket.SetItemQuantityAsync(item, quantity);
+            _error = null;
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
     }
 
     private void Checkout()
     {
-        NavigationManager.NavigateTo("checkout");
+        if (UserBasket.Items.Any())
+        {
+            NavigationManager.NavigateTo("checkout");
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        UserBasket.ItemsChanged -= OnBasketItemsChanged;
     }
 }

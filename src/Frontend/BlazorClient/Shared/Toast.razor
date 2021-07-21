@@ -1,4 +1,7 @@
 @inject NavigationManager NavigationManager
+@inject IToastService ToastService
+
+<BlazoredToasts />
 
 @code {
 
@@ -9,7 +12,9 @@
     {
         if (OrderState != null)
         {
-            Console.WriteLine("TOAST: " + OrderState.Status);
+            ToastService.ShowInfo(
+                $"Your order status has been updated to \"{OrderState.Status}\".",
+                $"Order #{OrderState.OrderNumber}");
         }
     }
 
