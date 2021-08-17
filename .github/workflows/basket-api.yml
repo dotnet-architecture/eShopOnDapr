@@ -90,7 +90,6 @@ jobs:
       working-directory: ./src
       shell: bash
       env:
-        TAG: latest
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
     - name: Compose push ${{ env.SERVICE }}
@@ -98,5 +97,4 @@ jobs:
       working-directory: ./src
       shell: bash
       env:
-        TAG: latest
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}

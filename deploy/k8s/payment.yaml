@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: payment-api
-          image: eshop/payment.api:linux-latest
+          image: eshopdapr/payment.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

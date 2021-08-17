@@ -18,7 +18,7 @@ services:
     image: openzipkin/zipkin-slim
 
   basket-api:
-    image: ${REGISTRY:-eshop}/basket.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/basket.api:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Basket/Basket.API/Dockerfile
@@ -33,7 +33,7 @@ services:
       - basket-api
 
   catalog-api:
-    image: ${REGISTRY:-eshop}/catalog.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
@@ -47,7 +47,7 @@ services:
       - catalog-api
 
   identity-api:
-    image: ${REGISTRY:-eshop}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/identity.api:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
@@ -55,7 +55,7 @@ services:
       - sqldata
 
   ordering-api:
-    image: ${REGISTRY:-eshop}/ordering.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
@@ -69,7 +69,7 @@ services:
       - ordering-api
 
   payment-api:
-    image: ${REGISTRY:-eshop}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/payment.api:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
@@ -81,7 +81,7 @@ services:
       - payment-api
 
   webshoppingagg:
-    image: ${REGISTRY:-eshop}/webshoppingagg:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/webshoppingagg:${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Dockerfile
@@ -108,7 +108,7 @@ services:
       - webshoppingapigw
 
   webspa:
-    image: ${REGISTRY:-eshop}/webspa:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/webspa:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebSPA/Dockerfile
@@ -116,7 +116,7 @@ services:
       - webshoppingagg
 
   webstatus:
-    image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebStatus/Dockerfile
