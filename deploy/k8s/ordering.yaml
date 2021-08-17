@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: ordering-api
-          image: eshop/ordering.api:linux-latest
+          image: eshopdapr/ordering.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

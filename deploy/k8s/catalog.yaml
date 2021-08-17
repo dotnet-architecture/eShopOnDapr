@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
         - name: catalog-api
-          image: eshop/catalog.api:linux-latest
+          image: eshopdapr/catalog.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

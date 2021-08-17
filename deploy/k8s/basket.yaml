@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: basket-api
-          image: eshop/basket.api:linux-latest
+          image: eshopdapr/basket.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
