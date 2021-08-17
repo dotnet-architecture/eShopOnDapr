@@ -8,5 +8,9 @@
         string PictureUrl)
     {
         public decimal Total => UnitPrice * Units;
+
+        public string GetFormattedUnitPrice() => UnitPrice.ToString("0.00");
+
+        public string GetFormattedTotal() => Total.ToString("0.00");
     }
 }

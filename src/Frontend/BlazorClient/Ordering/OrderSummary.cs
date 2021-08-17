@@ -7,5 +7,10 @@ namespace eShopOnDapr.BlazorClient.Ordering
         int OrderNumber,
         DateTime OrderDate,
         string OrderStatus,
-        decimal Total);
+        decimal Total)
+    {
+        public string GetFormattedOrderDate() => OrderDate.ToString("d");
+
+        public string GetFormattedTotal() => Total.ToString("0.00");
+    }
 }

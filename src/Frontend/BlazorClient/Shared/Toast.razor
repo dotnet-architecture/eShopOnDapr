@@ -5,16 +5,21 @@
 
 @code {
 
+    private OrderState _prevOrderState;
+
     [CascadingParameter]
     private OrderState OrderState { get; set; }
 
     protected override void OnParametersSet()
     {
-        if (OrderState != null)
+        // Deduplicate when the same parameter value is set multiple times.
+        if (OrderState != _prevOrderState)
         {
             ToastService.ShowInfo(
                 $"Your order status has been updated to \"{OrderState.Status}\".",
                 $"Order #{OrderState.OrderNumber}");
+
+            _prevOrderState = OrderState;
         }
     }
 

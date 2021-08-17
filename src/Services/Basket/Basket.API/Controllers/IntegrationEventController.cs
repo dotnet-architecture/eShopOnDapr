@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Basket.API.IntegrationEvents.Events;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Basket.API.IntegrationEvents.EventHandling;
+using System;
 
 namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
 {
@@ -14,19 +13,16 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
     {
         private const string DAPR_PUBSUB_NAME = "pubsub";
 
-        private readonly IServiceProvider _serviceProvider;
-
-        public IntegrationEventController(IServiceProvider serviceProvider)
+        [HttpPost("OrderStatusChangedToSubmitted")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToSubmittedIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToSubmittedIntegrationEvent @event,
+            [FromServices] OrderStatusChangedToSubmittedIntegrationEventHandler handler)
         {
-            _serviceProvider = serviceProvider;
-        }
+            if (@event == null) throw new ArgumentNullException(nameof(@event));
+            if (handler == null) throw new ArgumentNullException(nameof(handler));
 
-        [HttpPost("OrderStarted")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderStartedIntegrationEvent")]
-        public async Task OrderStarted(OrderStatusChangedToSubmittedIntegrationEvent @event)
-        {
-            var handler = _serviceProvider.GetRequiredService<OrderStatusChangedToSubmittedIntegrationEventHandler>();
-            await handler.Handle(@event);
+            return handler.Handle(@event);
         }
     }
 }

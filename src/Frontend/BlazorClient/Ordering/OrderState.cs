@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace eShopOnDapr.BlazorClient.Ordering
+﻿namespace eShopOnDapr.BlazorClient.Ordering
 {
-    public class OrderState
+    public record OrderState
     {
         public int OrderNumber { get; set; }
 

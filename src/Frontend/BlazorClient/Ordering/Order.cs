@@ -13,5 +13,9 @@ namespace eShopOnDapr.BlazorClient.Ordering
         List<OrderItem> OrderItems)
     {
         public decimal Total => OrderItems.Sum(o => o.Units * o.UnitPrice);
+
+        public string GetFormattedOrderDate() => OrderDate.ToString("d");
+
+        public string GetFormattedTotal() => Total.ToString("0.00");
     }
 }

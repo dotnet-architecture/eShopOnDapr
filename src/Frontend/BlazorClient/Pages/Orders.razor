@@ -1,7 +1,6 @@
 ﻿@page "/orders"
 @attribute [Authorize]
 @inject OrderClient OrderClient 
-@inject NavigationManager NavigationManager
 
 <div class="esh-orders">
     <div class="container">
@@ -31,8 +30,8 @@
             {
                 <article class="esh-orders-item divider row">
                     <section class="col-1">@order.OrderNumber</section>
-                    <section class="col-3">@order.OrderDate.ToString("d")</section>
-                    <section class="col-2">$@order.Total.ToString("0.00")</section>
+                    <section class="col-3">@order.GetFormattedOrderDate()</section>
+                    <section class="col-2">$@order.GetFormattedTotal()</section>
                     <section class="col-2">@order.OrderStatus</section>
                     <section class="col-2">
                         @if (order.OrderStatus == "Submitted")
