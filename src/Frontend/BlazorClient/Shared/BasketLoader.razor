@@ -1,0 +1,45 @@
+﻿@inject AuthenticationStateProvider _authenticationStateProvider
+@inject UserBasket _userBasket;
+
+@code {
+
+    private bool _basketLoaded;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!(await TryLoadBasket(AuthenticationStateTask)))
+        {
+            // When logging in, the BasketLoader component is initialized on the page before the login is
+            // completed. Therefore, we need to subscribe to the AuthenticationStateChanged event to load
+            // the basket once the user is authenticated.
+            _authenticationStateProvider.AuthenticationStateChanged += this.OnAuthenticationStateChanged;
+        }
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> authenticationStateTask)
+    {
+        Console.WriteLine($"BasketLoader -> OnAuthenticationStateChanged");
+
+        await TryLoadBasket(authenticationStateTask);
+    }
+
+    private async Task<bool> TryLoadBasket(Task<AuthenticationState> authenticationStateTask)
+    {
+        var user = (await authenticationStateTask).User;
+
+        Console.WriteLine($"BasketLoader -> TryLoadBasket [User authenticated: {user.Identity.IsAuthenticated}, Basket loaded: {_basketLoaded}]");
+
+        if (user.Identity.IsAuthenticated && !_basketLoaded)
+        {
+            Console.WriteLine($"BasketLoader -> TryLoadBasket -> Loading basket");
+            await _userBasket.LoadAsync();
+
+            _basketLoaded = true;
+        }
+
+        return _basketLoaded;
+    }
+}

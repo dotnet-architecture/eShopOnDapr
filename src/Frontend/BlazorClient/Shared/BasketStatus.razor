@@ -1,48 +1,32 @@
 @using eShopOnDapr.BlazorClient.Basket
-@inject UserBasket UserBasket
+@inject UserBasket _basket
+@implements IDisposable
 
 <div>
-    <a class="esh-basketstatus pt-2 pb-2 @(UserBasket.TotalItemCount < 1 ? "is-disabled" : "")" href="basket">
+    <a class="esh-basketstatus pt-2 pb-2 @(_basket?.TotalItemCount < 1 ? "is-disabled" : "")" href="basket">
         <div class="esh-basketstatus-image ml-4 mr-1">
             <img src="/images/cart.svg" />
         </div>
         <div class="esh-basketstatus-badge">
-            @UserBasket.TotalItemCount
+            @_basket?.TotalItemCount
         </div>
     </a>
 </div>
 
 @code {
 
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-
     protected override void OnInitialized()
     {
-        UserBasket.ItemsChanged += (s, e) => StateHasChanged();
+        _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
-    protected override async Task OnParametersSetAsync()
+    private void OnBasketItemsChanged(object sender, EventArgs e)
     {
-        var authenticationState = await authenticationStateTask;
-
-        if (authenticationState.User.Identity.IsAuthenticated)
-        {
-            await LoadBasketAsync();
-        }
+        StateHasChanged();
     }
 
-    private async Task LoadBasketAsync()
+    void IDisposable.Dispose()
     {
-        try
-        {
-            await UserBasket.LoadAsync();
-        }
-        catch (AccessTokenNotAvailableException)
-        {
-            Console.WriteLine("AccessTokenNotAvailableException");
-//            RedirectToLogin();
-        }
+        _basket.ItemsChanged -= OnBasketItemsChanged;
     }
-
 }

@@ -1,8 +1,8 @@
 ﻿@page "/basket"
 @attribute [Authorize]
 @implements IDisposable
-@inject UserBasket UserBasket
-@inject NavigationManager NavigationManager
+@inject UserBasket _basket
+@inject NavigationManager _navigationManager
 
 <div class="esh-basket">
     <div class="container">
@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-6 col-md-8 col-lg-9">
                 <div class="esh-basket-items row">
-                    @foreach (var item in UserBasket.Items)
+                    @foreach (var item in _basket.Items)
                     {
                         <div class="col-12 col-md-6 col-lg-4">
                             <article class="esh-basket-item">
@@ -54,11 +54,11 @@
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="esh-basket-checkout p-4">
                     <h2 class="esh-basket-checkout-title">Your shopping bag</h2>
-                    <div class="mb-3 u-text-sm">(@UserBasket.TotalItemCount items)</div>
+                    <div class="mb-3 u-text-sm">(@_basket.TotalItemCount items)</div>
 
                     <div class="d-flex justify-content-between align-items-center font-weight-bolder">
                         <div>TOTAL</div>
-                        <div>$@UserBasket.GetFormattedTotalPrice()</div>
+                        <div>$@_basket.GetFormattedTotalPrice()</div>
                     </div>
                 </div>
 
@@ -82,10 +82,7 @@
 
     protected override void OnInitialized()
     {
-        // If the user presses reload on the page, the UserBasket items are
-        // loaded asynchronously. The page may show before the items are loaded
-        // so subscribe to any changes to update the page.
-        UserBasket.ItemsChanged += OnBasketItemsChanged;
+        _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
     private void OnBasketItemsChanged(object sender, EventArgs e)
@@ -97,7 +94,7 @@
     {
         try
         {
-            await UserBasket.RemoveItemAsync(item);
+            await _basket.RemoveItemAsync(item);
             _error = null;
         }
         catch (AccessTokenNotAvailableException ex)
@@ -114,7 +111,7 @@
     {
         try
         {
-            await UserBasket.SetItemQuantityAsync(item, quantity);
+            await _basket.SetItemQuantityAsync(item, quantity);
             _error = null;
         }
         catch (AccessTokenNotAvailableException ex)
@@ -129,14 +126,14 @@
 
     private void Checkout()
     {
-        if (UserBasket.Items.Any())
+        if (_basket.Items.Any())
         {
-            NavigationManager.NavigateTo("checkout");
+            _navigationManager.NavigateTo("checkout");
         }
     }
 
     void IDisposable.Dispose()
     {
-        UserBasket.ItemsChanged -= OnBasketItemsChanged;
+        _basket.ItemsChanged -= OnBasketItemsChanged;
     }
 }
