@@ -1,5 +1,4 @@
-@inject NavigationManager NavigationManager
-@inject IToastService ToastService
+@inject IToastService _toastService
 
 <BlazoredToasts />
 
@@ -15,7 +14,7 @@
         // Deduplicate when the same parameter value is set multiple times.
         if (OrderState != _prevOrderState)
         {
-            ToastService.ShowInfo(
+            _toastService.ShowInfo(
                 $"Your order status has been updated to \"{OrderState.Status}\".",
                 $"Order #{OrderState.OrderNumber}");
 

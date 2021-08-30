@@ -1,5 +1,5 @@
 @inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+@inject NavigationManager _navigationManager
 
 <header class="esh-app-header @(IsRootPage() ? "esh-app-header--expanded" : "")">
     <div class="esh-app-header-promo">
@@ -55,5 +55,5 @@
 @code {
 
     private bool IsRootPage()
-        => NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Length == 0;
+        => _navigationManager.ToBaseRelativePath(_navigationManager.Uri).Length == 0;
 }  

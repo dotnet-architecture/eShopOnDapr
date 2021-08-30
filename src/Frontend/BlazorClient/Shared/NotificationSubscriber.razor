@@ -1,5 +1,5 @@
-﻿@inject IAccessTokenProvider AccessTokenProvider;
-@inject NavigationManager NavigationManager;
+﻿@inject IAccessTokenProvider _accessTokenProvider;
+@inject NavigationManager _navigationManager;
 
 <CascadingValue Value="_orderState">
     @ChildContent
@@ -46,13 +46,13 @@
 
     private async Task<string> GetAccessTokenAsync()
     {
-        var accessTokenResult = await AccessTokenProvider.RequestAccessToken();
+        var accessTokenResult = await _accessTokenProvider.RequestAccessToken();
         if (accessTokenResult.TryGetToken(out AccessToken accessToken))
         {
             return accessToken.Value;
         }
 
-        NavigationManager.NavigateTo("authentication/login");
+        _navigationManager.NavigateTo("authentication/login");
 
         return string.Empty;
     }

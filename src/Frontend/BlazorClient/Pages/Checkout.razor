@@ -1,8 +1,8 @@
 ﻿@page "/checkout"
 @attribute [Authorize]
 @implements IDisposable
-@inject UserBasket UserBasket
-@inject NavigationManager NavigationManager
+@inject UserBasket _basket
+@inject NavigationManager _navigationManager
 
 <div class="container">
     <h1 class="mb-4 mt-5">[ Checkout ]</h1>
@@ -95,7 +95,7 @@
             </div>
 
             <h2 class="mt-5 mb-4">Order details</h2>
-            @foreach (var item in UserBasket.Items)
+            @foreach (var item in _basket.Items)
             {
                 <article class="divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
                     <div class="esh-orders_new-thumbnail-container">
@@ -114,7 +114,7 @@
 
             <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
                 <div>Total</div>
-                <div class="ml-3">$@UserBasket.GetFormattedTotalPrice()</div>
+                <div class="ml-3">$@_basket.GetFormattedTotalPrice()</div>
             </div>
 
             <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">
@@ -156,7 +156,7 @@
         // If the user presses reload on the page, the UserBasket items are
         // loaded asynchronously. The page may show before the items are loaded
         // so subscribe to any changes to update the page.
-        UserBasket.ItemsChanged += OnBasketItemsChanged;
+        _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
     private void OnBasketItemsChanged(object sender, EventArgs e)
@@ -168,9 +168,9 @@
     {
         try
         {
-            await UserBasket.CheckoutAsync(_orderForm);
+            await _basket.CheckoutAsync(_orderForm);
 
-            NavigationManager.NavigateTo("/orders");
+            _navigationManager.NavigateTo("/orders");
         }
         catch (AccessTokenNotAvailableException ex)
         {
@@ -184,6 +184,6 @@
 
     void IDisposable.Dispose()
     {
-        UserBasket.ItemsChanged -= OnBasketItemsChanged;
+        _basket.ItemsChanged -= OnBasketItemsChanged;
     }
 }

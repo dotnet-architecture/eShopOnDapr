@@ -1,7 +1,5 @@
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+@inject NavigationManager _navigationManager
+@inject SignOutSessionStateManager _signOutManager
 
 <div class="esh-identity">
     <AuthorizeView>
@@ -35,43 +33,19 @@
 
 @code {
 
-    // TODO Clean up
-
-    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    protected override Task OnParametersSetAsync()
-    {
-        return LogUserAuthenticationState();
-    }
-
-    private async Task LogUserAuthenticationState()
-    {
-        var authState = await authenticationStateTask;
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            Console.WriteLine($"User {user.Identity.Name} is authenticated.");
-        }
-        else
-        {
-            Console.WriteLine("User is NOT authenticated.");
-        }
-    }
-
     private void Login(MouseEventArgs args)
     {
-        Navigation.NavigateTo("authentication/login");
+        _navigationManager.NavigateTo("authentication/login");
     }
 
     private void ViewOrders(MouseEventArgs args)
     {
-        Navigation.NavigateTo("orders");
+        _navigationManager.NavigateTo("orders");
     }
 
     private async Task BeginSignOutAsync(MouseEventArgs args)
     {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
+        await _signOutManager.SetSignOutState();
+        _navigationManager.NavigateTo("authentication/logout");
     }
 }

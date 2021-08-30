@@ -1,6 +1,6 @@
 ﻿@page "/orders/{orderNumber:int}"
 @attribute [Authorize]
-@inject OrderClient OrderClient
+@inject OrderClient _orderClient
 
 <div class="esh-orders_detail">
     <div class="container">
@@ -81,7 +81,7 @@
     {
         try
         {
-            _order = await OrderClient.GetOrderDetailsAsync(OrderNumber);
+            _order = await _orderClient.GetOrderDetailsAsync(OrderNumber);
         }
         catch (AccessTokenNotAvailableException ex)
         {
