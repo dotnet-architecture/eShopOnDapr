@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: identity-api
-          image: eshop/identity.api:linux-latest
+          image: eshopdapr/identity.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

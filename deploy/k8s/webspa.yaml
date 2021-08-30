@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
         - name: webspa
-          image: eshop/webspa:linux-latest
+          image: eshopdapr/webspa:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
