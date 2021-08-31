@@ -1,4 +1,4 @@
-﻿namespace Basket.API.Infrastructure.Filters
+﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Filters
 {
     public class JsonErrorResponse
     {

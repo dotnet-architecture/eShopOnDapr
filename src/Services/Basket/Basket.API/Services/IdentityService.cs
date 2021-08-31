@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.Services
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Services
 {
     public class IdentityService : IIdentityService
     {

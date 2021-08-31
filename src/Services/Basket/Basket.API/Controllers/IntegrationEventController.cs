@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using Basket.API.IntegrationEvents.Events;
+﻿using System;
+using System.Threading.Tasks;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
-using Basket.API.IntegrationEvents.EventHandling;
-using System;
+using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.EventHandling;
+using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

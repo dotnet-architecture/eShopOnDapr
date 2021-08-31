@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Basket.API.Infrastructure.Filters
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Filters
 {
     public class AuthorizeCheckOperationFilter : IOperationFilter
     {

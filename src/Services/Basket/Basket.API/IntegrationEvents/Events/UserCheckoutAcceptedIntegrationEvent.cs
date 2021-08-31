@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+using Microsoft.eShopOnDapr.Services.Basket.API.Model;
 
-namespace Basket.API.IntegrationEvents.Events
+namespace Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events
 {
     public class UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
     {

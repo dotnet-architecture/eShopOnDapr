@@ -2,19 +2,18 @@
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Basket.API.IntegrationEvents.Events;
-using Basket.API.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
-using Microsoft.eShopOnContainers.Services.Basket.API.Services;
+using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
+using Microsoft.eShopOnDapr.Services.Basket.API.Model;
+using Microsoft.eShopOnDapr.Services.Basket.API.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
+    [Authorize(Policy = "ApiScope")]
     [ApiController]
     public class BasketController : ControllerBase
     {
@@ -92,16 +91,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
             // Once basket is checkout, sends an integration event to
             // ordering.api to convert basket to order and proceed with
             // order creation process
-            try
-            {
-                await _eventBus.PublishAsync(eventMessage);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "ERROR Publishing integration event: {IntegrationEventId} from {AppName}", eventMessage.Id, Program.AppName);
-
-                throw;
-            }
+            await _eventBus.PublishAsync(eventMessage);
 
             return Accepted();
         }
@@ -109,7 +99,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
         // DELETE api/values/5
         [HttpDelete]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
-        public async Task DeleteBasketByIdAsync(string id)
+        public async Task DeleteBasketByIdAsync()
         {
             var userId = _identityService.GetUserIdentity();
 

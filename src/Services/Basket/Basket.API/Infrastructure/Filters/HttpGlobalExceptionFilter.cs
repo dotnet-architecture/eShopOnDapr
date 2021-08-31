@@ -1,14 +1,14 @@
-﻿using Basket.API.Infrastructure.ActionResults;
-using Basket.API.Infrastructure.Exceptions;
+﻿using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.ActionResults;
+using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 
-namespace Basket.API.Infrastructure.Filters
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Filters
 {
     public partial class HttpGlobalExceptionFilter : IExceptionFilter
     {

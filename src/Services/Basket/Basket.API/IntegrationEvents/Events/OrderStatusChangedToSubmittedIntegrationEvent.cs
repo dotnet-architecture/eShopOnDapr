@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Basket.API.IntegrationEvents.Events
+namespace Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events
 {
     public class OrderStatusChangedToSubmittedIntegrationEvent : IntegrationEvent
     {

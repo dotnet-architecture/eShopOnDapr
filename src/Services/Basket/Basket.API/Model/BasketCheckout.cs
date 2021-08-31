@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Basket.API.Model
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Model
 {
     public class BasketCheckout
     {

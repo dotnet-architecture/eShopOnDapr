@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Basket.API.Infrastructure.Exceptions
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions
