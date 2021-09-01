@@ -26,9 +26,6 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
             try
             {
                 Log.Information("Starting web host");
-
-                Log.Information("IdentityUrl: " + configuration.GetValue<string>("IdentityUrl"));
-
                 CreateHostBuilder(args).Build().Run();
                 return 0;
             }

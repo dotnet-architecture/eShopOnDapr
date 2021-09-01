@@ -39,16 +39,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CancelOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> CancelOrderAsync(int orderNumber)
         {
-            bool result = false;
+            var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
 
-            if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
-            {
-                var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
-                result = await orderingProcessActor.CancelAsync();
-            }
-
+            var result = await orderingProcessActor.CancelAsync();
             if (!result)
             {
                 return BadRequest();

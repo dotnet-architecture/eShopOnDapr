@@ -87,8 +87,19 @@
         }
     }
 
-    private Task CancelOrderAsync(int orderNumber)
+    private async Task CancelOrderAsync(int orderNumber)
     {
-        return Task.CompletedTask;
+        try
+        {
+            await _orderClient.CancelOrderAsync(orderNumber);
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch
+        {
+            _error = "Unable to cancel order.";
+        }
     }
 }

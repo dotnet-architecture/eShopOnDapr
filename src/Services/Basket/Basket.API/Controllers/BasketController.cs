@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,6 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
 using Microsoft.eShopOnDapr.Services.Basket.API.Model;
 using Microsoft.eShopOnDapr.Services.Basket.API.Services;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
 {
@@ -20,15 +18,12 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         private readonly IBasketRepository _repository;
         private readonly IIdentityService _identityService;
         private readonly IEventBus _eventBus;
-        private readonly ILogger<BasketController> _logger;
 
         public BasketController(
-            ILogger<BasketController> logger,
             IBasketRepository repository,
             IIdentityService identityService,
             IEventBus eventBus)
         {
-            _logger = logger;
             _repository = repository;
             _identityService = identityService;
             _eventBus = eventBus;

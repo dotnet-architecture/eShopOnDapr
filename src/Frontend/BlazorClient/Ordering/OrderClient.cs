@@ -19,5 +19,12 @@ namespace eShopOnDapr.BlazorClient.Ordering
 
         public Task<Order> GetOrderDetailsAsync(int orderNumber)
             => _httpClient.GetFromJsonAsync<Order>(orderNumber.ToString());
+
+        public async Task CancelOrderAsync(int orderNumber)
+        {
+            var response = await _httpClient.PutAsync($"{orderNumber}/cancel", null);
+
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

@@ -39,14 +39,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - PATH_BASE=/basket-api
       - PORT=80
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://localhost:5105
       - Serilog__SeqServerUrl=http://seq
     ports:
       - "5103:80"
-      - "9103:81"
       - "50001:50001"
 
   basket-api-dapr:
