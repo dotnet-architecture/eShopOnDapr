@@ -107,14 +107,6 @@ services:
     depends_on:
       - webshoppingapigw
 
-  webspa:
-    image: ${REGISTRY:-eshopdapr}/webspa:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebSPA/Dockerfile
-    depends_on:
-      - webshoppingagg
-
   webstatus:
     image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
     build:

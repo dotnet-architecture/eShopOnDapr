@@ -94,7 +94,7 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         // DELETE api/values/5
         [HttpDelete]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
-        public async Task DeleteBasketByIdAsync()
+        public async Task DeleteBasketAsync()
         {
             var userId = _identityService.GetUserIdentity();
 

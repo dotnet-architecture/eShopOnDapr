@@ -1,17 +1,16 @@
-﻿using Catalog.API.IntegrationEvents;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure;
-using Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events;
-using Microsoft.eShopOnContainers.Services.Catalog.API.Model;
-using Microsoft.eShopOnContainers.Services.Catalog.API.ViewModel;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Catalog.API.IntegrationEvents;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure;
+using Microsoft.eShopOnContainers.Services.Catalog.API.Model;
+using Microsoft.eShopOnContainers.Services.Catalog.API.ViewModel;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.eShopOnContainers.Services.Catalog.API.Controllers
 {

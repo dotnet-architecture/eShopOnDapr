@@ -49,13 +49,13 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
 
                     RequireConsent = false,
 
-                    AllowedCorsOrigins = { "http://localhost:8003" },
+                    AllowedCorsOrigins = { "http://localhost:5104" },
 
                     // where to redirect to after login
-                    RedirectUris = { "http://localhost:8003/authentication/login-callback" },
+                    RedirectUris = { "http://localhost:5104/authentication/login-callback" },
 
                     // where to redirect to after logout
-                    PostLogoutRedirectUris = { "http://localhost:8003/authentication/logout-callback" },
+                    PostLogoutRedirectUris = { "http://localhost:5104/authentication/logout-callback" },
 
                     AllowedScopes = new List<string>
                     {
