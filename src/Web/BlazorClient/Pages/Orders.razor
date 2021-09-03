@@ -61,12 +61,6 @@
     [CascadingParameter]
     private OrderState OrderState { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        // TODO Remove?
-        await LoadOrdersAsync();
-    }
-
     protected override async Task OnParametersSetAsync()
     {
         await LoadOrdersAsync();
