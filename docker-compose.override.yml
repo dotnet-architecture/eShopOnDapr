@@ -226,21 +226,23 @@ services:
 
   webstatus:
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - HealthChecksUI__HealthChecks__0__Name=Basket API
-      - HealthChecksUI__HealthChecks__0__Uri=http://basket-api/hc
-      - HealthChecksUI__HealthChecks__1__Name=Catalog API
-      - HealthChecksUI__HealthChecks__1__Uri=http://catalog-api/hc
-      - HealthChecksUI__HealthChecks__2__Name=Identity API
-      - HealthChecksUI__HealthChecks__2__Uri=http://identity-api/hc
-      - HealthChecksUI__HealthChecks__3__Name=Ordering API
-      - HealthChecksUI__HealthChecks__3__Uri=http://ordering-api/hc
-      - HealthChecksUI__HealthChecks__4__Name=Payment API
-      - HealthChecksUI__HealthChecks__4__Uri=http://payment-api/hc
-      - HealthChecksUI__HealthChecks__5__Name=Web Shopping Aggregator
-      - HealthChecksUI__HealthChecks__5__Uri=http://webshoppingagg/hc
-      - HealthChecksUI__HealthChecks__6__Name=Web SPA
-      - HealthChecksUI__HealthChecks__6__Uri=http://webspa/hc
+      - HealthChecksUI__HealthChecks__1__Name=Basket API
+      - HealthChecksUI__HealthChecks__1__Uri=http://basket-api/hc
+      - HealthChecksUI__HealthChecks__2__Name=Catalog API
+      - HealthChecksUI__HealthChecks__2__Uri=http://catalog-api/hc
+      - HealthChecksUI__HealthChecks__3__Name=Identity API
+      - HealthChecksUI__HealthChecks__3__Uri=http://identity-api/hc
+      - HealthChecksUI__HealthChecks__4__Name=Ordering API
+      - HealthChecksUI__HealthChecks__4__Uri=http://ordering-api/hc
+      - HealthChecksUI__HealthChecks__5__Name=Payment API
+      - HealthChecksUI__HealthChecks__5__Uri=http://payment-api/hc
+      - HealthChecksUI__HealthChecks__6__Name=Web Shopping Aggregator
+      - HealthChecksUI__HealthChecks__6__Uri=http://webshoppingagg/hc
+      - HealthChecksUI__HealthChecks__7__Name=Web SPA
+      - HealthChecksUI__HealthChecks__7__Uri=http://webspa/hc
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "5107:80"
 
