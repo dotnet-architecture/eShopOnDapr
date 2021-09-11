@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models
 {
     public class UpdateBasketRequest
     {

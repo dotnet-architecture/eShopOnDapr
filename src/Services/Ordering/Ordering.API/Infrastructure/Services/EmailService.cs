@@ -2,10 +2,10 @@
 using System.Text;
 using System.Threading.Tasks;
 using Dapr.Client;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {

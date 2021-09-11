@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
 namespace Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events
 {

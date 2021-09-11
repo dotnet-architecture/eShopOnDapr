@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API
 {
     public class OrderingSettings
     {

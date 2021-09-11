@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Filters;
 using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Repositories;
 using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.EventHandling;
@@ -30,7 +30,6 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddDapr();
@@ -95,7 +94,7 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
             healthChecksBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
             services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<OrderStatusChangedToSubmittedIntegrationEventHandler>();
+            services.AddScoped<OrderStatusChangedToSubmittedIntegrationEventHandler>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IBasketRepository, DaprBasketRepository>();
@@ -111,7 +110,7 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Basket.API V1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API V1");
                     c.OAuthClientId("basketswaggerui");
                     c.OAuthAppName("Basket Swagger UI");
                 });

@@ -18,14 +18,14 @@ namespace eShopOnDapr.BlazorClient.Catalog
 
         public async Task<IEnumerable<CatalogBrand>> GetBrandsAsync() =>
             await httpClient.GetFromJsonAsync<IEnumerable<CatalogBrand>>(
-                "c/api/v1/catalog/catalogbrands");
+                "c/api/v1/catalog/brands");
 
         public async Task<IEnumerable<CatalogType>> GetTypesAsync() =>
             await httpClient.GetFromJsonAsync<IEnumerable<CatalogType>>(
-                "c/api/v1/catalog/catalogtypes");
+                "c/api/v1/catalog/types");
 
         public async Task<CatalogPage> GetItemsAsync(int brandId, int typeId, int pageIndex) =>
             await httpClient.GetFromJsonAsync<CatalogPage>(
-                $"c/api/v1/catalog/items2?brandId={brandId}&typeId={typeId}&pageIndex={pageIndex}&pageSize={PageSize}");
+                $"c/api/v1/catalog/items?brandId={brandId}&typeId={typeId}&pageIndex={pageIndex}&pageSize={PageSize}");
     }
 }

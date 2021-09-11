@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Devspaces
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Devspaces
 {
     static class IdentityDevspacesBuilderExtensions
     {

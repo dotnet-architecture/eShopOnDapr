@@ -1,8 +1,8 @@
 ﻿using System;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Application.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
     public class UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
     {

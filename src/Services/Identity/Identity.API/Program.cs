@@ -1,7 +1,7 @@
 ﻿using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.eShopOnContainers.Services.Identity.API.Data;
+using Microsoft.eShopOnDapr.Services.Identity.API.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +11,7 @@ using Serilog;
 using System;
 using System.IO;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API
+namespace Microsoft.eShopOnDapr.Services.Identity.API
 {
     public class Program
     {

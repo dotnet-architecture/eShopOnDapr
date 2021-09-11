@@ -5,13 +5,13 @@ using Dapr.Actors;
 using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
+using Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

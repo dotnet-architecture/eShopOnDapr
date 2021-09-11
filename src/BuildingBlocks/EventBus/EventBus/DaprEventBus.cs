@@ -1,17 +1,17 @@
 using System.Threading.Tasks;
 using Dapr.Client;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus
+namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus
 {
     public class DaprEventBus : IEventBus
     {
         private const string DAPR_PUBSUB_NAME = "pubsub";
 
         private readonly DaprClient _dapr;
-        private readonly ILogger<DaprEventBus> _logger;
+        private readonly ILogger _logger;
 
         public DaprEventBus(DaprClient dapr, ILogger<DaprEventBus> logger)
         {

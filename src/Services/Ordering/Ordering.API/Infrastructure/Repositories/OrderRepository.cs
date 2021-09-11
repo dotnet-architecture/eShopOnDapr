@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

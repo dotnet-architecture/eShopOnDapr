@@ -1,8 +1,8 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+﻿using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
 
     public class OrderStockRejectedIntegrationEvent : IntegrationEvent

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions
+namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Extensions
 {
     public static class GenericTypeExtensions
     {

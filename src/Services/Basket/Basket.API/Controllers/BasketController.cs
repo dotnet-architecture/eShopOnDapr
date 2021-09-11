@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
 using Microsoft.eShopOnDapr.Services.Basket.API.Model;
 using Microsoft.eShopOnDapr.Services.Basket.API.Services;

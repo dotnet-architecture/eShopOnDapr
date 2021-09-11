@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migrations
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
 {
     public partial class InitialCreate : Migration
     {

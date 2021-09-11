@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure
 {
     public class OrderingContextSeed
     {

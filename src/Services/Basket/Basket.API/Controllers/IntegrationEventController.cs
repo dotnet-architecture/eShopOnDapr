@@ -14,7 +14,7 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         private const string DAPR_PUBSUB_NAME = "pubsub";
 
         [HttpPost("OrderStatusChangedToSubmitted")]
-        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToSubmittedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, nameof(OrderStatusChangedToSubmittedIntegrationEvent))]
         public Task HandleAsync(
             OrderStatusChangedToSubmittedIntegrationEvent @event,
             [FromServices] OrderStatusChangedToSubmittedIntegrationEventHandler handler)

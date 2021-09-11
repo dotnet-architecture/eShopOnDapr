@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Filters
+﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Filters
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.OpenApi.Models;

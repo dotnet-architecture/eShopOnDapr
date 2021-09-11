@@ -1,23 +1,23 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Catalog.API.Infrastructure;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Microsoft.eShopOnContainers.Services.Catalog.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Controllers
 {
     [ApiController]
     public class PicController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogDbContext _catalogContext;
 
         public PicController(IWebHostEnvironment env,
-            CatalogContext catalogContext)
+            CatalogDbContext catalogContext)
         {
             _env = env;
             _catalogContext = catalogContext;

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public interface IEmailService
     {

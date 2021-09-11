@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Models.ManageViewModels
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Models.ManageViewModels
 {
     public class IndexViewModel
     {

@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Migrations
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderingDbContext))]
     [Migration("20210701180453_InitialCreate")]

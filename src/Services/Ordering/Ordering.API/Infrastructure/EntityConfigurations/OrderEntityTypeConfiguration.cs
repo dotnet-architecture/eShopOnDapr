@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations
 {
     class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {

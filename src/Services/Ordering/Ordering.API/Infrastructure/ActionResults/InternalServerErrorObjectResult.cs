@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.ActionResults
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.ActionResults
 {
     using AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

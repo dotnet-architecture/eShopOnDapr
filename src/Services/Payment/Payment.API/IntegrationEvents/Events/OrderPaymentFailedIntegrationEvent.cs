@@ -1,7 +1,7 @@
 ﻿namespace Payment.API.IntegrationEvents.Events
 {
     using System;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+    using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
     public class OrderPaymentFailedIntegrationEvent : IntegrationEvent
     {

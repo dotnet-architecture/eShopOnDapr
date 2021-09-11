@@ -3,10 +3,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]

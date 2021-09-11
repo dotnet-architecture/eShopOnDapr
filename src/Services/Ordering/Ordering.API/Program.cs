@@ -4,7 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API
+namespace Microsoft.eShopOnDapr.Services.Ordering.API
 {
     public class Program
     {

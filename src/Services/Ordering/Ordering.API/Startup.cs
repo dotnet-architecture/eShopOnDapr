@@ -13,16 +13,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Filters;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.BuildingBlocks.IntegrationEventLogEF.Services;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Filters;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -30,7 +30,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API
+namespace Microsoft.eShopOnDapr.Services.Ordering.API
 {
     public class Startup
     {

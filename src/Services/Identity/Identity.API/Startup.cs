@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Identity.API.Certificates;
-using Microsoft.eShopOnContainers.Services.Identity.API.Data;
-using Microsoft.eShopOnContainers.Services.Identity.API.Devspaces;
-using Microsoft.eShopOnContainers.Services.Identity.API.Models;
-using Microsoft.eShopOnContainers.Services.Identity.API.Services;
+using Microsoft.eShopOnDapr.Services.Identity.API.Certificates;
+using Microsoft.eShopOnDapr.Services.Identity.API.Data;
+using Microsoft.eShopOnDapr.Services.Identity.API.Devspaces;
+using Microsoft.eShopOnDapr.Services.Identity.API.Models;
+using Microsoft.eShopOnDapr.Services.Identity.API.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -23,7 +23,7 @@ using StackExchange.Redis;
 using System;
 using System.Reflection;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API
+namespace Microsoft.eShopOnDapr.Services.Identity.API
 {
     public class Startup
     {

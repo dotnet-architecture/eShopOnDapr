@@ -1,7 +1,7 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions
+namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions
 {
     public interface IIntegrationEventHandler<in TIntegrationEvent> : IIntegrationEventHandler 
         where TIntegrationEvent: IntegrationEvent

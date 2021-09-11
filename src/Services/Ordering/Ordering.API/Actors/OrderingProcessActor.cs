@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapr.Actors.Runtime;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Application.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Actors
 {
     public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {

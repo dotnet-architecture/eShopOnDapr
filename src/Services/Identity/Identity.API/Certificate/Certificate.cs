@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Certificates
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Certificates
 {
     static class Certificate
     {

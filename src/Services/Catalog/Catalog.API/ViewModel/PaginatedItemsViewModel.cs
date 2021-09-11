@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.ViewModel
+﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel
 {
     using System.Collections.Generic;
 

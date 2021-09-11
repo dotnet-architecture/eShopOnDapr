@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Devspaces
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Devspaces
 {
     public class DevspacesRedirectUriValidator : IRedirectUriValidator
     {

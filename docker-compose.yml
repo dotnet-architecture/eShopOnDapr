@@ -108,10 +108,7 @@ services:
       - webshoppingapigw
 
   webstatus:
-    image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebStatus/Dockerfile
+    image: xabarilcoding/healthchecksui:5.0.0
 
   dapr-placement:
     image: "daprio/dapr:1.0.0"

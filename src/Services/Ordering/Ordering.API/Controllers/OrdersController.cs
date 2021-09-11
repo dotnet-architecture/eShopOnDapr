@@ -8,12 +8,12 @@ using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]

@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services
 {
     public class BasketService : IBasketService
     {

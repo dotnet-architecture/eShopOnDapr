@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public class Order
     {

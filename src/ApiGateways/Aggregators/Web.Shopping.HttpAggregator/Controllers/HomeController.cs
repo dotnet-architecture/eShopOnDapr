@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Controllers
 {
     [Route("")]
     public class HomeController : Controller

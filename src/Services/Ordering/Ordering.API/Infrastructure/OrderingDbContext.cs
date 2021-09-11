@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.EntityConfigurations;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure
 {
     public sealed class OrderingDbContext : DbContext
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Identity.API.Models;
+using Microsoft.eShopOnDapr.Services.Identity.API.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.eShopOnContainers.Services.Identity.API.Extensions;
-using Microsoft.eShopOnContainers.Services.Identity.API.Models;
+using Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
+using Microsoft.eShopOnDapr.Services.Identity.API.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Data
 {
 
 

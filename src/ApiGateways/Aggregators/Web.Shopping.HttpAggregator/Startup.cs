@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Filters.Basket.API.Infrastructure.Filters;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Filters.Basket.API.Infrastructure.Filters;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
 {
     public class Startup
     {

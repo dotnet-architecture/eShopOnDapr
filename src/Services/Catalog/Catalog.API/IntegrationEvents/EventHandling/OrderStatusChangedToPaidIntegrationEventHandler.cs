@@ -1,43 +1,32 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.EventHandling
-{
-    using BuildingBlocks.EventBus.Abstractions;
-    using System.Threading.Tasks;
-    using Infrastructure;
-    using Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events;
-    using Microsoft.Extensions.Logging;
-    using Serilog.Context;
+﻿using System.Threading.Tasks;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.Events;
+using System;
 
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling
+{
     public class OrderStatusChangedToPaidIntegrationEventHandler : 
         IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent>
     {
-        private readonly CatalogContext _catalogContext;
-        private readonly ILogger<OrderStatusChangedToPaidIntegrationEventHandler> _logger;
+        private readonly CatalogDbContext _context;
 
-        public OrderStatusChangedToPaidIntegrationEventHandler(
-            CatalogContext catalogContext,
-            ILogger<OrderStatusChangedToPaidIntegrationEventHandler> logger)
+        public OrderStatusChangedToPaidIntegrationEventHandler(CatalogDbContext context)
         {
-            _catalogContext = catalogContext;
-            _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task Handle(OrderStatusChangedToPaidIntegrationEvent @event)
         {
-            using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
+            //we're not blocking stock/inventory
+            foreach (var orderStockItem in @event.OrderStockItems)
             {
-                _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
+                var catalogItem = _context.CatalogItems.Find(orderStockItem.ProductId);
 
-                //we're not blocking stock/inventory
-                foreach (var orderStockItem in @event.OrderStockItems)
-                {
-                    var catalogItem = _catalogContext.CatalogItems.Find(orderStockItem.ProductId);
-
-                    catalogItem.RemoveStock(orderStockItem.Units);
-                }
-
-                await _catalogContext.SaveChangesAsync();
-
+                catalogItem.RemoveStock(orderStockItem.Units);
             }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Filters
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Filters
 {
     using System.Net;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.ActionResults;
+    using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.ActionResults;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 

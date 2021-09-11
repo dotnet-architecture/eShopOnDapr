@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
 {
     [Authorize]
     public class NotificationsHub : Hub

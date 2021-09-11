@@ -5,10 +5,10 @@ using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Identity.API.Configuration;
+using Microsoft.eShopOnDapr.Services.Identity.API.Configuration;
 using Microsoft.Extensions.Configuration;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Data
 {
     public class ConfigurationDbContextSeed
     {

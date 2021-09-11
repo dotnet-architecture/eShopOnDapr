@@ -2,7 +2,7 @@
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Configuration
 {
     public class Config
     {

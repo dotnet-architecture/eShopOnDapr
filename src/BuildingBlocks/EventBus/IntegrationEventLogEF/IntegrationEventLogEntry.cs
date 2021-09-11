@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
+using Microsoft.eShopOnDapr.BuildingBlocks.IntegrationEventLogEF.Services;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF
+namespace Microsoft.eShopOnDapr.BuildingBlocks.IntegrationEventLogEF
 {
     public class IntegrationEventLogEntry
     {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.eShopOnContainers.Services.Identity.API.Data;
+using Microsoft.eShopOnDapr.Services.Identity.API.Data;
 
 namespace Identity.API.Migrations
 {
