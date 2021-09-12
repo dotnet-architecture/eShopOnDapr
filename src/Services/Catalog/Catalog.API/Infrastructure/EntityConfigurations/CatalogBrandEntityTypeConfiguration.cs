@@ -22,7 +22,8 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfig
 
             builder.HasData(
                 new CatalogBrand { Id = 1, Name = ".NET" },
-                new CatalogBrand { Id = 2, Name = "Dapr" });
+                new CatalogBrand { Id = 2, Name = "Dapr" },
+                new CatalogBrand { Id = 3, Name = "Other" });
         }
     }
 }

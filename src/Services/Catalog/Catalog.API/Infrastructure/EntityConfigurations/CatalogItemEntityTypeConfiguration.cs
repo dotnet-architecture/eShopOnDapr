@@ -19,6 +19,7 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfig
                 .HasMaxLength(50);
 
             builder.Property(item => item.Price)
+                .HasPrecision(4, 2)
                 .IsRequired(true);
 
             builder.Property(item => item.PictureFileName)

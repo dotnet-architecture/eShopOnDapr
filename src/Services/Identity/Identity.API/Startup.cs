@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System;
+using System.Reflection;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using IdentityServer4.Services;
@@ -11,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnDapr.Services.Identity.API.Certificates;
 using Microsoft.eShopOnDapr.Services.Identity.API.Data;
-using Microsoft.eShopOnDapr.Services.Identity.API.Devspaces;
 using Microsoft.eShopOnDapr.Services.Identity.API.Models;
 using Microsoft.eShopOnDapr.Services.Identity.API.Services;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +21,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
-using System;
-using System.Reflection;
 
 namespace Microsoft.eShopOnDapr.Services.Identity.API
 {
@@ -84,8 +83,7 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
             {
                 x.IssuerUri = "null";
                 x.Authentication.CookieLifetime = TimeSpan.FromHours(2);
-            })
-            .AddDevspacesIfNeeded(Configuration.GetValue("EnableDevspaces", false));
+            });
 
             // Here we check if we're on development environment so we can just use the IdentityServer Developer credential.
             if (Environment.IsDevelopment())
@@ -142,7 +140,6 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {

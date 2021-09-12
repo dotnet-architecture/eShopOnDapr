@@ -3,10 +3,11 @@
     public record CatalogItem(
         int Id,
         string Name,
-        string Description,
         decimal Price,
-        string PictureUri)
+        string PictureFileName)
     {
         public string GetFormattedPrice() => Price.ToString("0.00");
+
+        public string GetPictureUrl(Settings settings) => $"{settings.ApiGatewayUrl}c/pics/{PictureFileName}";
     }
 }

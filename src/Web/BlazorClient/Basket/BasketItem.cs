@@ -5,9 +5,12 @@ namespace eShopOnDapr.BlazorClient.Basket
         string ProductName,
         decimal UnitPrice,
         int Quantity,
-        string PictureUrl)
+        string PictureFileName)
     {
         public string GetFormattedPrice() => UnitPrice.ToString("0.00");
+
         public string GetFormattedTotalPrice() => (UnitPrice * Quantity).ToString("0.00");
+
+        public string GetPictureUrl(Settings settings) => $"{settings.ApiGatewayUrl}c/pics/{PictureFileName}";
     }
 }

@@ -1,4 +1,5 @@
-﻿using HealthChecks.UI.Client;
+﻿using System.IO;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -47,7 +49,7 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API
             healthChecksBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddSqlServer(
-                    Configuration["ConnectionString"],
+                    Configuration["SqlConnectionString"],
                     name: "CatalogDB-check",
                     tags: new string[] { "catalogdb" });
 
@@ -55,8 +57,9 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API
             services.AddScoped<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();
             services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
 
+
             services.AddDbContext<CatalogDbContext>(
-                options => options.UseSqlServer(Configuration["ConnectionString"]));
+                options => options.UseSqlServer(Configuration["SqlConnectionString"]));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -70,6 +73,13 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog.API V1");
                 });
             }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "Pics")),
+                RequestPath = "/pics"
+            });
 
             app.UseRouting();
             app.UseCloudEvents();

@@ -3,6 +3,7 @@
 @implements IDisposable
 @inject UserBasket _basket
 @inject NavigationManager _navigationManager
+@inject IOptions<Settings> _settings 
 
 <div class="container">
     <h1 class="mb-4 mt-5">[ Checkout ]</h1>
@@ -100,7 +101,7 @@
                 <article class="divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
                     <div class="esh-orders_new-thumbnail-container">
                         <div class="esh-orders_new-thumbnail-wrapper">
-                            <img class="esh-orders_new-thumbnail" src="@item.PictureUrl">
+                            <img class="esh-orders_new-thumbnail" src="@item.GetPictureUrl(_settings.Value)">
                         </div>
                     </div>
                     <div class="row w-100 ml-3">

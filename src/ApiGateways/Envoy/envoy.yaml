@@ -33,16 +33,10 @@ static_resources:
               routes:
               - name: "pics"
                 match:
-                  safe_regex:
-                    google_re2: {}
-                    regex: "\/c\/api\/v1\/catalog\/items\/(\\d+)\/pic\/"
+                  prefix: "/c/pics/"
                 route:
                   auto_host_rewrite: true
-                  regex_rewrite:
-                    pattern:
-                      google_re2: {}
-                      regex: "\/c\/api\/v1\/catalog\/items\/(\\d+)\/pic\/"
-                    substitution: "/catalog-api/api/v1/catalog/items/\\1/pic/"
+                  prefix_rewrite: "/pics/"
                   cluster: catalog
               - name: "c-short"
                 match:

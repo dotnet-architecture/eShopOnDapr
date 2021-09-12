@@ -42,7 +42,7 @@ services:
       - PORT=80
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://localhost:5105
-      - Serilog__SeqServerUrl=http://seq
+      - SeqServerUrl=http://seq
     ports:
       - "5103:80"
       - "50001:50001"
@@ -63,8 +63,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - PORT=80
-      - ConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
-      - Serilog__SeqServerUrl=http://seq
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq
+      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5101:80"
       - "50002:50001"

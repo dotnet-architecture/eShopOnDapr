@@ -50,7 +50,7 @@ namespace eShopOnDapr.BlazorClient.Basket
                     item.Name,
                     item.Price,
                     1,
-                    item.PictureUri));
+                    item.PictureFileName));
             }
 
             await SaveItemsAsync();

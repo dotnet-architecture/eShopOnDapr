@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject UserBasket _basket
 @inject CatalogClient _catalogClient
+@inject IOptions<Settings> _settings
 
 <section class="esh-catalog-filters">
     <div class="container">
@@ -18,7 +19,7 @@
                 <select class="esh-catalog-filter form-control" id="brand" @onchange=@OnBrandChangedAsync>
                     @foreach (var brand in _brands)
                     {
-                        <option value=@brand.Id>@brand.Brand</option>
+                        <option value=@brand.Id>@brand.Name</option>
                     }
                 </select>
             </div>
@@ -27,7 +28,7 @@
                 <select class="esh-catalog-filter form-control" id="type" @onchange=@OnTypeChangedAsync>
                     @foreach (var type in _types)
                     {
-                        <option value=@type.Id>@type.Type</option>
+                        <option value=@type.Id>@type.Name</option>
                     }
                 </select>
             </div>
@@ -53,7 +54,7 @@
                             <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
                                 <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
                             </div>
-                            <img class="esh-catalog-thumbnail" src="@item.PictureUri" />
+                            <img class="esh-catalog-thumbnail" src="@item.GetPictureUrl(_settings.Value)" />
                         </div>
                         <div class="esh-catalog-details d-flex justify-content-between align-items-center">
                             <div class="esh-catalog-name ml-3">

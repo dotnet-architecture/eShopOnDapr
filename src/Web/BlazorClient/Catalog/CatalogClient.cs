@@ -26,6 +26,6 @@ namespace eShopOnDapr.BlazorClient.Catalog
 
         public async Task<CatalogPage> GetItemsAsync(int brandId, int typeId, int pageIndex) =>
             await httpClient.GetFromJsonAsync<CatalogPage>(
-                $"c/api/v1/catalog/items?brandId={brandId}&typeId={typeId}&pageIndex={pageIndex}&pageSize={PageSize}");
+                $"c/api/v1/catalog/items/by_page?brandId={brandId}&typeId={typeId}&pageIndex={pageIndex}&pageSize={PageSize}");
     }
 }

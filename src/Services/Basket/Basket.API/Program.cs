@@ -11,27 +11,33 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
 {
     public class Program
     {
+        private const string AppName = "Basket.API";
+
         public static int Main(string[] args)
         {
             var configuration = GetConfiguration();
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+            var seqServerUrl = configuration["SeqServerUrl"];
 
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
+                .ReadFrom.Configuration(configuration)
                 .WriteTo.Console()
                 .WriteTo.Seq(seqServerUrl)
+                .Enrich.WithProperty("ApplicationName", AppName)
                 .CreateLogger();
 
             try
             {
-                Log.Information("Starting web host");
-                CreateHostBuilder(args).Build().Run();
+                Log.Information("Configuring web host ({ApplicationName})...", AppName);
+                var host = CreateHostBuilder(args).Build();
+
+                Log.Information("Starting web host ({ApplicationName})...", AppName);
+                host.Run();
+
                 return 0;
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
+                Log.Fatal(ex, "Host terminated unexpectedly ({ApplicationName})...", AppName);
                 return 1;
             }
             finally

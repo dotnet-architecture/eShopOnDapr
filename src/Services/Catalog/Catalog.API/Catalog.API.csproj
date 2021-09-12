@@ -8,11 +8,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Pics\1.png" />
+    <Content Include="Pics\10.png" />
+    <Content Include="Pics\11.png" />
+    <Content Include="Pics\12.png" />
+    <Content Include="Pics\13.png" />
+    <Content Include="Pics\14.png" />
+    <Content Include="Pics\15.png" />
+    <Content Include="Pics\16.png" />
+    <Content Include="Pics\17.png" />
+    <Content Include="Pics\2.png" />
+    <Content Include="Pics\3.png" />
+    <Content Include="Pics\4.png" />
+    <Content Include="Pics\5.png" />
+    <Content Include="Pics\6.png" />
+    <Content Include="Pics\7.png" />
+    <Content Include="Pics\8.png" />
+    <Content Include="Pics\9.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="5.0.2" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9" />
+    <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />

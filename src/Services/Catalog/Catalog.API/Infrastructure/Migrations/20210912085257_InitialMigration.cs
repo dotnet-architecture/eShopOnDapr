@@ -48,8 +48,7 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(4,2)", precision: 4, scale: 2, nullable: false),
                     PictureFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CatalogTypeId = table.Column<int>(type: "int", nullable: false),
                     CatalogBrandId = table.Column<int>(type: "int", nullable: false),
@@ -78,7 +77,8 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, ".NET" },
-                    { 2, "Dapr" }
+                    { 2, "Dapr" },
+                    { 3, "Other" }
                 });
 
             migrationBuilder.InsertData(
@@ -95,26 +95,26 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "CatalogItem",
-                columns: new[] { "Id", "AvailableStock", "CatalogBrandId", "CatalogTypeId", "Description", "Name", "PictureFileName", "Price" },
+                columns: new[] { "Id", "AvailableStock", "CatalogBrandId", "CatalogTypeId", "Name", "PictureFileName", "Price" },
                 values: new object[,]
                 {
-                    { 15, 100, 2, 1, null, "Dapr Cap", "15.png", 9.99m },
-                    { 8, 100, 3, 5, null, "Kudu Purple Hoodie", "8.png", 8.5m },
-                    { 7, 100, 3, 5, null, "Roslyn Red T-Shirt", "7.png", 12m },
-                    { 6, 100, 1, 5, null, ".NET Blue Hoodie", "6.png", 12m },
-                    { 4, 100, 1, 5, null, ".NET Foundation T-shirt", "4.png", 14.99m },
-                    { 3, 100, 3, 5, null, "Prism White T-Shirt", "3.png", 12m },
-                    { 1, 100, 1, 5, null, ".NET Bot Black Hoodie", "1.png", 19.5m },
-                    { 12, 100, 3, 5, null, "Prism White TShirt", "12.png", 12m },
-                    { 17, 100, 2, 4, null, "Dapr Logo Sticker", "17.png", 1.99m },
-                    { 10, 100, 1, 3, null, ".NET Foundation Pin", "10.png", 9m },
-                    { 5, 100, 3, 3, null, "Roslyn Red Pin", "5.png", 8.5m },
-                    { 14, 100, 1, 2, null, "Modern Cup<T> White Mug", "14.png", 12m },
-                    { 13, 100, 1, 2, null, "Modern .NET Black & White Mug", "13.png", 8.5m },
-                    { 9, 100, 3, 2, null, "Cup<T> White Mug", "9.png", 12m },
-                    { 2, 100, 1, 2, null, ".NET Black & White Mug", "2.png", 8.5m },
-                    { 11, 100, 1, 3, null, "Cup<T> Pin", "11.png", 8.5m },
-                    { 16, 100, 2, 5, null, "Dapr Zipper Hoodie", "16.png", 14.99m }
+                    { 15, 100, 2, 1, "Dapr Cap", "15.png", 9.99m },
+                    { 8, 100, 3, 5, "Kudu Purple Hoodie", "8.png", 8.5m },
+                    { 7, 100, 3, 5, "Roslyn Red T-Shirt", "7.png", 12m },
+                    { 6, 100, 1, 5, ".NET Blue Hoodie", "6.png", 12m },
+                    { 4, 100, 1, 5, ".NET Foundation T-shirt", "4.png", 14.99m },
+                    { 3, 100, 3, 5, "Prism White T-Shirt", "3.png", 12m },
+                    { 1, 100, 1, 5, ".NET Bot Black Hoodie", "1.png", 19.5m },
+                    { 12, 100, 3, 5, "Prism White TShirt", "12.png", 12m },
+                    { 17, 100, 2, 4, "Dapr Logo Sticker", "17.png", 1.99m },
+                    { 10, 100, 1, 3, ".NET Foundation Pin", "10.png", 9m },
+                    { 5, 100, 3, 3, "Roslyn Red Pin", "5.png", 8.5m },
+                    { 14, 100, 1, 2, "Modern Cup<T> White Mug", "14.png", 12m },
+                    { 13, 100, 1, 2, "Modern .NET Black & White Mug", "13.png", 8.5m },
+                    { 9, 100, 3, 2, "Cup<T> White Mug", "9.png", 12m },
+                    { 2, 100, 1, 2, ".NET Black & White Mug", "2.png", 8.5m },
+                    { 11, 100, 1, 3, "Cup<T> Pin", "11.png", 8.5m },
+                    { 16, 100, 2, 5, "Dapr Zipper Hoodie", "16.png", 14.99m }
                 });
 
             migrationBuilder.CreateIndex(
