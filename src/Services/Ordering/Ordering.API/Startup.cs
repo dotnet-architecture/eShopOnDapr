@@ -302,7 +302,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API
             {
                 options.Authority = identityUrl;
                 options.RequireHttpsMetadata = false;
-                options.Audience = "orders";
+                options.Audience = "ordering-api";
             });
 
             return services;

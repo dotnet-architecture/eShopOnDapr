@@ -66,7 +66,7 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
             services.AddAuthentication("Bearer")
                 .AddJwtBearer(options =>
                 {
-                    options.Audience = "basket";
+                    options.Audience = "basket-api";
                     options.Authority = Configuration.GetValue<string>("IdentityUrl");
                     options.RequireHttpsMetadata = false;
                 });

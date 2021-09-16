@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json;
 using Dapr.Client;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -109,7 +108,7 @@ namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
             {
                 options.Authority = identityUrl;
                 options.RequireHttpsMetadata = false;
-                options.Audience = "webshoppingagg";
+                options.Audience = "shoppingaggr-api";
             });
 
             return services;

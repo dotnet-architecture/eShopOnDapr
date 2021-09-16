@@ -57,7 +57,6 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API
             services.AddScoped<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();
             services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
 
-
             services.AddDbContext<CatalogDbContext>(
                 options => options.UseSqlServer(Configuration["SqlConnectionString"]));
         }

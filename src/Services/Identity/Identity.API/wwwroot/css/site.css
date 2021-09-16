@@ -14,6 +14,10 @@
     top: -10px;
 }
 
+.top-buffer {
+    margin-top: 20px;
+}
+
 .welcome-title {
     margin-top:2rem;
 }
@@ -936,7 +940,7 @@ form .col-md-4 {
 
 .es-header-brand {
     height: auto;
-    width: 92px;
+    width: 125px;
 }
 
 .es-pager-bottom {
