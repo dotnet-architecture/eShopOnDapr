@@ -56,6 +56,8 @@ namespace IdentityServerHost.Quickstart.UI
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
 
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (vm.IsExternalLoginOnly)
             {
                 // we only have one option for logging in and it's an external provider
@@ -145,6 +147,9 @@ namespace IdentityServerHost.Quickstart.UI
 
             // something went wrong, show form with error
             var vm = await BuildLoginViewModelAsync(model);
+
+            ViewData["ReturnUrl"] = model.ReturnUrl;
+
             return View(vm);
         }
 

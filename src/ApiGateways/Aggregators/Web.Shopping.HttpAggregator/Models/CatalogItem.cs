@@ -8,6 +8,6 @@
 
         public decimal Price { get; set; }
 
-        public string PictureUri { get; set; }
+        public string PictureFileName { get; set; }
     }
 }

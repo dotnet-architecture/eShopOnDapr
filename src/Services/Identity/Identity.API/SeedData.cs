@@ -101,7 +101,7 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                     {
                         throw new Exception(result.Errors.First().Description);
                     }
-
+                    // TODO
                 //    result = userMgr.AddClaimsAsync(bob, new Claim[]{
                 //    new Claim(JwtClaimTypes.Name, "Bob Smith"),
                 //    new Claim(JwtClaimTypes.GivenName, "Bob"),

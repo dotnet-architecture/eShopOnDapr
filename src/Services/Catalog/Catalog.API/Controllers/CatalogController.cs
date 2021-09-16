@@ -83,6 +83,7 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Controllers
                 .LongCountAsync();
 
             var itemsOnPage = await query
+                .OrderBy(item => item.Name)
                 .Skip(pageSize * pageIndex)
                 .Take(pageSize)
                 .ToListAsync();

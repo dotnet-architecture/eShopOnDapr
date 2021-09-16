@@ -1,5 +1,6 @@
 ﻿using System;
 using HealthChecks.UI.Client;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnDapr.Services.Identity.API.Data;
 using Microsoft.eShopOnDapr.Services.Identity.API.Models;
+using Microsoft.eShopOnDapr.Services.Identity.API.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -46,9 +48,6 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
-                // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-//                options.EmitStaticAudienceClaim = true;
             })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
@@ -67,8 +66,7 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                     name: "IdentityDB-check",
                     tags: new string[] { "IdentityDB" });
 
-//            services.AddTransient<IProfileService, ProfileService>();
-
+            services.AddTransient<IProfileService, ProfileService>();
         }
 
         public void Configure(IApplicationBuilder app)

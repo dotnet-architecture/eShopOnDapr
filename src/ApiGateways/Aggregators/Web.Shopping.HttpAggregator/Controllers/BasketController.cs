@@ -59,7 +59,7 @@ namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Controllers
                     {
                         ProductId = catalogItem.Id,
                         ProductName = catalogItem.Name,
-                        PictureUrl = catalogItem.PictureUri,
+                        PictureFileName = catalogItem.PictureFileName,
                         UnitPrice = catalogItem.Price,
                         Quantity = bitem.Quantity
                     });
