@@ -1,9 +1,9 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
-{
-    using System;
-    using System.Collections.Generic;
-    using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
+{
     public class OrderStatusChangedToPaidIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }

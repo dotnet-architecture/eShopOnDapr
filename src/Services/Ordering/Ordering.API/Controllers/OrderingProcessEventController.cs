@@ -15,7 +15,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
     [ApiController]
     public class OrderingProcessEventController : ControllerBase
     {
-        private const string DaprPubSubName = "pubsub";
+        private const string DAPR_PUBSUB_NAME = "pubsub";
 
         private readonly ILogger<OrderingProcessEventController> _logger;
 
@@ -25,7 +25,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("UserCheckoutAccepted")]
-        [Topic(DaprPubSubName, "UserCheckoutAcceptedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "UserCheckoutAcceptedIntegrationEvent")]
         public async Task HandleAsync(UserCheckoutAcceptedIntegrationEvent integrationEvent)
         {
             if (integrationEvent.RequestId != Guid.Empty)
@@ -43,7 +43,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStockConfirmed")]
-        [Topic(DaprPubSubName, "OrderStockConfirmedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStockConfirmedIntegrationEvent")]
         public Task HandleAsync(OrderStockConfirmedIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)
@@ -51,7 +51,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStockRejected")]
-        [Topic(DaprPubSubName, "OrderStockRejectedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStockRejectedIntegrationEvent")]
         public Task HandleAsync(OrderStockRejectedIntegrationEvent integrationEvent)
         {
             var outOfStockItems = integrationEvent.OrderStockItems
@@ -64,7 +64,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderPaymentSucceeded")]
-        [Topic(DaprPubSubName, "OrderPaymentSucceededIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderPaymentSucceededIntegrationEvent")]
         public Task HandleAsync(OrderPaymentSucceededIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)
@@ -72,7 +72,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderPaymentFailed")]
-        [Topic(DaprPubSubName, "OrderPaymentFailedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderPaymentFailedIntegrationEvent")]
         public Task HandleAsync(OrderPaymentFailedIntegrationEvent integrationEvent)
         {
             return GetOrderingProcessActor(integrationEvent.OrderId)

@@ -9,19 +9,23 @@ using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderingDbContext))]
-    partial class OrderingContextModelSnapshot : ModelSnapshot
+    partial class OrderingDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("Relational:Sequence:.orderitemseq", "'orderitemseq', '', '1', '10', '', '', 'Int64', 'False'")
-                .HasAnnotation("Relational:Sequence:.orderseq", "'orderseq', '', '1', '10', '', '', 'Int64', 'False'")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
+            modelBuilder.HasSequence("orderitemseq")
+                .IncrementsBy(10);
+
+            modelBuilder.HasSequence("orderseq")
+                .IncrementsBy(10);
+
+            modelBuilder.Entity("Microsoft.eShopOnDapr.Services.Ordering.API.Model.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +59,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderItem", b =>
+            modelBuilder.Entity("Microsoft.eShopOnDapr.Services.Ordering.API.Model.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +70,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("PictureFileName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
@@ -76,7 +80,8 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)");
 
                     b.Property<int>("Units")
                         .HasColumnType("int");
@@ -88,9 +93,9 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", b =>
+            modelBuilder.Entity("Microsoft.eShopOnDapr.Services.Ordering.API.Model.Order", b =>
                 {
-                    b.OwnsOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Address", "Address", b1 =>
+                    b.OwnsOne("Microsoft.eShopOnDapr.Services.Ordering.API.Model.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
@@ -114,15 +119,22 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
                         });
+
+                    b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("Microsoft.eShopOnContainers.Services.Ordering.API.Model.OrderItem", b =>
+            modelBuilder.Entity("Microsoft.eShopOnDapr.Services.Ordering.API.Model.OrderItem", b =>
                 {
-                    b.HasOne("Microsoft.eShopOnContainers.Services.Ordering.API.Model.Order", null)
+                    b.HasOne("Microsoft.eShopOnDapr.Services.Ordering.API.Model.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.eShopOnDapr.Services.Ordering.API.Model.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

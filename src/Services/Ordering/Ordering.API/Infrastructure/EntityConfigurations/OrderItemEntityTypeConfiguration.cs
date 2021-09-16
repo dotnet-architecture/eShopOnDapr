@@ -14,6 +14,9 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfi
 
             orderItemConfiguration.Property(o => o.Id)
                 .UseHiLo("orderitemseq");
+
+            orderItemConfiguration.Property(item => item.UnitPrice)
+                .HasPrecision(4, 2);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/orders/{orderNumber:int}"
 @attribute [Authorize]
 @inject OrderClient _orderClient
+@inject IOptions<Settings> _settings 
 
 <div class="esh-orders_detail">
     <div class="container">
@@ -38,7 +39,7 @@
                     <article class="esh-orders_detail-items divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
                         <div class="esh-orders_detail-thumbnail-container">
                             <div class="esh-orders_detail-thumbnail-wrapper">
-                                <img class="esh-orders_detail-thumbnail" src="@item.PictureUrl">
+                                <img class="esh-orders_detail-thumbnail" src="@item.GetPictureUrl(_settings.Value)">
                             </div>
                         </div>
                         <div class="row w-100 ml-3">

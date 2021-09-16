@@ -28,7 +28,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Filters
                 {
                     new OpenApiSecurityRequirement
                     {
-                        [ oAuthScheme ] = new [] { "orderingapi" }
+                        [ oAuthScheme ] = new [] { "basketapi" }
                     }
                 };
         }

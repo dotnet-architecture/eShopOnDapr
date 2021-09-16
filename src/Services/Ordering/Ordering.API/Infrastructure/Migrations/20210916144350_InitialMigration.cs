@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,17 +19,17 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    OrderNumber = table.Column<int>(nullable: false),
-                    OrderDate = table.Column<DateTime>(nullable: false),
-                    OrderStatus = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    Address_Street = table.Column<string>(nullable: true),
-                    Address_City = table.Column<string>(nullable: true),
-                    Address_State = table.Column<string>(nullable: true),
-                    Address_Country = table.Column<string>(nullable: true),
-                    BuyerId = table.Column<string>(nullable: true),
-                    BuyerEmail = table.Column<string>(nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderNumber = table.Column<int>(type: "int", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address_City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address_State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address_Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BuyerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BuyerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,13 +41,13 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false),
-                    ProductName = table.Column<string>(nullable: true),
-                    UnitPrice = table.Column<decimal>(nullable: false),
-                    Units = table.Column<int>(nullable: false),
-                    PictureUrl = table.Column<string>(nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UnitPrice = table.Column<decimal>(type: "decimal(4,2)", precision: 4, scale: 2, nullable: false),
+                    Units = table.Column<int>(type: "int", nullable: false),
+                    PictureFileName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

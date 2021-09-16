@@ -17,7 +17,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
     [ApiController]
     public class UpdateOrderStatusEventController : ControllerBase
     {
-        private const string DaprPubSubName = "pubsub";
+        private const string DAPR_PUBSUB_NAME = "pubsub";
 
         private readonly IOrderRepository _orderRepository;
         private readonly IHubContext<NotificationsHub> _hubContext;
@@ -32,7 +32,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToSubmitted")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToSubmittedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToSubmittedIntegrationEvent")]
         public async Task HandleAsync(
             OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
             [FromServices] IOptions<OrderingSettings> settings, [FromServices] IEmailService emailService)
@@ -59,7 +59,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToAwaitingStockValidation")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToAwaitingStockValidationIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToAwaitingStockValidationIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToAwaitingStockValidationIntegrationEvent integrationEvent)
         {
@@ -69,7 +69,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToValidated")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToValidatedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToValidatedIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToValidatedIntegrationEvent integrationEvent)
         {
@@ -79,7 +79,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToPaid")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToPaidIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToPaidIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToPaidIntegrationEvent integrationEvent)
         {
@@ -89,7 +89,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToShipped")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToShippedIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToShippedIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToShippedIntegrationEvent integrationEvent)
         {
@@ -99,7 +99,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToCancelled")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToCancelledIntegrationEvent")]
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToCancelledIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToCancelledIntegrationEvent integrationEvent)
         {

@@ -97,19 +97,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
-      - identityUrl=http://identity-api
+      - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
-      - CheckUpdateTime=30000
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - UseLoadTest=${USE_LOADTEST:-False}
-      - Serilog__MinimumLevel__Override__ordering-api=Verbose
-      - PATH_BASE=/ordering-api
-      - PORT=80
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq
+      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5102:80"
-      - "9102:81"
       - "50003:50001"
 
   ordering-api-dapr:

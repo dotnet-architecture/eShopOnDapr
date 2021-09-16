@@ -5,12 +5,14 @@
         string ProductName,
         decimal UnitPrice,
         int Units,
-        string PictureUrl)
+        string PictureFileName)
     {
         public decimal Total => UnitPrice * Units;
 
         public string GetFormattedUnitPrice() => UnitPrice.ToString("0.00");
 
         public string GetFormattedTotal() => Total.ToString("0.00");
+
+        public string GetPictureUrl(Settings settings) => $"{settings.ApiGatewayUrl}c/pics/{PictureFileName}";
     }
 }

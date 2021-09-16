@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
-
     public class OrderStockRejectedIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }

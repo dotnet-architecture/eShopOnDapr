@@ -11,17 +11,17 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
     {
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.User.Claims.First(c => c.Type == "sub").Value;
-            var userId2 = Context.UserIdentifier;
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, GetUserId());
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetUserId());
             await base.OnDisconnectedAsync(ex);
         }
+
+        private string GetUserId() => Context.User.Claims.First(c => c.Type == "sub").Value;
+
     }
 }

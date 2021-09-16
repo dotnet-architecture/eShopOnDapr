@@ -65,7 +65,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Actors
                         ProductName = item.ProductName,
                         UnitPrice = item.UnitPrice,
                         Units = item.Quantity,
-                        PictureUrl = item.PictureUrl
+                        PictureFileName = item.PictureFileName
                     })
                     .ToList()
             };

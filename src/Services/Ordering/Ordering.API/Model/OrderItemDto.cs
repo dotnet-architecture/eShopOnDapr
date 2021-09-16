@@ -16,7 +16,7 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
                 productname = orderItem.ProductName,
                 units = orderItem.Units,
                 unitprice = orderItem.UnitPrice,
-                pictureurl = orderItem.PictureUrl
+                pictureurl = orderItem.PictureFileName
             };
         }
     }

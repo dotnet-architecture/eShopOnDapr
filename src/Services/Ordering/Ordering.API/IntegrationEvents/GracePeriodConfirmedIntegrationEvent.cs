@@ -1,6 +1,7 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
+﻿using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
-    using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
     public class GracePeriodConfirmedIntegrationEvent : IntegrationEvent
     {
