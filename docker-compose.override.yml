@@ -39,7 +39,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - PORT=80
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://localhost:5105
       - SeqServerUrl=http://seq
@@ -62,7 +61,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - PORT=80
       - RetryMigrations=true
       - SeqServerUrl=http://seq
       - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
@@ -85,7 +83,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - PORT=80
       - SeqServerUrl=http://seq
       - SqlConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word}
       - RetryMigrations=true
@@ -132,9 +129,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling=Verbose
+      - SeqServerUrl=http://seq
     ports:
       - "5108:80"
       - "50006:50001"

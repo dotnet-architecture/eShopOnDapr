@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.EventHandling;
@@ -18,11 +17,6 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         public Task HandleAsync(
             OrderStatusChangedToSubmittedIntegrationEvent @event,
             [FromServices] OrderStatusChangedToSubmittedIntegrationEventHandler handler)
-        {
-            if (@event == null) throw new ArgumentNullException(nameof(@event));
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-
-            return handler.Handle(@event);
-        }
+            => handler.Handle(@event);
     }
 }

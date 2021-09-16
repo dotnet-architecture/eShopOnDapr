@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
@@ -18,23 +17,13 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Controllers
         public Task HandleAsync(
             OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event,
             [FromServices] OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler handler)
-        {
-            if (@event == null) throw new ArgumentNullException(nameof(@event));
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-
-            return handler.Handle(@event);
-        }
+            => handler.Handle(@event);
 
         [HttpPost("OrderStatusChangedToPaid")]
         [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToPaidIntegrationEvent")]
         public Task HandleAsync(
             OrderStatusChangedToPaidIntegrationEvent @event,
             [FromServices] OrderStatusChangedToPaidIntegrationEventHandler handler)
-        {
-            if (@event == null) throw new ArgumentNullException(nameof(@event));
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-
-            return handler.Handle(@event);
-        }
+            => handler.Handle(@event);
     }
 }

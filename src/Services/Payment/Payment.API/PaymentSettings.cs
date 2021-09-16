@@ -1,4 +1,4 @@
-﻿namespace Payment.API
+﻿namespace Microsoft.eShopOnDapr.Services.Payment.API
 {
     public class PaymentSettings
     {
