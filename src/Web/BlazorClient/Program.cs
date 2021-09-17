@@ -8,7 +8,6 @@ using eShopOnDapr.BlazorClient.Ordering;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace eShopOnDapr.BlazorClient
 {
@@ -24,7 +23,7 @@ namespace eShopOnDapr.BlazorClient
             builder.Services.AddTransient<ApiAuthorizationMessageHandler>();
 
             var settings = new Settings();
-            builder.Configuration.Bind("App", settings);
+            builder.Configuration.Bind(settings);
 
             builder.Services.AddHttpClient<CatalogClient>(
                 client => client.BaseAddress = new Uri(settings.ApiGatewayUrl));
@@ -41,7 +40,7 @@ namespace eShopOnDapr.BlazorClient
                 .AddBlazoredToast()
                 .AddScoped<UserBasket>();
 
-            builder.Services.Configure<Settings>(options => builder.Configuration.Bind("App", options));
+            builder.Services.Configure<Settings>(builder.Configuration);
 
             builder.Services.AddOidcAuthentication(options =>
             {

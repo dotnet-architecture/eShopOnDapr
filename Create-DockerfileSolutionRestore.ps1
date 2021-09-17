@@ -1,5 +1,5 @@
 param (
-  [string]$solution = "eShop-Learn.sln"
+  [string]$solution = "eShopOnDapr.sln"
 )
 
 $outfile = "DockerfileSolutionRestore.txt"

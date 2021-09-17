@@ -1,0 +1,32 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "basket-api": "StartDebugging",
+        "basket-api-dapr": "StartWithoutDebugging",
+        "blazor-client": "StartWithoutDebugging",
+        "catalog-api": "StartDebugging",
+        "catalog-api-dapr": "StartWithoutDebugging",
+        "dapr-placement": "StartWithoutDebugging",
+        "identity-api": "StartDebugging",
+        "ordering-api": "StartDebugging",
+        "ordering-api-dapr": "StartWithoutDebugging",
+        "payment-api": "StartDebugging",
+        "payment-api-dapr": "StartWithoutDebugging",
+        "rabbitmq": "StartWithoutDebugging",
+        "redis": "StartWithoutDebugging",
+        "seq": "StartWithoutDebugging",
+        "sqldata": "StartWithoutDebugging",
+        "webshoppingagg": "StartDebugging",
+        "webshoppingagg-dapr": "StartWithoutDebugging",
+        "webshoppingapigw": "StartWithoutDebugging",
+        "webshoppingapigw-dapr": "StartWithoutDebugging",
+        "webstatus": "StartWithoutDebugging",
+        "zipkin": "StartWithoutDebugging"
+      },
+      "composeLaunchAction": "None",
+      "commandVersion": "1.0"
+    }
+  }
+}

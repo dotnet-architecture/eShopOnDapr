@@ -62,9 +62,6 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                     // where to redirect to after logout
                     PostLogoutRedirectUris =
                     {
-                        // TODO
-                        "http://localhost:5104",
-                        "http://localhost:5104/authentication/logout-callback",
                         $"{configuration["BlazorClientUrlExternal"]}/authentication/logout-callback"
                     },
 
@@ -78,7 +75,7 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                     },
 
                     // TODO Probably not needed
-                    AlwaysIncludeUserClaimsInIdToken = true
+//                    AlwaysIncludeUserClaimsInIdToken = true
 
                 },
                 new Client
