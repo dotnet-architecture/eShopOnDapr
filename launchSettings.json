@@ -5,7 +5,7 @@
       "serviceActions": {
         "basket-api": "StartDebugging",
         "basket-api-dapr": "StartWithoutDebugging",
-        "blazor-client": "StartWithoutDebugging",
+        "blazor-client": "DoNotStart",
         "catalog-api": "StartDebugging",
         "catalog-api-dapr": "StartWithoutDebugging",
         "dapr-placement": "StartWithoutDebugging",

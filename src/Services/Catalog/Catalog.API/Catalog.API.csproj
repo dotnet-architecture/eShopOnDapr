@@ -8,23 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Pics\1.png" />
-    <Content Include="Pics\10.png" />
-    <Content Include="Pics\11.png" />
-    <Content Include="Pics\12.png" />
-    <Content Include="Pics\13.png" />
-    <Content Include="Pics\14.png" />
-    <Content Include="Pics\15.png" />
-    <Content Include="Pics\16.png" />
-    <Content Include="Pics\17.png" />
-    <Content Include="Pics\2.png" />
-    <Content Include="Pics\3.png" />
-    <Content Include="Pics\4.png" />
-    <Content Include="Pics\5.png" />
-    <Content Include="Pics\6.png" />
-    <Content Include="Pics\7.png" />
-    <Content Include="Pics\8.png" />
-    <Content Include="Pics\9.png" />
+    <Content Include="Pics\*.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
