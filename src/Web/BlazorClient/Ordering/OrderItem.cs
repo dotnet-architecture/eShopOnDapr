@@ -13,6 +13,6 @@
 
         public string GetFormattedTotal() => Total.ToString("0.00");
 
-        public string GetPictureUrl(Settings settings) => $"{settings.ApiGatewayUrl}c/pics/{PictureFileName}";
+        public string GetPictureUrl(Settings settings) => $"{settings.ApiGatewayUrlExternal}/c/pics/{PictureFileName}";
     }
 }

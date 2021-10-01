@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.Extensions.Options;
 
 namespace eShopOnDapr.BlazorClient
 {
@@ -9,13 +8,13 @@ namespace eShopOnDapr.BlazorClient
         public ApiAuthorizationMessageHandler(
             IAccessTokenProvider provider,
             NavigationManager navigation,
-            IOptions<Settings> settings)
+            Settings settings)
             : base(provider, navigation)
         {
             // Configure this message handler to attach bearer tokens to
             // requests going to the API Gateway.
             ConfigureHandler(
-                authorizedUrls: new[] { settings.Value.ApiGatewayUrl });
+                authorizedUrls: new[] { settings.ApiGatewayUrlExternal });
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Blazored.Toast;
 using eShopOnDapr.BlazorClient.Basket;
@@ -20,37 +21,43 @@ namespace eShopOnDapr.BlazorClient
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            var settings = await LoadSettingsFromHostAsync(builder.Services);
+            builder.Services.AddSingleton(settings);
+
             builder.Services.AddTransient<ApiAuthorizationMessageHandler>();
 
-            var settings = new Settings();
-            builder.Configuration.Bind(settings);
-
             builder.Services.AddHttpClient<CatalogClient>(
-                client => client.BaseAddress = new Uri(settings.ApiGatewayUrl));
+                client => client.BaseAddress = new Uri(settings.ApiGatewayUrlExternal));
 
             builder.Services.AddHttpClient<BasketClient>(
-                client => client.BaseAddress = new Uri(settings.ApiGatewayUrl))
+                client => client.BaseAddress = new Uri(settings.ApiGatewayUrlExternal))
                 .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<OrderClient>(
-                client => client.BaseAddress = new Uri(settings.ApiGatewayUrl))
+                client => client.BaseAddress = new Uri(settings.ApiGatewayUrlExternal))
                 .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
             builder.Services
                 .AddBlazoredToast()
                 .AddScoped<UserBasket>();
 
-            builder.Services.Configure<Settings>(builder.Configuration);
-
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("OidcAuthentication", options.ProviderOptions);
 
+                options.ProviderOptions.Authority = settings.IdentityUrlExternal;
                 options.AuthenticationPaths.LogOutSucceededPath = "";
             });
 
             var host = builder.Build();
             await host.RunAsync();
+        }
+
+        private static async Task<Settings> LoadSettingsFromHostAsync(IServiceCollection services)
+        {
+            using var serviceProvider = services.BuildServiceProvider();
+            var httpClient = serviceProvider.GetRequiredService<HttpClient>();
+            return await httpClient.GetFromJsonAsync<Settings>("/settings");
         }
     }
 }

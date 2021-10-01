@@ -1,5 +1,5 @@
 ﻿@inject IAccessTokenProvider _accessTokenProvider
-@inject IOptions<Settings> _settings
+@inject Settings _settings
 @inject NavigationManager _navigationManager
 
 <CascadingValue Value="_orderState">
@@ -31,7 +31,7 @@
         if (_hubConnection == null || _hubConnection.State == HubConnectionState.Disconnected)
         {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl($"{_settings.Value.ApiGatewayUrl}hub/notificationhub", options =>
+                .WithUrl($"{_settings.ApiGatewayUrlExternal}/hub/notificationhub", options =>
                 {
                     options.AccessTokenProvider = GetAccessTokenAsync;
                 })

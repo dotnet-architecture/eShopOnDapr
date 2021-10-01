@@ -1,49 +1,39 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: ordering-cm
+  name: blazorclient-cm
   namespace: eshop
   labels:
     app: eshop
-    service: ordering
+    service: blazorclient
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  IdentityUrl: http://identity-api
-  IdentityUrlExternal: http://identity-api
-  SeqServerUrl: http://seq
-  SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word
 
 ---
 
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: ordering
+  name: blazorclient
   namespace: eshop
   labels:
     app: eshop
-    service: ordering
+    service: blazorclient
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: ordering
+      service: blazorclient
   template:
     metadata:
       labels:
         app: eshop
-        service: ordering
-      annotations:
-        dapr.io/enabled: "true"
-        dapr.io/app-id: "ordering-api"
-        dapr.io/app-port: "80"
-        dapr.io/config: "dapr-config"
-        dapr.io/log-as-json: "true"
+        service: blazorclient
     spec:
       containers:
-        - name: ordering-api
-          image: eshopdapr/ordering.api:latest
+        - name: blazorclient
+          image: eshopdapr/blazor.client:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -51,25 +41,25 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: ordering-cm
+                name: blazorclient-cm
 
 ---
 
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
-  name: ordering-api
+  name: blazorclient
   namespace: eshop
   labels:
     app: eshop
-    service: ordering
+    service: blazorclient
 spec:
   type: NodePort
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30002
+      nodePort: 30000
       protocol: TCP
       name: http
   selector:
-    service: ordering
+    service: blazorclient

@@ -62,6 +62,8 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IEmailService, EmailService>();
 
+            services.Configure<OrderingSettings>(Configuration);
+
             services.AddSignalR();
 
             services.AddDbContext<OrderingDbContext>(

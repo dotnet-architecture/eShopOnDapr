@@ -8,14 +8,9 @@ metadata:
     service: catalog
 data:
   ASPNETCORE_ENVIRONMENT: Development
-  AzureServiceBusEnabled: "False"
-  AzureStorageEnabled: "False"
-  ConnectionString: Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word
-  OrchestratorType: K8S
-  PATH_BASE: /catalog-api
-  PicBaseUrl: http://localhost:30050/c/api/v1/catalog/items/[0]/pic/
-  PORT: "80"
-  UseCustomizationData: "True"
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  SeqServerUrl: http://seq
+  SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word
 
 ---
 
@@ -42,6 +37,7 @@ spec:
         dapr.io/app-id: "catalog-api"
         dapr.io/app-port: "80"
         dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
     spec:
       containers:
         - name: catalog-api

@@ -36,7 +36,7 @@ services:
     image: ${REGISTRY:-eshopdapr}/blazor.client:${TAG:-latest}
     build:
       context: .
-      dockerfile: src/Web/BlazorClient/Dockerfile
+      dockerfile: src/Web/BlazorClient.Host/Dockerfile
 
   catalog-api:
     image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}

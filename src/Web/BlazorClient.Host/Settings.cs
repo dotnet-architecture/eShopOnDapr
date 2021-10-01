@@ -1,4 +1,4 @@
-﻿namespace eShopOnDapr.BlazorClient
+﻿namespace eShopOnDapr.BlazorClient.Host
 {
     public class Settings
     {

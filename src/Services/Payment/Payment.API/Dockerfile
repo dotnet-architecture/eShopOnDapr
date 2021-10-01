@@ -15,6 +15,7 @@ COPY ["src/Services/Catalog/Catalog.API/Catalog.API.csproj", "src/Services/Catal
 COPY ["src/Services/Identity/Identity.API/Identity.API.csproj", "src/Services/Identity/Identity.API/"]
 COPY ["src/Services/Ordering/Ordering.API/Ordering.API.csproj", "src/Services/Ordering/Ordering.API/"]
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
+COPY ["src/Web/BlazorClient.Host/BlazorClient.Host.csproj", "src/Web/BlazorClient.Host/"]
 COPY ["src/Web/BlazorClient/BlazorClient.csproj", "src/Web/BlazorClient/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]

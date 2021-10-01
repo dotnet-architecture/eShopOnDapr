@@ -1,5 +1,5 @@
 kubectl delete `
-    -f ./webspa.yaml `
+    -f ./blazorclient.yaml `
     -f ./webstatus.yaml `
     -f ./webshoppingagg.yaml `
     -f ./catalog.yaml `

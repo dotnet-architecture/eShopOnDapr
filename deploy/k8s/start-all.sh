@@ -19,5 +19,5 @@ kubectl apply \
     -f ./basket.yaml \
     -f ./payment.yaml \
     -f ./webshoppingagg.yaml \
-    -f ./webspa.yaml \
+    -f ./blazorclient.yaml \
     -f ./webstatus.yaml

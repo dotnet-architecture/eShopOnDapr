@@ -61,8 +61,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ApiGatewayUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - OidcAuthentication__Authority=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - ApiGatewayUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
     ports:
       - "5104:80"
 

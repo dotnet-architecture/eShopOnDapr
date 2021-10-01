@@ -7,6 +7,7 @@ using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
 using Microsoft.eShopOnDapr.Services.Basket.API.Model;
 using Microsoft.eShopOnDapr.Services.Basket.API.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
 {
@@ -18,15 +19,18 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         private readonly IBasketRepository _repository;
         private readonly IIdentityService _identityService;
         private readonly IEventBus _eventBus;
+        private readonly ILogger _logger;
 
         public BasketController(
             IBasketRepository repository,
             IIdentityService identityService,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            ILogger<BasketController> logger)
         {
             _repository = repository;
             _identityService = identityService;
             _eventBus = eventBus;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -97,6 +101,8 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
         public async Task DeleteBasketAsync()
         {
             var userId = _identityService.GetUserIdentity();
+
+            _logger.LogInformation("Deleting basket for user {UserId}...", userId);
 
             await _repository.DeleteBasketAsync(userId);
         }

@@ -1,7 +1,7 @@
 ﻿@page "/"
 @inject UserBasket _basket
 @inject CatalogClient _catalogClient
-@inject IOptions<Settings> _settings
+@inject Settings _settings
 
 <section class="esh-catalog-filters">
     <div class="container">
@@ -54,7 +54,7 @@
                             <div class="esh-catalog-thumbnail-icon d-flex justify-content-center">
                                 <img class="esh-catalog-thumbnail-icon-svg" src="images/add.svg" />
                             </div>
-                            <img class="esh-catalog-thumbnail" src="@item.GetPictureUrl(_settings.Value)" />
+                            <img class="esh-catalog-thumbnail" src="@item.GetPictureUrl(_settings)" />
                         </div>
                         <div class="esh-catalog-details d-flex justify-content-between align-items-center">
                             <div class="esh-catalog-name ml-3">

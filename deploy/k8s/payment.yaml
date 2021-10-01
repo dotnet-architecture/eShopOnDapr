@@ -9,11 +9,8 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  AzureServiceBusEnabled: "False"
   MaxOrderTotal: "100"
-  OrchestratorType: K8S
-  Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ: Verbose
-  Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling: "Verbose"
+  SeqServerUrl: http://seq
 
 ---
 
@@ -40,6 +37,7 @@ spec:
         dapr.io/app-id: "payment-api"
         dapr.io/app-port: "80"
         dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
     spec:
       containers:
         - name: payment-api
