@@ -2,13 +2,15 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: blazorclient-cm
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: blazorclient
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
+  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30050
+  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
 
 ---
 
@@ -16,7 +18,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: blazorclient
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: blazorclient
@@ -49,7 +51,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: blazorclient
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: blazorclient

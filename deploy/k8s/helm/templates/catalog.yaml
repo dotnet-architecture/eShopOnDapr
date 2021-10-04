@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: catalog-cm
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: catalog
@@ -18,7 +18,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: catalog
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: catalog
@@ -58,7 +58,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: catalog-api
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: catalog

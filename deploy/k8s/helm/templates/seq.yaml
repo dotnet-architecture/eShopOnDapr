@@ -1,50 +1,51 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: redis
-  namespace: eshop
+  name: seq
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: redis
+    service: seq
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: redis
+      service: seq
   template:
     metadata:
       labels:
         app: eshop
-        service: redis
+        service: seq
     spec:
       containers:
-      - name: redis
-        image: redis:alpine
+      - name: seq
+        image: datalust/seq:latest
         imagePullPolicy: IfNotPresent
-        args:
-          - "--requirepass e$h0p0nD@pr"
         ports:
           - name: http
-            containerPort: 6379
+            containerPort: 80
             protocol: TCP
+        env:
+          - name: ACCEPT_EULA
+            value: "Y"
 
 ---
 
 kind: Service
 apiVersion: v1
 metadata:
-  name: redis
-  namespace: eshop
+  name: seq
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: redis
+    service: seq
 spec:
   type: NodePort
   ports:
-    - port: 6379
-      targetPort: 6379
-      nodePort: 30379
+    - port: 80
+      targetPort: 80
+      nodePort: 30011
       protocol: TCP
-      name: redis
+      name: http
   selector:
-    service: redis
+    service: seq

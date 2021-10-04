@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: sqldata
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: sqldata
@@ -37,7 +37,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: sqldata
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: sqldata

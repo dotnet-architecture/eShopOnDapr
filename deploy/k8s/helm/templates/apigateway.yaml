@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: envoy-cm
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
 data:
   envoy.yaml: >
     admin:
@@ -154,7 +154,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: apigateway
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: apigateway
@@ -205,7 +205,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: apigateway
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: apigateway

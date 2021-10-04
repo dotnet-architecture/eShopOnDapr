@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: identity-cm
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: identity
@@ -11,10 +11,10 @@ data:
   ASPNETCORE_URLS: http://0.0.0.0:80
   SeqServerUrl: http://seq
   SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word
-  BlazorClientUrlExternal: http://localhost:30000
-  BasketApiUrlExternal: http://localhost:30005
-  OrderingApiUrlExternal: http://ordering-api
-  ShoppingAggregatorApiUrlExternal: http://webshoppingagg
+  BlazorClientUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30000
+  BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
+  OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
+  ShoppingAggregatorApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30006
 
 ---
 
@@ -22,7 +22,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: identity
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: identity
@@ -55,7 +55,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: identity-api
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: identity

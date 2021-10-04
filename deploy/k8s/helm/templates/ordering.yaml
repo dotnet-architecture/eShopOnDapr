@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: ordering-cm
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: ordering
@@ -10,7 +10,7 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: http://identity-api
+  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
   SeqServerUrl: http://seq
   SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word
 
@@ -20,7 +20,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: ordering
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: ordering
@@ -59,7 +59,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ordering-api
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
   labels:
     app: eshop
     service: ordering

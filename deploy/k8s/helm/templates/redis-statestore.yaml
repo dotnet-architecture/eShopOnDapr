@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: eshop-statestore
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
 spec:
   type: state.redis
   version: v1

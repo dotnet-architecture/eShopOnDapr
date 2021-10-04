@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: sendmail
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
 spec:
   type: bindings.twilio.sendgrid
   version: v1
