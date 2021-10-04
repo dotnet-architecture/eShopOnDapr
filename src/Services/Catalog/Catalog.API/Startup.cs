@@ -48,6 +48,7 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API
             var healthChecksBuilder = services.AddHealthChecks();
             healthChecksBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr()
                 .AddSqlServer(
                     Configuration["SqlConnectionString"],
                     name: "CatalogDB-check",

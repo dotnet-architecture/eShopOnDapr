@@ -35,5 +35,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Healthchecks\Healthchecks.csproj" />
+  </ItemGroup>
+
 </Project>
 

@@ -68,6 +68,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "src\BuildingBlo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorClient.Host", "src\Web\BlazorClient.Host\BlazorClient.Host.csproj", "{E03A530B-3E53-4BFC-978C-105D86D04B67}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Healthchecks", "Healthchecks", "{60441B2A-69B7-4BD1-B4FE-CCA68DFF4311}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Healthchecks", "src\BuildingBlocks\Healthchecks\Healthchecks.csproj", "{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +118,10 @@ Global
 		{E03A530B-3E53-4BFC-978C-105D86D04B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E03A530B-3E53-4BFC-978C-105D86D04B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E03A530B-3E53-4BFC-978C-105D86D04B67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +150,8 @@ Global
 		{538E9CCC-6E48-4C02-8F58-6E4A5F48EA2D} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
 		{A96826FE-933F-4F26-989D-1369E025A8FD} = {18C365E9-2DDC-4247-BCD5-C77D3D289E57}
 		{E03A530B-3E53-4BFC-978C-105D86D04B67} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
+		{60441B2A-69B7-4BD1-B4FE-CCA68DFF4311} = {6E3302E8-41FD-490C-920B-D5929B5DE0D9}
+		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7} = {60441B2A-69B7-4BD1-B4FE-CCA68DFF4311}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBED0B95-87F8-439B-BC1E-382C8ABD4F2E}

@@ -90,8 +90,10 @@ namespace Microsoft.eShopOnDapr.Services.Basket.API
                     .AllowCredentials());
             });
 
-            var healthChecksBuilder = services.AddHealthChecks();
-            healthChecksBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+            services
+                .AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr();
 
             services.AddScoped<IEventBus, DaprEventBus>();
             services.AddScoped<OrderStatusChangedToSubmittedIntegrationEventHandler>();
