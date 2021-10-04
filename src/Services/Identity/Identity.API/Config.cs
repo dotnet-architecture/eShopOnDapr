@@ -73,10 +73,6 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                         "ordering",
                         "shoppingaggr"
                     },
-
-                    // TODO Probably not needed
-//                    AlwaysIncludeUserClaimsInIdToken = true
-
                 },
                 new Client
                 {
