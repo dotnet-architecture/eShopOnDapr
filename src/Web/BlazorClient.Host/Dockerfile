@@ -32,5 +32,5 @@ RUN dotnet publish --no-restore "BlazorClient.Host.csproj" -c Release -o /app/pu
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BlazorClient.Host.dll"]
+COPY --from=publish /app/publish/ .
+ENTRYPOINT ["dotnet", "eShopOnDapr.BlazorClient.Host.dll"]
