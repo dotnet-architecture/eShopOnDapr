@@ -76,7 +76,7 @@ helm install --set externalDnsNameOrIP=<clusterIP> myeshop .
 
 When running on Kubernetes, you can access the eShopOnDapr health UI at http://localhost:30007/healthchecks-ui.
 
-When all microservices are healthy, you can navigate to http://localhost:30007 to view the eShopOnDapr UI.
+When all microservices are healthy, you can navigate to http://localhost:30000 to view the eShopOnDapr UI.
 
 To remove eShopOnDapr from Kubernetes, uninstall the Helm chart:
 
