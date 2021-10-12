@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
-namespace eShopOnDapr.BlazorClient
+namespace Microsoft.eShopOnDapr.BlazorClient
 {
     public class ApiAuthorizationMessageHandler : AuthorizationMessageHandler
     {

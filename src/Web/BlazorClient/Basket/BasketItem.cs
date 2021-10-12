@@ -1,4 +1,4 @@
-namespace eShopOnDapr.BlazorClient.Basket
+namespace Microsoft.eShopOnDapr.BlazorClient.Basket
 {
     public record BasketItem(
         int ProductId,

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace eShopOnDapr.BlazorClient.Host.Controllers
+namespace Microsoft.eShopOnDapr.BlazorClient.Host.Controllers
 {
     [Route("[controller]")]
     [ApiController]

@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace eShopOnDapr.BlazorClient.Ordering
+namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
 {
     public class OrderClient
     {

@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace eShopOnDapr.BlazorClient.Catalog
+namespace Microsoft.eShopOnDapr.BlazorClient.Catalog
 {
     public class CatalogClient
     {

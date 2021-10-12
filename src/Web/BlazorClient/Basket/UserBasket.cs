@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using eShopOnDapr.BlazorClient.Catalog;
-using eShopOnDapr.BlazorClient.Ordering;
+using Microsoft.eShopOnDapr.BlazorClient.Catalog;
+using Microsoft.eShopOnDapr.BlazorClient.Ordering;
 
-namespace eShopOnDapr.BlazorClient.Basket
+namespace Microsoft.eShopOnDapr.BlazorClient.Basket
 {
     public class UserBasket
     {

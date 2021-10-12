@@ -3,14 +3,14 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Blazored.Toast;
-using eShopOnDapr.BlazorClient.Basket;
-using eShopOnDapr.BlazorClient.Catalog;
-using eShopOnDapr.BlazorClient.Ordering;
+using Microsoft.eShopOnDapr.BlazorClient.Basket;
+using Microsoft.eShopOnDapr.BlazorClient.Catalog;
+using Microsoft.eShopOnDapr.BlazorClient.Ordering;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace eShopOnDapr.BlazorClient
+namespace Microsoft.eShopOnDapr.BlazorClient
 {
     public class Program
     {

@@ -1,4 +1,4 @@
-﻿namespace eShopOnDapr.BlazorClient
+﻿namespace Microsoft.eShopOnDapr.BlazorClient
 {
     public class Settings
     {

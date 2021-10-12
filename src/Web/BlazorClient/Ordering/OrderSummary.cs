@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace eShopOnDapr.BlazorClient.Ordering
+namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
 {
     public record OrderSummary(
         Guid Id,

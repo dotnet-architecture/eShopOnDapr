@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace eShopOnDapr.BlazorClient.Catalog
+namespace Microsoft.eShopOnDapr.BlazorClient.Catalog
 {
     public record CatalogPage(
         int Count,

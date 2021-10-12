@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace eShopOnDapr.BlazorClient.Basket
+namespace Microsoft.eShopOnDapr.BlazorClient.Basket
 {
     public record BasketData(IEnumerable<BasketItem> Items);
 }

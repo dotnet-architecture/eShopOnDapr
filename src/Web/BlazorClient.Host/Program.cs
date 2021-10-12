@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace eShopOnDapr.BlazorClient.Host
+namespace Microsoft.eShopOnDapr.BlazorClient.Host
 {
     public class Program
     {

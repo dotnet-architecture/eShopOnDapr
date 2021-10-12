@@ -2,9 +2,9 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using eShopOnDapr.BlazorClient.Ordering;
+using Microsoft.eShopOnDapr.BlazorClient.Ordering;
 
-namespace eShopOnDapr.BlazorClient.Basket
+namespace Microsoft.eShopOnDapr.BlazorClient.Basket
 {
     public class BasketClient
     {

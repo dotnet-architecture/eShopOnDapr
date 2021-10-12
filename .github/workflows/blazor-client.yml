@@ -1,4 +1,4 @@
-name: webspa
+name: blazor-client
 
 on:
   workflow_dispatch:
@@ -8,8 +8,8 @@ on:
 
     paths:
     - src/BuildingBlocks/**
-    - src/Web/WebSPA/**
-    - .github/workflows/webspa.yml
+    - src/Web/**
+    - .github/workflows/blazor-client.yml
   
   pull_request:
     branches:
@@ -17,11 +17,12 @@ on:
     
     paths:
     - src/BuildingBlocks/**
-    - src/Web/WebSPA/**
-    - .github/workflows/webspa.yml
+    - src/Web/**
+    - .github/workflows/blazor-client.yml
 env:
-  SERVICE: webspa
-  IMAGE: webspa
+  SERVICE: blazor-client
+  IMAGE: blazor.client
+  DOTNET_VERSION: 5.0.x
 
 jobs:
 
@@ -31,7 +32,18 @@ jobs:
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
-      
+    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Build
+      run: |
+        dotnet restore "eShopOnDapr.sln"
+        cd src/Web/BlazorClient.Host
+        dotnet build --no-restore
+
     - name: Compose build ${{ env.SERVICE }}
       run: sudo -E docker-compose build ${{ env.SERVICE }}
       working-directory: ./src
@@ -46,6 +58,17 @@ jobs:
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Build
+      run: |
+        dotnet restore "eShopOnDapr.sln"
+        cd src/Web/BlazorClient.Host
+        dotnet build --no-restore
 
     - name: Enable experimental features for the Docker daemon and CLI
       run: |

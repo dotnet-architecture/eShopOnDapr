@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>eShopOnDapr.BlazorClient</RootNamespace>
+    <RootNamespace>Microsoft.eShopOnDapr.BlazorClient</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'BlazorClient' ">

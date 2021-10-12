@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace eShopOnDapr.BlazorClient.Ordering
+namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
 {
     public class OrderForm
     {

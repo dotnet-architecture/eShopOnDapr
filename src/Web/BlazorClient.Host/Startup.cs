@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
-namespace eShopOnDapr.BlazorClient.Host
+namespace Microsoft.eShopOnDapr.BlazorClient.Host
 {
     public class Startup
     {

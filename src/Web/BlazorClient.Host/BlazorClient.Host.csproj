@@ -2,13 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>eShopOnDapr.BlazorClient.Host</AssemblyName>
-    <RootNamespace>eShopOnDapr.BlazorClient.Host</RootNamespace>
+    <AssemblyName>Microsoft.eShopOnDapr.BlazorClient.Host</AssemblyName>
+    <RootNamespace>Microsoft.eShopOnDapr.BlazorClient.Host</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Startup.cs~RFf5da0c.TMP" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />

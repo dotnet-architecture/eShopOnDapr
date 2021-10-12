@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace eShopOnDapr.BlazorClient.Ordering
+namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
 {
     public static class CardExpirationDate
     {
