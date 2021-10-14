@@ -12,4 +12,14 @@ namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions
     public interface IIntegrationEventHandler
     {
     }
+
+    public interface IIntegrationEventHandler2<in TIntegrationEvent> : IIntegrationEventHandler2
+    where TIntegrationEvent : IntegrationEvent2
+    {
+        Task Handle(TIntegrationEvent @event);
+    }
+
+    public interface IIntegrationEventHandler2
+    {
+    }
 }

@@ -7,5 +7,8 @@ namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions
     {
         Task PublishAsync<TIntegrationEvent>(TIntegrationEvent @event)
             where TIntegrationEvent : IntegrationEvent;
+
+        Task PublishAsync2<TIntegrationEvent>(TIntegrationEvent @event)
+            where TIntegrationEvent : IntegrationEvent2;
     }
 }
