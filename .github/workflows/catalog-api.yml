@@ -69,7 +69,7 @@ jobs:
 
     - name: Build and run unit tests
       run: |
-        dotnet restore "src/Services/Catalog/Catalog.API"
+        dotnet restore "src/Services/Catalog/Catalog.API/Catalog.API.csproj"
         cd src/Services/Catalog/Catalog.API
         dotnet build --no-restore
 
