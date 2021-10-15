@@ -21,7 +21,7 @@ COPY ["src/Web/BlazorClient/BlazorClient.csproj", "src/Web/BlazorClient/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
 COPY ["eShopOnDapr.sln", "./"]
-RUN dotnet restore "eShopOnDapr.sln"
+RUN dotnet restore "src/Services/Payment/Payment.API/Payment.API.csproj"
 
 COPY . .
 WORKDIR "/src/src/Services/Payment/Payment.API"
