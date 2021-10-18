@@ -35,6 +35,6 @@ namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
 
         [Required]
         [Display(Name = "Security code")]
-        public string CardSecurityCode { get; set; }
+        public string CardSecurityNumber { get; set; }
     }
 }

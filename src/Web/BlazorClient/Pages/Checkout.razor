@@ -87,10 +87,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Security code</label>
-                        <InputText @bind-Value="@_orderForm.CardSecurityCode"
+                        <InputText @bind-Value="@_orderForm.CardSecurityNumber"
                                    class="form-control form-input w-50 u-maxwidth-unset"
                                    placeholder="000" />
-                        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
+                        <ValidationMessage For="@(() => _orderForm.CardSecurityNumber)" />
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
             CardNumber = claims["card_number"],
             CardHolderName = claims["card_holder"],
             CardExpirationDate = claims["card_expiration"],
-            CardSecurityCode = claims["card_security_number"]
+            CardSecurityNumber = claims["card_security_number"]
         };
 
         // If the user presses reload on the page, the UserBasket items are

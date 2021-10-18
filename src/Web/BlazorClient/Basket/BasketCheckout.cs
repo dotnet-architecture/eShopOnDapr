@@ -11,5 +11,5 @@ namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
         string CardNumber,
         string CardHolderName,
         DateTime CardExpirationDate,
-        string CardSecurityCode);
+        string CardSecurityNumber);
 }

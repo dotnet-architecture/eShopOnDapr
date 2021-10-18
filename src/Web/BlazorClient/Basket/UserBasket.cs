@@ -85,7 +85,7 @@ namespace Microsoft.eShopOnDapr.BlazorClient.Basket
                 orderForm.CardNumber,
                 orderForm.CardHolderName,
                 CardExpirationDate.Parse(orderForm.CardExpirationDate),
-                orderForm.CardSecurityCode);
+                orderForm.CardSecurityNumber);
 
             await _basketClient.CheckoutAsync(basketCheckout);
 
