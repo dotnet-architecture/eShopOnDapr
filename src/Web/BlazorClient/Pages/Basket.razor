@@ -3,7 +3,7 @@
 @implements IDisposable
 @inject UserBasket _basket
 @inject NavigationManager _navigationManager
-@inject IOptions<Settings> _settings
+@inject Settings _settings
 
 <div class="esh-basket">
     <div class="container">
@@ -27,7 +27,7 @@
                                     <div class="esh-basket-delete" @onclick="@(() => RemoveItemAsync(item))">
                                         <img class="esh-basket-delete-svg" src="images/delete.svg" />
                                     </div>
-                                    <img class="esh-basket-thumbnail" src="@item.GetPictureUrl(_settings.Value)" />
+                                    <img class="esh-basket-thumbnail" src="@item.GetPictureUrl(_settings)" />
                                 </div>
                                 <div class="esh-basket-title">@item.ProductName</div>
                                 <div class="esh-basket-description divider d-flex align-items-center justify-content-between">

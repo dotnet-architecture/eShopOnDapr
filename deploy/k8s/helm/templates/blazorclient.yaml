@@ -50,7 +50,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: blazorclient
+  name: blazor-client
   namespace: {{ .Values.namespace }}
   labels:
     app: eshop
