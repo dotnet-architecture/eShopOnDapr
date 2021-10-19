@@ -1,0 +1,78 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: webshoppingagg-cm
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webshoppingagg
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  BasketUrlHC: http://basket-api/hc
+  CatalogUrlHC: http://catalog-api/hc
+  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
+  IdentityUrlHC: http://identity-api/hc
+  PATH_BASE: /webshoppingagg
+  PaymentUrlHC: http://payment-api/hc
+  urls__basket: http://basket-api
+  urls__catalog: http://catalog-api
+  urls__identity: http://identity-api
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: webshoppingagg
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webshoppingagg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: webshoppingagg
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: webshoppingagg
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "webshoppingagg"
+        dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
+    spec:
+      containers:
+        - name: webshoppingagg
+          image: eshopdapr/webshoppingagg:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: webshoppingagg-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webshoppingagg
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webshoppingagg
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30006
+      protocol: TCP
+      name: http
+  selector:
+    service: webshoppingagg

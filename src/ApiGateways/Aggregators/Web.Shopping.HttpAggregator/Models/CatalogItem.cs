@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models
+﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models
 {
     public class CatalogItem
     {
@@ -8,6 +8,6 @@
 
         public decimal Price { get; set; }
 
-        public string PictureUri { get; set; }
+        public string PictureFileName { get; set; }
     }
 }

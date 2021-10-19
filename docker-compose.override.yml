@@ -39,13 +39,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - identityUrl=http://identity-api
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - PATH_BASE=/basket-api
-      - PORT=80
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq
     ports:
       - "5103:80"
-      - "9103:81"
       - "50001:50001"
 
   basket-api-dapr:
@@ -59,22 +57,24 @@ services:
       - "./dapr/components/:/components"
       - "./dapr/configuration/:/configuration"
 
+  blazor-client:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ApiGatewayUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+    ports:
+      - "5104:80"
+
   catalog-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionString=${ESHOP_AZURE_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
-      - PicBaseUrl=${ESHOP_STORAGE_CATALOG_URL}
-      - AzureStorageAccountName=${ESHOP_AZURE_STORAGE_CATALOG_NAME}
-      - AzureStorageAccountKey=${ESHOP_AZURE_STORAGE_CATALOG_KEY}
-      - UseCustomizationData=True
-      - AzureStorageEnabled=False
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - PORT=80
-      - PATH_BASE=/catalog-api
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq
+      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5101:80"
-      - "9101:81"
       - "50002:50001"
 
   catalog-api-dapr:
@@ -92,21 +92,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - SpaClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
-      - XamarinCallback=http://${ESHOP_PROD_EXTERNAL_DNS_NAME_OR_IP}:5105/xamarincallback
-      - ConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Service.IdentityDb;User Id=sa;Password=Pass@word}
-      - MvcClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5100
-      - LocationApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5109
-      - MarketingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5110
-      - BasketApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
-      - OrderingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
-      - MobileShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
-      - WebShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
-      - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
-      - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
-      - UseCustomizationData=True
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - SeqServerUrl=http://seq
+      - SqlConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word}
+      - RetryMigrations=true
+      - BlazorClientUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
+      - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
+      - OrderingApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
+      - ShoppingAggregatorApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
     ports:
       - "5105:80"
 
@@ -114,19 +106,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_AZURE_ORDERING_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.OrderingDb;User Id=sa;Password=Pass@word}
-      - identityUrl=http://identity-api
+      - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
-      - CheckUpdateTime=30000
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - UseLoadTest=${USE_LOADTEST:-False}
-      - Serilog__MinimumLevel__Override__ordering-api=Verbose
-      - PATH_BASE=/ordering-api
-      - PORT=80
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq
+      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5102:80"
-      - "9102:81"
       - "50003:50001"
 
   ordering-api-dapr:
@@ -146,9 +132,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling=Verbose
+      - SeqServerUrl=http://seq
     ports:
       - "5108:80"
       - "50006:50001"
@@ -169,11 +153,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - urls__basket=http://basket-api
       - urls__catalog=http://catalog-api
-      - urls__orders=http://ordering-api
       - urls__identity=http://identity-api
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
-      - OrderingUrlHC=http://ordering-api/hc
       - IdentityUrlHC=http://identity-api/hc
       - PaymentUrlHC=http://payment-api/hc
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
@@ -211,38 +193,23 @@ services:
       - "./dapr/components/:/components"
       - "./dapr/configuration/:/configuration"
 
-  webspa:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
-      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
-      - PurchaseUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - IdentityUrlHC=http://identity-api/hc
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-    ports:
-      - "5104:80"
-
   webstatus:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - HealthChecksUI__HealthChecks__1__Name=Basket API
-      - HealthChecksUI__HealthChecks__1__Uri=http://basket-api/hc
-      - HealthChecksUI__HealthChecks__2__Name=Catalog API
-      - HealthChecksUI__HealthChecks__2__Uri=http://catalog-api/hc
-      - HealthChecksUI__HealthChecks__3__Name=Identity API
-      - HealthChecksUI__HealthChecks__3__Uri=http://identity-api/hc
-      - HealthChecksUI__HealthChecks__4__Name=Ordering API
-      - HealthChecksUI__HealthChecks__4__Uri=http://ordering-api/hc
-      - HealthChecksUI__HealthChecks__5__Name=Payment API
-      - HealthChecksUI__HealthChecks__5__Uri=http://payment-api/hc
-      - HealthChecksUI__HealthChecks__6__Name=Web Shopping Aggregator
-      - HealthChecksUI__HealthChecks__6__Uri=http://webshoppingagg/hc
-      - HealthChecksUI__HealthChecks__7__Name=Web SPA
-      - HealthChecksUI__HealthChecks__7__Uri=http://webspa/hc
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - HealthChecksUI__HealthChecks__0__Name=Basket API
+      - HealthChecksUI__HealthChecks__0__Uri=http://basket-api/hc
+      - HealthChecksUI__HealthChecks__1__Name=Catalog API
+      - HealthChecksUI__HealthChecks__1__Uri=http://catalog-api/hc
+      - HealthChecksUI__HealthChecks__2__Name=Identity API
+      - HealthChecksUI__HealthChecks__2__Uri=http://identity-api/hc
+      - HealthChecksUI__HealthChecks__3__Name=Ordering API
+      - HealthChecksUI__HealthChecks__3__Uri=http://ordering-api/hc
+      - HealthChecksUI__HealthChecks__4__Name=Payment API
+      - HealthChecksUI__HealthChecks__4__Uri=http://payment-api/hc
+      - HealthChecksUI__HealthChecks__5__Name=Web Shopping Aggregator
+      - HealthChecksUI__HealthChecks__5__Uri=http://webshoppingagg/hc
+      - HealthChecksUI__HealthChecks__6__Name=Blazor Client
+      - HealthChecksUI__HealthChecks__6__Uri=http://blazor-client/hc
     ports:
       - "5107:80"
 

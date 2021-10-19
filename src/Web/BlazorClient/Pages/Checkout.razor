@@ -1,0 +1,190 @@
+﻿@page "/checkout"
+@attribute [Authorize]
+@implements IDisposable
+@inject UserBasket _basket
+@inject NavigationManager _navigationManager
+@inject Settings _settings 
+
+<div class="container">
+    <h1 class="mb-4 mt-5">[ Checkout ]</h1>
+    @if (_error != null)
+    {
+        <div class="alert" role="alert">
+            Not possible to create a new order, please try later. @_error
+        </div>
+    }
+    <EditForm Model="@_orderForm" OnValidSubmit="@OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <section class="u-background-brightest p-5">
+            <h2 class="mb-4">Shipping Address</h2>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Address</label>
+                        <InputText @bind-Value="@_orderForm.Street"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="Address" />
+                        <ValidationMessage For="@(() => _orderForm.Street)" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>City</label>
+                        <InputText @bind-Value="@_orderForm.City"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="City" />
+                        <ValidationMessage For="@(() => _orderForm.City)" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>State</label>
+                        <InputText @bind-Value="@_orderForm.State"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="State" />
+                        <ValidationMessage For="@(() => _orderForm.State)" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Country</label>
+                        <InputText @bind-Value="@_orderForm.Country"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="Country" />
+                        <ValidationMessage For="@(() => _orderForm.Country)" />
+                    </div>
+                </div>
+            </div>
+            <h2 class="mt-5 mb-4">Payment method</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Card number</label>
+                        <InputText @bind-Value="@_orderForm.CardNumber"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="000000000000000" />
+                        <ValidationMessage For="@(() => _orderForm.CardNumber)" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Cardholder name</label>
+                        <InputText @bind-Value="@_orderForm.CardHolderName"
+                                   class="form-control form-input w-100 u-maxwidth-unset"
+                                   placeholder="Card holder" />
+                        <ValidationMessage For="@(() => _orderForm.CardHolderName)" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Expiration date</label>
+                        <InputText @bind-Value="@_orderForm.CardExpirationDate"
+                                   class="form-control form-input w-50 u-maxwidth-unset"
+                                   placeholder="MM/YY" />
+                        <ValidationMessage For="@(() => _orderForm.CardExpirationDate)" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Security code</label>
+                        <InputText @bind-Value="@_orderForm.CardSecurityCode"
+                                   class="form-control form-input w-50 u-maxwidth-unset"
+                                   placeholder="000" />
+                        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mt-5 mb-4">Order details</h2>
+            @foreach (var item in _basket.Items)
+            {
+                <article class="divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
+                    <div class="esh-orders_new-thumbnail-container">
+                        <div class="esh-orders_new-thumbnail-wrapper">
+                            <img class="esh-orders_new-thumbnail" src="@item.GetPictureUrl(_settings)">
+                        </div>
+                    </div>
+                    <div class="row w-100 ml-3">
+                        <div class="col-6">@item.ProductName</div>
+                        <div class="col-2">$@item.GetFormattedPrice()</div>
+                        <div class="col-2">@item.Quantity</div>
+                        <div class="col-2 text-right">$@item.GetFormattedTotalPrice()</div>
+                    </div>
+                </article>
+            }
+
+            <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
+                <div>Total</div>
+                <div class="ml-3">$@_basket.GetFormattedTotalPrice()</div>
+            </div>
+
+            <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">
+                <a class="btn btn-secondary" href="/basket">Back to basket</a>
+
+                <button class="btn btn-primary ml-3" type="submit">Place Order</button>
+            </div>
+        </section>
+    </EditForm>
+</div>
+
+@code {
+
+    private OrderForm _orderForm;
+    private string _error;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+        var claims = authenticationState.User.Claims
+            .ToDictionary(c => c.Type, c => c.Value);
+
+        _orderForm = new OrderForm
+        {
+            Email = claims["email"],
+            Street = claims["address_street"],
+            City = claims["address_city"],
+            State = claims["address_state"],
+            Country = claims["address_country"],
+            CardNumber = claims["card_number"],
+            CardHolderName = claims["card_holder"],
+            CardExpirationDate = claims["card_expiration"],
+            CardSecurityCode = claims["card_security_number"]
+        };
+
+        // If the user presses reload on the page, the UserBasket items are
+        // loaded asynchronously. The page may show before the items are loaded
+        // so subscribe to any changes to update the page.
+        _basket.ItemsChanged += OnBasketItemsChanged;
+    }
+
+    private void OnBasketItemsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        try
+        {
+            await _basket.CheckoutAsync(_orderForm);
+
+            _navigationManager.NavigateTo("/orders");
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        _basket.ItemsChanged -= OnBasketItemsChanged;
+    }
+}

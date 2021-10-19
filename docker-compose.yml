@@ -27,10 +27,16 @@ services:
       - redis
 
   basket-api-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:basket-api"
     depends_on:
       - basket-api
+
+  blazor-client:
+    image: ${REGISTRY:-eshopdapr}/blazor.client:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/BlazorClient.Host/Dockerfile
 
   catalog-api:
     image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}
@@ -41,7 +47,7 @@ services:
       - sqldata
 
   catalog-api-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:catalog-api"
     depends_on:
       - catalog-api
@@ -63,7 +69,7 @@ services:
       - sqldata
 
   ordering-api-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:ordering-api"
     depends_on:
       - ordering-api
@@ -75,7 +81,7 @@ services:
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
 
   payment-api-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:payment-api"
     depends_on:
       - payment-api
@@ -93,7 +99,7 @@ services:
       - sqldata
 
   webshoppingagg-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:webshoppingagg"
     depends_on:
       - webshoppingagg
@@ -102,24 +108,13 @@ services:
     image: envoyproxy/envoy:v1.14.2
 
   webshoppingapigw-dapr:
-    image: "daprio/daprd:1.0.0"
+    image: "daprio/daprd:1.4.0"
     network_mode: "service:webshoppingapigw"
     depends_on:
       - webshoppingapigw
 
-  webspa:
-    image: ${REGISTRY:-eshopdapr}/webspa:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebSPA/Dockerfile
-    depends_on:
-      - webshoppingagg
-
   webstatus:
-    image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebStatus/Dockerfile
+    image: xabarilcoding/healthchecksui:5.0.0
 
   dapr-placement:
     image: "daprio/dapr:1.0.0"

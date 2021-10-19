@@ -1,0 +1,40 @@
+.esh-orders_detail-titles {
+    color: #7979ac;
+    font-size: 1.125rem;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.esh-orders_detail-title {
+    color: #7979ac;
+    font-size: 1.125rem;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+.esh-orders_detail-items {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.esh-orders_detail-thumbnail-container {
+    width: 10rem;
+}
+
+.esh-orders_detail-thumbnail-wrapper {
+    background-color: #dbdede;
+    height: 0;
+    overflow: hidden;
+    padding-top: 100%;
+    position: relative;
+}
+
+.esh-orders_detail-thumbnail {
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+}

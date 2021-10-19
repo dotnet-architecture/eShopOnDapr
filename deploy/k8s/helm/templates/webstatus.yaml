@@ -1,0 +1,78 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: webstatus-cm
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webstatus
+data:
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  HealthChecksUI__HealthChecks__0__Name: Basket API
+  HealthChecksUI__HealthChecks__0__Uri: http://basket-api/hc
+  HealthChecksUI__HealthChecks__1__Name: Catalog API
+  HealthChecksUI__HealthChecks__1__Uri: http://catalog-api/hc
+  HealthChecksUI__HealthChecks__2__Name: Identity API
+  HealthChecksUI__HealthChecks__2__Uri: http://identity-api/hc
+  HealthChecksUI__HealthChecks__3__Name: Ordering API
+  HealthChecksUI__HealthChecks__3__Uri: http://ordering-api/hc
+  HealthChecksUI__HealthChecks__4__Name: Payment API
+  HealthChecksUI__HealthChecks__4__Uri: http://payment-api/hc
+  HealthChecksUI__HealthChecks__5__Name: Web Shopping Aggregator
+  HealthChecksUI__HealthChecks__5__Uri: http://webshoppingagg/hc
+  HealthChecksUI__HealthChecks__6__Name: Blazor Client
+  HealthChecksUI__HealthChecks__6__Uri: http://blazor-client/hc
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: webstatus
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webstatus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: webstatus
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: webstatus
+    spec:
+      containers:
+        - name: webstatus
+          image: xabarilcoding/healthchecksui:5.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: webstatus-cm
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: webstatus
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webstatus
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30007
+      protocol: TCP
+      name: http
+  selector:
+    service: webstatus

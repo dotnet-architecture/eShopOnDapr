@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public class OrderItem
     {
@@ -10,7 +10,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         public string ProductName { get; set; }
         public decimal UnitPrice { get; set; }
         public int Units { get; set; }
-        public string PictureUrl { get; set; }
+        public string PictureFileName { get; set; }
 
         public static OrderItem FromActorState(Actors.OrderItem orderItem)
         {
@@ -20,7 +20,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
                 ProductName = orderItem.ProductName,
                 UnitPrice = orderItem.UnitPrice,
                 Units = orderItem.Units,
-                PictureUrl = orderItem.PictureUrl
+                PictureFileName = orderItem.PictureFileName
             };
         }
     }

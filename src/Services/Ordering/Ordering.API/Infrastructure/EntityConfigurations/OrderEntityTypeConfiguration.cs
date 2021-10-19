@@ -1,21 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.EntityConfigurations
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations
 {
     class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {
         public void Configure(EntityTypeBuilder<Order> orderConfiguration)
         {
-            orderConfiguration.ToTable("orders", OrderingContext.DEFAULT_SCHEMA);
+            orderConfiguration.ToTable("Orders");
 
             orderConfiguration.HasKey(o => o.Id);
 
             orderConfiguration.HasAlternateKey(o => o.OrderNumber);
 
             orderConfiguration.Property(o => o.OrderNumber)
-                .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
+                .UseHiLo("orderseq");
 
             orderConfiguration
                 .OwnsOne(o => o.Address, a =>

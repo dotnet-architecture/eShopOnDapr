@@ -1,8 +1,8 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events
-{
-    using System;
-    using BuildingBlocks.EventBus.Events;
+﻿using System;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.Events
+{
     public class OrderStockConfirmedIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }

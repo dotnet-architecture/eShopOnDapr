@@ -1,14 +1,14 @@
 ﻿using System;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Application.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
     public class UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
     {
         public string UserId { get; set; }
 
-        public string UserName { get; set; }
+        public string UserEmail { get; set; }
 
         public string City { get; set; }
 
@@ -18,8 +18,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
 
         public string Country { get; set; }
 
-        public string ZipCode { get; set; }
-
         public string CardNumber { get; set; }
 
         public string CardHolderName { get; set; }
@@ -28,34 +26,36 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
 
         public string CardSecurityNumber { get; set; }
 
-        public int CardTypeId { get; set; }
-
-        public string Buyer { get; set; }
-
         public Guid RequestId { get; set; }
 
-        public CustomerBasket Basket { get; set; }
+        public CustomerBasket Basket { get; }
 
-        public UserCheckoutAcceptedIntegrationEvent(string userId, string userName, string city, string street,
-            string state, string country, string zipCode, string cardNumber, string cardHolderName,
-            DateTime cardExpiration, string cardSecurityNumber, int cardTypeId, string buyer, Guid requestId,
+        public UserCheckoutAcceptedIntegrationEvent(
+            string userId,
+            string userEmail,
+            string city,
+            string street,
+            string state,
+            string country,
+            string cardNumber,
+            string cardHolderName,
+            DateTime cardExpiration,
+            string cardSecurityNumber,
+            Guid requestId,
             CustomerBasket basket)
         {
             UserId = userId;
+            UserEmail = userEmail;
             City = city;
             Street = street;
             State = state;
             Country = country;
-            ZipCode = zipCode;
             CardNumber = cardNumber;
             CardHolderName = cardHolderName;
             CardExpiration = cardExpiration;
             CardSecurityNumber = cardSecurityNumber;
-            CardTypeId = cardTypeId;
-            Buyer = buyer;
             Basket = basket;
             RequestId = requestId;
-            UserName = userName;
         }
     }
 }

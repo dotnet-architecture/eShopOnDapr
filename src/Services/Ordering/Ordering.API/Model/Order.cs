@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public class Order
     {
@@ -13,7 +13,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         public string Description { get; set; }
         public Address Address { get; set; }
         public string BuyerId { get; set; }
-        public string BuyerName { get; set; }
+        public string BuyerEmail { get; set; }
         public List<OrderItem> OrderItems { get; set; }
 
         public decimal GetTotal()
@@ -30,13 +30,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
                 Id = orderId,
                 OrderDate = order.OrderDate,
                 OrderStatus = order.OrderStatus.Name,
-                BuyerId = order.UserId,
-                BuyerName = order.UserName,
+                BuyerId = order.BuyerId,
+                BuyerEmail = order.BuyerEmail,
                 Address = new Address
                 {
                     Street = order.Address.Street,
                     City = order.Address.City,
-                    ZipCode = order.Address.ZipCode,
                     State = order.Address.State,
                     Country = order.Address.Country
                 },

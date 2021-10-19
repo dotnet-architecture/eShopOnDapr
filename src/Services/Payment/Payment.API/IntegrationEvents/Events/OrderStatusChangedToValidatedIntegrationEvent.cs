@@ -1,9 +1,8 @@
-﻿namespace Payment.API.IntegrationEvents.Events
-{
-    using System;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Newtonsoft.Json;
+﻿using System;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
+namespace Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.Events
+{
     public class OrderStatusChangedToValidatedIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }

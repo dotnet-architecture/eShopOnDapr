@@ -1,0 +1,100 @@
+﻿@page "/orders"
+@attribute [Authorize]
+@inject OrderClient _orderClient 
+
+<div class="esh-orders">
+    <div class="container">
+        <h1 class="mb-4 mt-5">[ Order List ]</h1>
+
+        @if (_error != null)
+        {
+            <div class="alert" role="alert">
+                Error requesting order list, please try later. @_error
+            </div>
+        }
+
+    <div class="esh-orders-wrapper">
+
+        @if (_orders != null)
+        {
+            <article class="esh-orders-titles row">
+                <section class="col-1"></section>
+                <section class="col-3">Date</section>
+                <section class="col-2">Total</section>
+                <section class="col-2">Status</section>
+                <section class="col-2"></section>
+                <section class="col-2"></section>
+            </article>
+
+            @foreach (var order in _orders)
+            {
+                <article class="esh-orders-item divider row">
+                    <section class="col-1">@order.OrderNumber</section>
+                    <section class="col-3">@order.GetFormattedOrderDate()</section>
+                    <section class="col-2">$@order.GetFormattedTotal()</section>
+                    <section class="col-2">@order.OrderStatus</section>
+                    <section class="col-2">
+                        @if (order.OrderStatus == "Submitted")
+                        {
+                            <a @onclick=@(() => CancelOrderAsync(order.OrderNumber)) class="esh-orders-link u-cursor-pointer">Cancel</a>
+                        }
+                    </section>
+                    <section class="col-2">
+                        <a class="esh-orders-link" href="/orders/@order.OrderNumber">Details</a>
+                    </section>
+                </article>
+            }
+        }
+
+        <aside class="d-flex justify-content-end mt-5 pr-5">
+            <a class="btn btn-secondary" href="/">Continue Shopping</a>
+        </aside>
+    </div>
+    </div>
+</div>
+
+@code {
+
+    private IEnumerable<OrderSummary> _orders;
+    private string _error;
+
+    [CascadingParameter]
+    private OrderState OrderState { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadOrdersAsync();
+    }
+
+    private async Task LoadOrdersAsync()
+    {
+        try
+        {
+            _orders = await _orderClient.GetOrdersAsync();
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private async Task CancelOrderAsync(int orderNumber)
+    {
+        try
+        {
+            await _orderClient.CancelOrderAsync(orderNumber);
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch
+        {
+            _error = "Unable to cancel order.";
+        }
+    }
+}

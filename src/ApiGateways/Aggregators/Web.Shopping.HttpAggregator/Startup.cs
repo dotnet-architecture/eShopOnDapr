@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json;
 using Dapr.Client;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Filters.Basket.API.Infrastructure.Filters;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Filters.Basket.API.Infrastructure.Filters;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -18,7 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
 {
     public class Startup
     {
@@ -34,11 +33,10 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
         {
             var healthCheckBuilder = services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr()
                 .AddUrlGroup(new Uri(Configuration["CatalogUrlHC"]), name: "catalogapi-check", tags: new string[] { "catalogapi" })
-                .AddUrlGroup(new Uri(Configuration["OrderingUrlHC"]), name: "orderingapi-check", tags: new string[] { "orderingapi" })
                 .AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" })
-                .AddUrlGroup(new Uri(Configuration["BasketUrlHC"]), name: "basketapi-check", tags: new string[] { "basketapi" })
-                .AddUrlGroup(new Uri(Configuration["PaymentUrlHC"]), name: "paymentapi-check", tags: new string[] { "paymentapi" });
+                .AddUrlGroup(new Uri(Configuration["BasketUrlHC"]), name: "basketapi-check", tags: new string[] { "basketapi" });
 
             services.AddCustomMvc(Configuration)
                 .AddCustomAuthentication(Configuration)
@@ -111,7 +109,7 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
             {
                 options.Authority = identityUrl;
                 options.RequireHttpsMetadata = false;
-                options.Audience = "webshoppingagg";
+                options.Audience = "shoppingaggr-api";
             });
 
             return services;
@@ -175,9 +173,6 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
 
             services.AddSingleton<ICatalogService, CatalogService>(
                 _ => new CatalogService(DaprClient.CreateInvokeHttpClient("catalog-api")));
-
-            services.AddSingleton<IOrderingService, OrderingService>(
-                _ => new OrderingService(DaprClient.CreateInvokeHttpClient("ordering-api")));
 
             return services;
         }

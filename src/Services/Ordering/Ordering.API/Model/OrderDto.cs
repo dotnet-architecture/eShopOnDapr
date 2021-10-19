@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public class OrderDto
     {
@@ -12,7 +12,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
         public string description { get; set; }
         public string street { get; set; }
         public string city { get; set; }
-        public string zipcode { get; set; }
         public string country { get; set; }
         public List<OrderItemDto> orderitems { get; set; }
         public decimal subtotal { get; set; }
@@ -28,7 +27,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
                 description = order.Description,
                 street = order.Address.Street,
                 city = order.Address.City,
-                zipcode = order.Address.ZipCode,
                 country = order.Address.Country,
                 orderitems = order.OrderItems
                     .Select(OrderItemDto.FromOrderItem)

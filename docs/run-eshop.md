@@ -6,15 +6,11 @@ The root folder of the repository contains [Docker Compose](https://docs.docker.
 
 To start eShopOnDapr from the CLI, run the following command from the root folder:
 
-```
+```terminal
 docker-compose up
 ```
 
-First Docker builds the images. This can take between 10 and 30 minutes to complete, depending on the system speed.
-
-![Docker building images](media/docker-build.png)
-
-Once the images have been built, Docker will start the containers. You should now see the application logs in the terminal:
+First Docker pulls the images. This can take some time to complete. Once the images are available, Docker will start the containers. You should now see the application logs in the terminal:
 
 ![Application logging](media/docker-application-output.png)
 
@@ -64,21 +60,26 @@ The debugger is now attached to your container and you can set breakpoints in th
 
 ## Run eShopOnDapr on Kubernetes
 
-The manifest files provided here are meant for deployment to a Kubernetes cluster running on your local machine. To run eShopOnDapr on Kubernetes, you first need to set up a Kubernetes cluster, such as MiniKube or Docker for Desktop. Next, you need to install Dapr into it. See the [*Install Dapr into a Kubernetes cluster how-to*](https://docs.dapr.io/getting-started/install-dapr-kubernetes/) for details.
+To run eShopOnDapr on Kubernetes, you first need to set up a Kubernetes cluster, such as MiniKube or Docker for Desktop. Next, you need to install Dapr into it. See the [*Install Dapr into a Kubernetes cluster how-to*](https://docs.dapr.io/getting-started/install-dapr-kubernetes/) for details.
 
-To start the application in Kubernetes, run the `start-all.ps1` or `start-all.sh` script located in the `/deploy/k8s` folder. It uses `kubectl` - the Kubernetes CLI - to apply all the manifests to the Kubernetes cluster.
+eShopOnDapr includes a [Helm](https://helm.sh/) chart for easy deployment to a Kubernetes cluster. Run the following command from the `deploy\k8s\helm` folder to install the Helm chart onto a local cluster:
 
-Different parts of the application are exposed as NodePorts to the local machine. This is convenient for testing the application locally. The following diagram depicts how the application is running in Kubernetes:
+```terminal
+helm install myeshop .
+```
 
-![eShopOnDapr running in Kubernetes](media/k8s-nodeport.png)
+If you want to install eShopOnDapr on a remote Kubernetes cluster (e.g. Azure Kubernetes Service), include the remote cluster IP in the Helm command:
 
-Use the following URLs for testing the application:
+```terminal
+helm install --set externalDnsNameOrIP=<clusterIP> myeshop .
+```
 
-| URL                    | Description                             |
-|------------------------|-----------------------------------------|
-| http://localhost:30000 | Access the eShopOnDapr SPA front-end    |
-| http://localhost:30007 | Access the eShopOnDapr health dashboard |
+When running on Kubernetes, you can access the eShopOnDapr health UI at http://localhost:30007/healthchecks-ui.
 
-All access to backend APIs is routed through the API Gateway exposed on port `30050`. The Identity server is exposed on port `30008`. All URLs are configured accordingly in the different manifest files.
+When all microservices are healthy, you can navigate to http://localhost:30000 to view the eShopOnDapr UI.
 
-To remove eShopOnDapr from your cluster, run the `stop-all.ps1` or `stop-all.sh` script located in the `/deploy/k8s` folder.
+To remove eShopOnDapr from Kubernetes, uninstall the Helm chart:
+
+```terminal
+helm uninstall myeshop
+```

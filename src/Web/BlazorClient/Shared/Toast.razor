@@ -1,0 +1,25 @@
+@inject IToastService _toastService
+
+<BlazoredToasts />
+
+@code {
+
+    private OrderState _prevOrderState;
+
+    [CascadingParameter]
+    private OrderState OrderState { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // Deduplicate when the same parameter value is set multiple times.
+        if (OrderState != _prevOrderState)
+        {
+            _toastService.ShowInfo(
+                $"Your order status has been updated to \"{OrderState.Status}\".",
+                $"Order #{OrderState.OrderNumber}");
+
+            _prevOrderState = OrderState;
+        }
+    }
+
+}

@@ -12,8 +12,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Web.Shopping.HttpAggregator' " />
+
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +33,10 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00834" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Healthchecks\Healthchecks.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,39 +1,42 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
-using System;
-using System.IO;
-using System.Net;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API
+namespace Microsoft.eShopOnDapr.Services.Basket.API
 {
     public class Program
     {
-        public static readonly string Namespace = typeof(Program).Namespace;
-        public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+        private const string AppName = "Basket.API";
 
         public static int Main(string[] args)
         {
             var configuration = GetConfiguration();
+            var seqServerUrl = configuration["SeqServerUrl"];
 
-            Log.Logger = CreateSerilogLogger(configuration);
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .WriteTo.Console()
+                .WriteTo.Seq(seqServerUrl)
+                .Enrich.WithProperty("ApplicationName", AppName)
+                .CreateLogger();
 
             try
             {
-                Log.Information("Configuring web host ({ApplicationContext})...", AppName);
-                var host = BuildWebHost(configuration, args);
+                Log.Information("Configuring web host ({ApplicationName})...", AppName);
+                var host = CreateHostBuilder(args).Build();
 
-                Log.Information("Starting web host ({ApplicationContext})...", AppName);
+                Log.Information("Starting web host ({ApplicationName})...", AppName);
                 host.Run();
 
                 return 0;
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", AppName);
+                Log.Fatal(ex, "Host terminated unexpectedly ({ApplicationName})...", AppName);
                 return 1;
             }
             finally
@@ -42,37 +45,13 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             }
         }
 
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .CaptureStartupErrors(false)
-                .ConfigureKestrel(options =>
-                {
-                    var httpPort = configuration.GetValue("PORT", 80);
-                    options.Listen(IPAddress.Any, httpPort, listenOptions =>
-                    {
-                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                    });
-                })
-                .UseStartup<Startup>()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration(configuration)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .Build();
-
-        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
-        {
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
-            var logstashUrl = configuration["Serilog:LogstashUrl"];
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.WithProperty("ApplicationContext", AppName)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
-                .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
 
         private static IConfiguration GetConfiguration()
         {
@@ -80,16 +59,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
-
-            var config = builder.Build();
-
-            if (config.GetValue<bool>("UseVault", false))
-            {
-                builder.AddAzureKeyVault(
-                    $"https://{config["Vault:Name"]}.vault.azure.net/",
-                    config["Vault:ClientId"],
-                    config["Vault:ClientSecret"]);
-            }
 
             return builder.Build();
         }

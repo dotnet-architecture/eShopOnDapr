@@ -1,0 +1,72 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: payment-cm
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: payment
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  SeqServerUrl: http://seq
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: payment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: payment
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: payment
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "payment-api"
+        dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
+    spec:
+      containers:
+        - name: payment-api
+          image: eshopdapr/payment.api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: payment-cm
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-api
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: payment
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30004
+      protocol: TCP
+      name: http
+  selector:
+    service: payment

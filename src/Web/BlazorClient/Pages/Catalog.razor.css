@@ -1,0 +1,175 @@
+h2 {
+    margin-top: 24px;
+}
+
+.esh-catalog-title {
+    position: relative;
+    top: 74.2857142857px;
+}
+
+.esh-catalog-filters {
+    height: 65px;
+}
+
+.esh-catalog-filters-wrapper {
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.esh-catalog-filter-wrapper {
+    margin-right: 0.5rem;
+    position: relative;
+}
+
+.esh-catalog-filter-wrapper:after {
+    border-bottom: 1px solid #292929;
+    border-right: 1px solid #292929;
+    bottom: 1rem;
+    content: '';
+    height: 0.5rem;
+    pointer-events: none;
+    position: absolute;
+    right: 0.9rem;
+    transform: rotate(45deg);
+    width: 0.5rem;
+    z-index: 1;
+}
+
+.esh-catalog-filter {
+    appearance: none;
+    background-color: transparent;
+    border: solid 3px #292929;
+    border-radius: 0;
+    cursor: pointer;
+    margin-right: 1rem;
+    min-width: 140px;
+    outline-color: #292929;
+    padding-left: 0.5rem;
+    padding-right: 2rem;
+}
+
+.esh-catalog-filter option {
+    appearance: none;
+    border: unset;
+}
+
+.esh-catalog-filter option:hover {
+    background-color: #0d2092;
+    color: #fff;
+    cursor: pointer;
+}
+
+.esh-catalog-filter option:active {
+    background-color: #0d2092;
+    color: #fff;
+}
+
+.esh-catalog-filter option:focus {
+    background-color: #0d2092;
+    color: #fff;
+}
+
+.esh-catalog-filter option:current {
+    background-color: #0d2092;
+    color: #fff;
+}
+
+.esh-catalog-filter option:selected {
+    background-color: #0d2092;
+    color: #fff;
+}
+
+.esh-catalog-label {
+    display: inline-block;
+    font-size: 1rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 0;
+}
+
+.esh-catalog-items {
+    margin-top: 1rem;
+}
+
+.esh-catalog-item {
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.esh-catalog-item:hover {
+    background-color: #fff;
+}
+
+.esh-catalog-item:hover .esh-catalog-thumbnail-icon {
+    opacity: 1;
+}
+
+.esh-catalog-item.is-disabled {
+    background-color: unset;
+    cursor: default;
+}
+
+.esh-catalog-item.is-disabled .esh-catalog-thumbnail-icon {
+    display: none !important;
+}
+
+.esh-catalog-thumbnail-wrapper {
+    background-color: #dbdede;
+    height: 0;
+    overflow: hidden;
+    padding-top: 100%;
+    position: relative;
+}
+
+.esh-catalog-thumbnail-icon {
+    background-color: #0d2092;
+    border-radius: 50%;
+    height: 3.5rem;
+    left: 50%;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 3.5rem;
+    z-index: 20;
+    transition: all 0.35s;
+}
+
+.esh-catalog-thumbnail-icon-svg {
+    height: auto;
+    width: 1.5rem;
+}
+
+.esh-catalog-thumbnail {
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    z-index: 10;
+}
+
+.esh-catalog-details {
+    height: 4rem;
+}
+
+.esh-catalog-name {
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.esh-catalog-price {
+    color: #0d2092;
+    font-size: 1rem;
+}
+
+.esh-catalog-price::before {
+    content: '$';
+}
+
+.esh-catalog-alert {
+    margin-top: 10px;
+    color: #fff;
+}

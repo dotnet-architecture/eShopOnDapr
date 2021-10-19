@@ -1,26 +1,26 @@
 ﻿using System;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents
 {
     public class OrderStatusChangedToShippedIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }
         public string OrderStatus { get; set; }
         public string Description { get; set; }
-        public string BuyerName { get; set; }
+        public string BuyerId { get; set; }
 
         public OrderStatusChangedToShippedIntegrationEvent()
         {
         }
 
         public OrderStatusChangedToShippedIntegrationEvent(Guid orderId, string orderStatus,
-            string description, string buyerName)
+            string description, string buyerId)
         {
             OrderId = orderId;
             OrderStatus = orderStatus;
             Description = description;
-            BuyerName = buyerName;
+            BuyerId = buyerId;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Actors
 {
     public class OrderItem
     {
@@ -10,6 +10,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
         public string ProductName { get; set; }
         public decimal UnitPrice { get; set; }
         public int Units { get; set; }
-        public string PictureUrl { get; set; }
+        public string PictureFileName { get; set; }
     }
 }

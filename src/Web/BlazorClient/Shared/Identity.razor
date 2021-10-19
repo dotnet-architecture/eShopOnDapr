@@ -1,0 +1,51 @@
+@inject NavigationManager _navigationManager
+@inject SignOutSessionStateManager _signOutManager
+
+<div class="esh-identity">
+    <AuthorizeView>
+        <NotAuthorized>
+            <section class="esh-identity-section">
+                <div class="u-cursor-pointer pt-2 pb-2" @onclick=@Login>
+                    <div class="esh-identity-name d-flex align-items-center">LOGIN 
+                        <img class="esh-identity-image ml-2" src="/images/user.svg">
+                    </div>
+                </div>
+            </section>
+        </NotAuthorized>
+        <Authorized>
+            <section class="esh-identity-section u-cursor-pointer pt-2 pb-2">
+                <div class="esh-identity-name">@context.User.Identity.Name</div>
+                <img class="esh-identity-image ml-2" src="/images/user.svg">
+            </section>
+
+            <section class="esh-identity-drop">
+                <div class="esh-identity-item" @onclick=@ViewOrders>
+                    <div class="esh-identity-name">My orders</div>
+                </div>
+
+                <div class="esh-identity-item" @onclick=@BeginSignOutAsync>
+                    <div class="esh-identity-name">Log Out</div>
+                </div>
+            </section>
+        </Authorized>
+    </AuthorizeView>
+</div>
+
+@code {
+
+    private void Login(MouseEventArgs args)
+    {
+        _navigationManager.NavigateTo("authentication/login");
+    }
+
+    private void ViewOrders(MouseEventArgs args)
+    {
+        _navigationManager.NavigateTo("orders");
+    }
+
+    private async Task BeginSignOutAsync(MouseEventArgs args)
+    {
+        await _signOutManager.SetSignOutState();
+        _navigationManager.NavigateTo("authentication/logout");
+    }
+}

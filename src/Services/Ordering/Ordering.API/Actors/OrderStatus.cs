@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Actors
 {
     public class OrderStatus
     {

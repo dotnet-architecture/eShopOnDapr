@@ -1,36 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Reflection;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF.Services;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Controllers;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Filters;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Filters;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Converters;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API
+namespace Microsoft.eShopOnDapr.Services.Ordering.API
 {
     public class Startup
     {
@@ -41,128 +33,18 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
 
         public IConfiguration Configuration { get; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddHttpClient()
-                .AddApplicationInsights(Configuration)
-                .AddCustomMvc()
-                .AddHealthChecks(Configuration)
-                .AddCustomDbContext(Configuration)
-                .AddCustomSwagger(Configuration)
-                .AddCustomIntegrations(Configuration)
-                .AddCustomConfiguration(Configuration)
-                .AddEventBus(Configuration)
-                .AddCustomAuthentication(Configuration);
+            services.AddControllers().AddDapr();
+
+            services.AddCustomSwagger(Configuration);
+            services.AddCustomAuth(Configuration);
+            services.AddCustomHealthChecks(Configuration);
 
             services.AddActors(options =>
             {
                 options.Actors.RegisterActor<OrderingProcessActor>();
             });
-
-            services.AddSignalR();
-
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IEmailService, EmailService>();
-
-            var container = new ContainerBuilder();
-            container.Populate(services);
-
-            return new AutofacServiceProvider(container.Build());
-        }
-
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
-        {
-            //loggerFactory.AddAzureWebAppDiagnostics();
-            //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
-
-            var pathBase = Configuration["PATH_BASE"];
-            if (!string.IsNullOrEmpty(pathBase))
-            {
-                loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
-                app.UsePathBase(pathBase);
-            }
-
-            app.UseCors("CorsPolicy");
-
-            app.UseSwagger()
-               .UseSwaggerUI(c =>
-               {
-                   c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Ordering.API V1");
-                   c.OAuthClientId("orderingswaggerui");
-                   c.OAuthAppName("Ordering Swagger UI");
-               });
-
-            app.UseRouting();
-            app.UseCloudEvents();
-            ConfigureAuth(app);
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
-                endpoints.MapControllers();
-                endpoints.MapSubscribeHandler();
-                endpoints.MapActorsHandlers();
-                endpoints.MapGet("/_proto/", async ctx =>
-                {
-                    ctx.Response.ContentType = "text/plain";
-                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "basket.proto"), FileMode.Open, FileAccess.Read);
-                    using var sr = new StreamReader(fs);
-                    while (!sr.EndOfStream)
-                    {
-                        var line = await sr.ReadLineAsync();
-                        if (line != "/* >>" || line != "<< */")
-                        {
-                            await ctx.Response.WriteAsync(line);
-                        }
-                    }
-                });
-                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
-                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
-                {
-                    Predicate = r => r.Name.Contains("self")
-                });
-
-                endpoints.MapHub<NotificationsHub>("/hub/notificationhub",
-                    options => options.Transports = AspNetCore.Http.Connections.HttpTransportType.LongPolling);
-            });
-        }
-
-        protected virtual void ConfigureAuth(IApplicationBuilder app)
-        {
-            app.UseAuthentication();
-            app.UseAuthorization();
-        }
-    }
-
-    static class CustomExtensionsMethods
-    {
-        public static IServiceCollection AddApplicationInsights(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddApplicationInsightsTelemetry(configuration);
-            services.AddApplicationInsightsKubernetesEnricher();
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomMvc(this IServiceCollection services)
-        {
-            // Add framework services.
-            services.AddControllers(options =>
-                {
-                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                })
-                .AddDapr()
-                // Added for functional tests
-                .AddApplicationPart(typeof(OrdersController).Assembly)
-                .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-            ;
 
             services.AddCors(options =>
             {
@@ -174,138 +56,130 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API
                     .AllowCredentials());
             });
 
-            return services;
+            services.AddScoped<IEventBus, DaprEventBus>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IEmailService, EmailService>();
+
+            services.Configure<OrderingSettings>(Configuration);
+
+            services.AddSignalR();
+
+            services.AddDbContext<OrderingDbContext>(
+                options => options.UseSqlServer(Configuration["SqlConnectionString"]));
         }
 
-        public static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var hcBuilder = services.AddHealthChecks();
-
-            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
-
-            hcBuilder
-                .AddSqlServer(
-                    configuration["ConnectionString"],
-                    name: "OrderingDB-check",
-                    tags: new string[] { "orderingdb" });
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddEntityFrameworkSqlServer()
-                   .AddDbContext<OrderingContext>(options =>
-                   {
-                       options.UseSqlServer(configuration["ConnectionString"],
-                           sqlServerOptionsAction: sqlOptions =>
-                           {
-                               sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                               sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                           });
-                   },
-                       ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
-                   );
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomSwagger(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddSwaggerGen(options =>
+            if (env.IsDevelopment())
             {
-                options.SwaggerDoc("v1", new OpenApiInfo
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
                 {
-                    Title = "eShopOnDapr - Ordering HTTP API",
-                    Version = "v1",
-                    Description = "The Ordering Service HTTP API"
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering.API V1");
+                    c.OAuthClientId("orderingswaggerui");
+                    c.OAuthAppName("Ordering Swagger UI");
                 });
-                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            }
+
+            app.UseRouting();
+            app.UseCloudEvents();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapSubscribeHandler();
+                endpoints.MapActorsHandlers();
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+                endpoints.MapHub<NotificationsHub>("/hub/notificationhub",
+                    options => options.Transports = AspNetCore.Http.Connections.HttpTransportType.LongPolling);
+            });
+        }
+    }
+
+    static class CustomServiceExtensions
+    {
+        public static IServiceCollection AddCustomSwagger(this IServiceCollection services, IConfiguration configuration)
+            => services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "eShopOnDapr - Ordering API", Version = "v1" });
+
+                var identityUrlExternal = configuration.GetValue<string>("IdentityUrlExternal");
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
                     Flows = new OpenApiOAuthFlows()
                     {
                         Implicit = new OpenApiOAuthFlow()
                         {
-                            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
-                            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                            AuthorizationUrl = new Uri($"{identityUrlExternal}/connect/authorize"),
+                            TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                             Scopes = new Dictionary<string, string>()
                             {
-                                { "orders", "Ordering API" }
+                                { "ordering", "Ordering API" }
                             }
                         }
                     }
                 });
 
-                options.OperationFilter<AuthorizeCheckOperationFilter>();
-            });
-            services.AddSwaggerGenNewtonsoftSupport();
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
-                sp => (DbConnection c) => new IntegrationEventLogService(c));
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddOptions();
-            services.Configure<OrderingSettings>(configuration);
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = context =>
-                {
-                    var problemDetails = new ValidationProblemDetails(context.ModelState)
-                    {
-                        Instance = context.HttpContext.Request.Path,
-                        Status = StatusCodes.Status400BadRequest,
-                        Detail = "Please refer to the errors property for additional details."
-                    };
-
-                    return new BadRequestObjectResult(problemDetails)
-                    {
-                        ContentTypes = { "application/problem+json", "application/problem+xml" }
-                    };
-                };
+                c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
-            return services;
-        }
-
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomAuth(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IEventBus, DaprEventBus>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
-        {
-            // prevent from mapping "sub" claim to nameidentifier.
+            // Prevent mapping "sub" claim to nameidentifier.
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
-            var identityUrl = configuration.GetValue<string>("IdentityUrl");
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer(options =>
+                {
+                    options.Audience = "ordering-api";
+                    options.Authority = configuration.GetValue<string>("IdentityUrl");
+                    options.RequireHttpsMetadata = false;
+                });
 
-            services.AddAuthentication(options =>
+            services.AddAuthorization(options =>
             {
-                options.DefaultAuthenticateScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = identityUrl;
-                options.RequireHttpsMetadata = false;
-                options.Audience = "orders";
+                options.AddPolicy("ApiScope", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "ordering");
+                });
             });
 
             return services;
         }
+
+        public static IServiceCollection AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            var builder = services.AddHealthChecks();
+            builder
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr()
+                .AddSqlServer(
+                    configuration["SqlConnectionString"],
+                    name: "OrderingDB-check",
+                    tags: new string[] { "orderingdb" });
+
+            return services;
+        }
+
     }
 }

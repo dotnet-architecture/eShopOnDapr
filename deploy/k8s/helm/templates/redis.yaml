@@ -1,0 +1,50 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: redis
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        imagePullPolicy: IfNotPresent
+        args:
+          - "--requirepass e$h0p0nD@pr"
+        ports:
+          - name: http
+            containerPort: 6379
+            protocol: TCP
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: redis
+spec:
+  type: NodePort
+  ports:
+    - port: 6379
+      targetPort: 6379
+      nodePort: 30379
+      protocol: TCP
+      name: redis
+  selector:
+    service: redis

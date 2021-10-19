@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
 {
     public class Program
     {

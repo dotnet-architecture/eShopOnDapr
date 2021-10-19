@@ -1,0 +1,33 @@
+.esh-orders-wrapper {
+    background-color: #fff;
+    padding-bottom: 4rem;
+    padding-top: 4rem;
+}
+
+.esh-orders-titles {
+    color: #7979ac;
+    font-size: 1.125rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    padding-left: 5rem;
+    text-transform: uppercase;
+}
+
+.esh-orders-item {
+    font-size: 1rem;
+    font-weight: 400;
+    height: 6rem;
+    line-height: 6rem;
+    padding-left: 5rem;
+    position: relative;
+}
+
+.esh-orders-link {
+    color: #0d2092;
+    text-decoration: none;
+    transition: color 0.35s;
+}
+
+.esh-orders-link:hover {
+    color: #292929;
+}

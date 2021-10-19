@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model
 {
     public class OrderItemDto
     {
@@ -16,7 +16,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Model
                 productname = orderItem.ProductName,
                 units = orderItem.Units,
                 unitprice = orderItem.UnitPrice,
-                pictureurl = orderItem.PictureUrl
+                pictureurl = orderItem.PictureFileName
             };
         }
     }

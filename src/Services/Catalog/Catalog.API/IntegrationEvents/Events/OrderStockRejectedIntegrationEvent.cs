@@ -1,9 +1,9 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.IntegrationEvents.Events
-{
-    using BuildingBlocks.EventBus.Events;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.Events
+{
     public class OrderStockRejectedIntegrationEvent : IntegrationEvent
     {
         public Guid OrderId { get; set; }

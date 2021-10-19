@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Catalog.API.ViewModel
+﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel
 {
     using System.Collections.Generic;
 
@@ -11,14 +11,14 @@
 
         public long Count { get; private set; }
 
-        public IEnumerable<TEntity> Data { get; private set; }
+        public IEnumerable<TEntity> Items { get; private set; }
 
-        public PaginatedItemsViewModel(int pageIndex, int pageSize, long count, IEnumerable<TEntity> data)
+        public PaginatedItemsViewModel(int pageIndex, int pageSize, long count, IEnumerable<TEntity> items)
         {
-            this.PageIndex = pageIndex;
-            this.PageSize = pageSize;
-            this.Count = count;
-            this.Data = data;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+            Count = count;
+            Items = items;
         }
     }
 }

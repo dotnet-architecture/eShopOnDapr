@@ -1,0 +1,109 @@
+.esh-basket-item {
+    background-color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.esh-basket-delete {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 2rem;
+    justify-content: center;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    transition: all 0.15s;
+    width: 2rem;
+    z-index: 20;
+}
+
+.esh-basket-delete:hover {
+    transform: scale(1.2);
+}
+
+.esh-basket-delete-svg {
+    height: auto;
+    width: 1.5rem;
+}
+
+.esh-basket-buttons {
+    width: 5rem;
+}
+
+.esh-basket-button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    height: 1.5rem;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.15s;
+    width: 1.5rem;
+    z-index: 20;
+}
+
+.esh-basket-button.is-disabled {
+    cursor: default;
+    opacity: 0.3;
+}
+
+.esh-basket-button-svg {
+    height: auto;
+    width: 1.5rem;
+}
+
+.esh-basket-thumbnail-wrapper {
+    background-color: #dbdede;
+    height: 0;
+    overflow: hidden;
+    padding-top: 100%;
+    position: relative;
+}
+
+.esh-basket-thumbnail {
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+}
+
+.esh-basket-title {
+    font-size: 1rem;
+    line-height: 3rem;
+    padding: 0 1rem;
+    text-transform: uppercase;
+}
+
+.esh-basket-description {
+    min-height: 3rem;
+    padding: 0 1rem;
+}
+
+.esh-basket-quantity {
+    line-height: 1.5rem;
+    text-align: center;
+    width: 2rem;
+}
+
+.esh-basket-price {
+    color: #0d2092;
+    width: 4rem;
+}
+
+.esh-basket-checkout {
+    background-color: #fff;
+}
+
+.esh-basket-checkout-title {
+    font-weight: 600;
+    text-align: center;
+}
+
+.esh-basket-input {
+    line-height: 1rem;
+    width: 100%;
+}

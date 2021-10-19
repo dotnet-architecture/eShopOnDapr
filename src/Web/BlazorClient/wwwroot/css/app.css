@@ -1,0 +1,281 @@
+.btn {
+    background-color: transparent;
+    border-width: 3px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    min-width: 15rem;
+    text-transform: uppercase;
+}
+
+.btn:focus {
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.btn:hover {
+    color: #fff !important;
+}
+
+.btn:active:focus {
+    box-shadow: none !important;
+}
+
+.btn:visited {
+    text-decoration: none;
+}
+
+.btn:disabled {
+    background-color: transparent;
+    border-color: #7979ac;
+    color: #7979ac;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.btn-primary {
+    border-color: #0d2092;
+    color: #0d2092;
+}
+
+.btn-secondary {
+    border-color: #292929;
+    color: #292929;
+}
+
+.form-control {
+    border-width: 2px;
+    border-color: #292929;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.form-control:hover {
+    border-color: #979797;
+}
+
+.form-control:focus {
+    border-color: #0d2092;
+    box-shadow: unset;
+}
+
+.form-control:visited {
+    text-decoration: unset;
+}
+
+label {
+    font-size: 0.875rem;
+    margin-bottom: 0.2rem;
+}
+
+.u-text-uppercase {
+    text-transform: uppercase;
+}
+
+.u-cursor-pointer {
+    cursor: pointer;
+}
+
+.u-mb-4 {
+    margin-bottom: 4rem;
+}
+
+.u-mb-5 {
+    margin-bottom: 5rem;
+}
+
+.u-width-100 {
+    width: 100%;
+}
+
+.u-width-65 {
+    width: 65%;
+}
+
+.u-width-50 {
+    width: 50%;
+}
+
+.u-minwidth-unset {
+    min-width: unset !important;
+}
+
+.u-maxwidth-unset {
+    max-width: unset !important;
+}
+
+.u-background-brightest {
+    background-color: #fff;
+}
+
+.u-text-sm {
+    font-size: 0.875rem;
+}
+
+.u-text-lg {
+    font-size: 1.125rem;
+}
+
+.u-text-xl {
+    font-size: 1.25rem;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-Medium.eot');
+    src: url('../fonts/Oswald-Medium.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-Medium.woff2') format('woff2'), url('../fonts/Oswald-Medium.woff') format('woff'), url('../fonts/Oswald-Medium.ttf') format('truetype'), url('../fonts/Oswald-Medium.svg#Oswald-Medium') format('svg');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-ExtraLight.eot');
+    src: url('../fonts/Oswald-ExtraLight.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-ExtraLight.woff2') format('woff2'), url('../fonts/Oswald-ExtraLight.woff') format('woff'), url('../fonts/Oswald-ExtraLight.ttf') format('truetype'), url('../fonts/Oswald-ExtraLight.svg#Oswald-ExtraLight') format('svg');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-Regular.eot');
+    src: url('../fonts/Oswald-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-Regular.woff2') format('woff2'), url('../fonts/Oswald-Regular.woff') format('woff'), url('../fonts/Oswald-Regular.ttf') format('truetype'), url('../fonts/Oswald-Regular.svg#Oswald-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-Bold.eot');
+    src: url('../fonts/Oswald-Bold.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-Bold.woff2') format('woff2'), url('../fonts/Oswald-Bold.woff') format('woff'), url('../fonts/Oswald-Bold.ttf') format('truetype'), url('../fonts/Oswald-Bold.svg#Oswald-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-Light.eot');
+    src: url('../fonts/Oswald-Light.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-Light.woff2') format('woff2'), url('../fonts/Oswald-Light.woff') format('woff'), url('../fonts/Oswald-Light.ttf') format('truetype'), url('../fonts/Oswald-Light.svg#Oswald-Light') format('svg');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald-SemiBold.eot');
+    src: url('../fonts/Oswald-SemiBold.eot?#iefix') format('embedded-opentype'), url('../fonts/Oswald-SemiBold.woff2') format('woff2'), url('../fonts/Oswald-SemiBold.woff') format('woff'), url('../fonts/Oswald-SemiBold.ttf') format('truetype'), url('../fonts/Oswald-SemiBold.svg#Oswald-SemiBold') format('svg');
+    font-weight: 600;
+    font-style: normal;
+}
+
+html, body {
+    background-color: #f3f4f3;
+    font-family: Oswald, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    height: 100%;
+    z-index: 10;
+}
+
+::selection {
+    background: rgba(13, 32, 146, .75);
+}
+
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+.preloading {
+    color: #0d2092;
+    display: block;
+    font-size: 1.25rem;
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+@media screen and (min-width: 992px) {
+    .form-input {
+        max-width: 360px;
+        width: 360px;
+    }
+}
+
+.form-input {
+    border-radius: 0;
+    height: 45px;
+    padding: 10px;
+}
+
+.form-input-small {
+    max-width: 100px !important;
+}
+
+.form-input-medium {
+    width: 150px !important;
+}
+
+.alert {
+    background-color: white;
+    border: 1px solid red;
+    color: #0d2092;
+    font-size: 1.25rem;
+}
+
+.divider {
+    border-top: 3px solid #f3f4f3;
+}
+
+.divider--bottom {
+    border-top: 0;
+    border-bottom: 3px solid #f3f4f3;
+}
+
+h1 {
+    font-size: 1.5625rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.validation-message {
+    color: red;
+}
+
+.blazored-toast-info {
+    background-color: #7979ac !important;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

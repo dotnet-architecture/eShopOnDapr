@@ -1,9 +1,9 @@
 ﻿using Dapr.Client;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+using Microsoft.eShopOnDapr.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Repositories
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Repositories
 {
     public class DaprBasketRepository : IBasketRepository
     {
@@ -35,7 +35,7 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Reposit
 
             await state.SaveAsync();
 
-            _logger.LogInformation("Basket item persisted succesfully.");
+            _logger.LogInformation("Basket item persisted successfully.");
 
             return await GetBasketAsync(basket.BuyerId);
         }

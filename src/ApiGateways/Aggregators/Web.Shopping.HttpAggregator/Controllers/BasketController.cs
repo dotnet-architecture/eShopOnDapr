@@ -3,10 +3,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Models;
-using Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Services;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 
-namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
@@ -26,9 +26,11 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(BasketData), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync([FromBody] UpdateBasketRequest data, [FromHeader] string authorization)
+        public async Task<ActionResult<BasketData>> UpdateAllBasketAsync(
+            [FromBody] UpdateBasketRequest data,
+            [FromHeader] string authorization)
         {
-            var basket = new BasketData(data.BuyerId);
+            var basket = new BasketData();
 
             if (data.Items != null && data.Items.Any())
             {
@@ -55,10 +57,9 @@ namespace Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator.Controllers
 
                     basket.Items.Add(new BasketDataItem()
                     {
-                        Id = bitem.Id,
                         ProductId = catalogItem.Id,
                         ProductName = catalogItem.Name,
-                        PictureUrl = catalogItem.PictureUri,
+                        PictureFileName = catalogItem.PictureFileName,
                         UnitPrice = catalogItem.Price,
                         Quantity = bitem.Quantity
                     });

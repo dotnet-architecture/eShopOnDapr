@@ -2,10 +2,10 @@
 using System.Text;
 using System.Threading.Tasks;
 using Dapr.Client;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Services
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {
@@ -21,10 +21,10 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Servi
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendOrderConfirmation(Order order)
+        public Task SendOrderConfirmationAsync(Order order)
         {
-            _logger.LogInformation("Sending order confirmation email for order {OrderId} to {UserName}.",
-                order.Id, order.BuyerName);
+            _logger.LogInformation("Sending order confirmation email for order {OrderId} to {BuyerEmail}.",
+                order.Id, order.BuyerEmail);
 
             return _daprClient.InvokeBindingAsync(
                 SendMailBinding,
@@ -33,7 +33,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Servi
                 new System.Collections.Generic.Dictionary<string, string>
                 {
                     ["emailFrom"] = "eShopOn@dapr.io",
-                    ["emailTo"] = order.BuyerName,
+                    ["emailTo"] = order.BuyerEmail,
                     ["subject"] = $"Your eShopOnDapr Order #{order.OrderNumber}"
                 });
         }

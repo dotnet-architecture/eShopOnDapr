@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repositories
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly OrderingContext _orderingContext;
+        private readonly OrderingDbContext _orderingContext;
 
-        public OrderRepository(OrderingContext orderingContext)
+        public OrderRepository(OrderingDbContext orderingContext)
         {
             _orderingContext = orderingContext ?? throw new ArgumentNullException(nameof(orderingContext));
 
@@ -71,12 +71,6 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.Repos
                     OrderStatus = o.OrderStatus,
                     Total = o.GetTotal()
                 })
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<CardType>> GetCardTypesAsync()
-        {
-            return await _orderingContext.CardTypes
                 .ToListAsync();
         }
     }

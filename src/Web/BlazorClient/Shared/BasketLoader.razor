@@ -1,0 +1,26 @@
+﻿@inject UserBasket _basket
+
+@code {
+
+    private bool _basketLoaded;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var user = (await AuthenticationStateTask).User;
+
+        Console.WriteLine($"BasketLoader -> TryLoadBasket [User authenticated: {user.Identity.IsAuthenticated}, Basket loaded: {_basketLoaded}]");
+
+        // OnParametersSetAsync may be called multiple times, so check if
+        // we haven't already loaded the basket.
+        if (user.Identity.IsAuthenticated && !_basketLoaded)
+        {
+            Console.WriteLine($"BasketLoader -> TryLoadBasket -> Loading basket");
+            await _basket.LoadAsync();
+
+            _basketLoaded = true;
+        }
+    }
+}

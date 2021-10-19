@@ -1,18 +1,17 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using HealthChecks.UI.Client;
+﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.EventHandling;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
-using Payment.API.IntegrationEvents.EventHandling;
-using System;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
-namespace Payment.API
+namespace Microsoft.eShopOnDapr.Services.Payment.API
 {
     public class Startup
     {
@@ -23,43 +22,57 @@ namespace Payment.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddCustomHealthCheck(Configuration)
-                .AddEventBus()
                 .Configure<PaymentSettings>(Configuration)
-                .AddMvc().AddDapr();
+                .AddControllers().AddDapr();
 
-            RegisterAppInsights(services);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "eShopOnDapr - Catalog API", Version = "v1" });
+            });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
-            var container = new ContainerBuilder();
-            container.Populate(services);
-            return new AutofacServiceProvider(container.Build());
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr();
+
+            services.AddScoped<IEventBus, DaprEventBus>();
+            services.AddScoped<OrderStatusChangedToValidatedIntegrationEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //loggerFactory.AddAzureWebAppDiagnostics();
-            //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
-
-            var pathBase = Configuration["PATH_BASE"];
-            if (!string.IsNullOrEmpty(pathBase))
+            if (env.IsDevelopment())
             {
-                app.UsePathBase(pathBase);
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment.API V1");
+                });
             }
 
             app.UseRouting();
             app.UseCloudEvents();
 
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapSubscribeHandler();
-                
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
@@ -70,32 +83,6 @@ namespace Payment.API
                     Predicate = r => r.Name.Contains("self")
                 });
             });
-        }
-
-        private void RegisterAppInsights(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry(Configuration);
-            services.AddApplicationInsightsKubernetesEnricher();
-        }
-    }
-
-    public static class CustomExtensionMethods
-    {
-        public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
-        {
-            var hcBuilder = services.AddHealthChecks();
-
-            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
-
-            return services;
-        }
-
-        public static IServiceCollection AddEventBus(this IServiceCollection services)
-        {
-            services.AddScoped<IEventBus, DaprEventBus>();
-            services.AddTransient<OrderStatusChangedToValidatedIntegrationEventHandler>();
-
-            return services;
         }
     }
 }

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapr.Actors.Runtime;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
+using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Models;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Application.Models;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Actors
 {
     public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {
@@ -41,20 +41,20 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         private Guid OrderId => Guid.Parse(Id.GetId());
 
-        public async Task Submit(string userId, string userName, string street, string city,
-            string zipCode, string state, string country, CustomerBasket basket)
+        public async Task SubmitAsync(
+            string buyerId, string buyerEmail, string street, string city, string state,
+            string country, CustomerBasket basket)
         {
             var order = new Order
             {
                 OrderDate = DateTime.UtcNow,
                 OrderStatus = OrderStatus.Submitted,
-                UserId = userId,
-                UserName = userName,
+                BuyerId = buyerId,
+                BuyerEmail = buyerEmail,
                 Address = new OrderAddress
                 {
                     Street = street,
                     City = city,
-                    ZipCode = zipCode,
                     State = state,
                     Country = country
                 },
@@ -65,7 +65,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                         ProductName = item.ProductName,
                         UnitPrice = item.UnitPrice,
                         Units = item.Quantity,
-                        PictureUrl = item.PictureUrl
+                        PictureFileName = item.PictureFileName
                     })
                     .ToList()
             };
@@ -82,11 +82,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             await _eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(
                 OrderId,
                 OrderStatus.Submitted.Name,
-                userId,
-                userName));
+                buyerId,
+                buyerEmail));
         }
 
-        public async Task NotifyStockConfirmed()
+        public async Task NotifyStockConfirmedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Validated);
             if (statusChanged)
@@ -100,7 +100,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }            
         }
 
-        public async Task NotifyStockRejected(List<int> rejectedProductIds)
+        public async Task NotifyStockRejectedAsync(List<int> rejectedProductIds)
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Cancelled);
             if (statusChanged)
@@ -116,7 +116,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task NotifyPaymentSucceeded()
+        public async Task NotifyPaymentSucceededAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
@@ -130,7 +130,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task NotifyPaymentFailed()
+        public async Task NotifyPaymentFailedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Validated, OrderStatus.Paid);
             if (statusChanged)
@@ -144,7 +144,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
             }
         }
 
-        public async Task<bool> Cancel()
+        public async Task<bool> CancelAsync()
         {
             var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
             if (!orderStatus.HasValue)
@@ -171,12 +171,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 $"The order was cancelled by buyer.",
-                order.UserName));
+                order.BuyerId));
 
             return true;
         }
 
-        public async Task<bool> Ship()
+        public async Task<bool> ShipAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Paid, OrderStatus.Shipped);
             if (statusChanged)
@@ -187,7 +187,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                     OrderId,
                     OrderStatus.Shipped.Name,
                     "The order was shipped.",
-                    order.UserName));
+                    order.BuyerId));
 
                 return true;
             }
@@ -202,26 +202,23 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
 
         public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
         {
-            _logger.LogInformation("Received {Actor}[{ActorId}] reminder: {Reminder}", nameof(OrderingProcessActor), OrderId, reminderName);
+            _logger.LogInformation(
+                "Received {Actor}[{ActorId}] reminder: {Reminder}",
+                nameof(OrderingProcessActor), OrderId, reminderName);
 
-            switch (reminderName)
+            return reminderName switch
             {
-                case GracePeriodElapsedReminder: return OnGracePeriodElapsed();
-                case StockConfirmedReminder: return OnStockConfirmedSimulatedWorkDone();
-                case StockRejectedReminder:
-                    {
-                        var rejectedProductIds = JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state));
-                        return OnStockRejectedSimulatedWorkDone(rejectedProductIds);
-                    }
-                case PaymentSucceededReminder: return OnPaymentSucceededSimulatedWorkDone();
-                case PaymentFailedReminder: return OnPaymentFailedSimulatedWorkDone();
-            }
-
-            _logger.LogError("Unknown actor reminder {ReminderName}", reminderName);
-            return Task.CompletedTask;
+                GracePeriodElapsedReminder => OnGracePeriodElapsedAsync(),
+                StockConfirmedReminder => OnStockConfirmedSimulatedWorkDoneAsync(),
+                StockRejectedReminder => OnStockRejectedSimulatedWorkDoneAsync(
+                    JsonConvert.DeserializeObject<List<int>>(Encoding.UTF8.GetString(state))),
+                PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDoneAsync(),
+                PaymentFailedReminder => OnPaymentFailedSimulatedWorkDoneAsync(),
+                _ => Task.CompletedTask 
+            };
         }
 
-        public async Task OnGracePeriodElapsed()
+        public async Task OnGracePeriodElapsedAsync()
         {
             var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.Submitted, OrderStatus.AwaitingStockValidation);
             if (statusChanged)
@@ -232,13 +229,13 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                     OrderId,
                     OrderStatus.AwaitingStockValidation.Name,
                     "Grace period elapsed; waiting for stock validation.",
-                    order.UserName,
                     order.OrderItems
-                        .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
+                        .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units)),
+                    order.BuyerId));
             }
         }
 
-        public async Task OnStockConfirmedSimulatedWorkDone()
+        public async Task OnStockConfirmedSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -246,11 +243,11 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Validated.Name,
                 "All the items were confirmed with available stock.",
-                order.UserName,
-                order.GetTotal()));
+                order.GetTotal(),
+                order.BuyerId));
         }
 
-        public async Task OnStockRejectedSimulatedWorkDone(List<int> rejectedProductIds)
+        public async Task OnStockRejectedSimulatedWorkDoneAsync(List<int> rejectedProductIds)
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -264,10 +261,10 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 $"The following product items don't have stock: ({rejectedDescription}).",
-                order.UserName));
+                order.BuyerId));
         }
 
-        public async Task OnPaymentSucceededSimulatedWorkDone()
+        public async Task OnPaymentSucceededSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -275,12 +272,12 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Paid.Name,
                 "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"",
-                order.UserName,
                 order.OrderItems
-                    .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units))));
+                    .Select(orderItem => new OrderStockItem(orderItem.ProductId, orderItem.Units)),
+                order.BuyerId));
         }
 
-        public async Task OnPaymentFailedSimulatedWorkDone()
+        public async Task OnPaymentFailedSimulatedWorkDoneAsync()
         {
             var order = await StateManager.GetStateAsync<Order>(OrderDetailsStateName);
 
@@ -288,7 +285,7 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Actors
                 OrderId,
                 OrderStatus.Cancelled.Name,
                 "The order was cancelled because payment failed.",
-                order.UserName));
+                order.BuyerId));
         }
 
         protected override async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)

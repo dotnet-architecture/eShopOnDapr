@@ -5,19 +5,19 @@ using Dapr.Actors;
 using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Actors;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Model;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.eShopOnContainers.Services.Ordering.API.IntegrationEvents;
+using Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
 
-namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UpdateOrderStatusEventController : ControllerBase
     {
-        private const string DaprPubSubName = "pubsub";
+        private const string DAPR_PUBSUB_NAME = "pubsub";
 
         private readonly IOrderRepository _orderRepository;
         private readonly IHubContext<NotificationsHub> _hubContext;
@@ -32,8 +32,9 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
         }
 
         [HttpPost("OrderStatusChangedToSubmitted")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToSubmittedIntegrationEvent")]
-        public async Task Handle(OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToSubmittedIntegrationEvent")]
+        public async Task HandleAsync(
+            OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
             [FromServices] IOptions<OrderingSettings> settings, [FromServices] IEmailService emailService)
         {
             // Gets the order details from Actor state.
@@ -48,63 +49,67 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
             readModelOrder = await _orderRepository.AddOrGetOrderAsync(readModelOrder);
 
             // Send a SignalR notification to the client.
-            await SendNotificationAsync(readModelOrder.OrderNumber, integrationEvent.OrderStatus,
-                integrationEvent.BuyerName);
+            await SendNotificationAsync(readModelOrder.OrderNumber, integrationEvent.OrderStatus, integrationEvent.BuyerId);
 
             // Send a confirmation e-mail if enabled.
             if (settings.Value.SendConfirmationEmail)
             {
-                await emailService.SendOrderConfirmation(readModelOrder);
+                await emailService.SendOrderConfirmationAsync(readModelOrder);
             }
         }
 
         [HttpPost("OrderStatusChangedToAwaitingStockValidation")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToAwaitingStockValidationIntegrationEvent")]
-        public Task Handle(OrderStatusChangedToAwaitingStockValidationIntegrationEvent integrationEvent)
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToAwaitingStockValidationIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToAwaitingStockValidationIntegrationEvent integrationEvent)
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToValidated")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToValidatedIntegrationEvent")]
-        public Task Handle(OrderStatusChangedToValidatedIntegrationEvent integrationEvent)
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToValidatedIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToValidatedIntegrationEvent integrationEvent)
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToPaid")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToPaidIntegrationEvent")]
-        public Task Handle(OrderStatusChangedToPaidIntegrationEvent integrationEvent)
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToPaidIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToPaidIntegrationEvent integrationEvent)
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToShipped")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToShippedIntegrationEvent")]
-        public Task Handle(OrderStatusChangedToShippedIntegrationEvent integrationEvent)
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToShippedIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToShippedIntegrationEvent integrationEvent)
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
         [HttpPost("OrderStatusChangedToCancelled")]
-        [Topic(DaprPubSubName, "OrderStatusChangedToCancelledIntegrationEvent")]
-        public Task Handle(OrderStatusChangedToCancelledIntegrationEvent integrationEvent)
+        [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToCancelledIntegrationEvent")]
+        public Task HandleAsync(
+            OrderStatusChangedToCancelledIntegrationEvent integrationEvent)
         {
             // Save the updated status in the read model and notify the client via SignalR.
             return UpdateReadModelAndSendNotificationAsync(integrationEvent.OrderId,
-                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerName);
+                integrationEvent.OrderStatus, integrationEvent.Description, integrationEvent.BuyerId);
         }
 
-        private async Task UpdateReadModelAndSendNotificationAsync(Guid orderId, string orderStatus,
-            string description, string buyerName)
+        private async Task UpdateReadModelAndSendNotificationAsync(
+            Guid orderId, string orderStatus, string description, string buyerId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order != null)
@@ -113,14 +118,15 @@ namespace Microsoft.eShopOnContainers.Services.Ordering.API.Controllers
                 order.Description = description;
 
                 await _orderRepository.UpdateOrderAsync(order);
-                await SendNotificationAsync(order.OrderNumber, orderStatus, buyerName);
+                await SendNotificationAsync(order.OrderNumber, orderStatus, buyerId);
             }
         }
 
-        private Task SendNotificationAsync(int orderNumber, string orderStatus, string buyerName)
+        private Task SendNotificationAsync(
+            int orderNumber, string orderStatus, string buyerId)
         {
             return _hubContext.Clients
-                .Group(buyerName)
+                .Group(buyerId)
                 .SendAsync("UpdatedOrderState", new { OrderNumber = orderNumber, Status = orderStatus });
         }
     }

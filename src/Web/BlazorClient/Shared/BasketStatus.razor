@@ -1,0 +1,31 @@
+@inject UserBasket _basket
+@implements IDisposable
+
+<div>
+    <a class="esh-basketstatus pt-2 pb-2 @(_basket?.TotalItemCount < 1 ? "is-disabled" : "")" href="basket">
+        <div class="esh-basketstatus-image ml-4 mr-1">
+            <img src="/images/cart.svg" />
+        </div>
+        <div class="esh-basketstatus-badge">
+            @_basket?.TotalItemCount
+        </div>
+    </a>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        _basket.ItemsChanged += OnBasketItemsChanged;
+    }
+
+    private void OnBasketItemsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        _basket.ItemsChanged -= OnBasketItemsChanged;
+    }
+}

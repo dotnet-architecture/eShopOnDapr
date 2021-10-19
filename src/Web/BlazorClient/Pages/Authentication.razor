@@ -1,0 +1,18 @@
+@page "/authentication/{action}"
+
+<RemoteAuthenticatorView Action="@Action">
+    <LogInFailed>
+        <div class="container">
+            <h1 class="mb-4 mt-5">Your login failed or was canceled</h1>
+            <div class="p-4">
+                <NavLink class="btn btn-secondary u-width-100 u-minwidth-unset" href="/">Continue Shopping</NavLink>
+            </div>
+        </div>
+    </LogInFailed>
+</RemoteAuthenticatorView>
+
+@code {
+
+    [Parameter]
+    public string Action { get; set; }
+}

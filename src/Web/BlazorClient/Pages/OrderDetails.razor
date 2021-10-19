@@ -1,0 +1,97 @@
+﻿@page "/orders/{orderNumber:int}"
+@attribute [Authorize]
+@inject OrderClient _orderClient
+@inject Settings _settings 
+
+<div class="esh-orders_detail">
+    <div class="container">
+        <h1 class="mb-4 mt-5">[ Order Details ]</h1>
+        
+        @if (_error != null)
+        {
+            <div class="alert" role="alert">
+                Error requesting order details, please try later. @_error
+            </div>
+        }
+
+        <div class="u-background-brightest p-5">
+            <article class="esh-orders_detail-titles row">
+                <section class="col-3">Order number</section>
+                <section class="col-3">Date</section>
+                <section class="col-3">Total</section>
+                <section class="col-3">Status</section>
+            </article>
+
+            @if (_order != null)
+            {
+                <article class="esh-orders_detail-items row">
+                    <section class="col-3">@_order.OrderNumber</section>
+                    <section class="col-3">@_order.GetFormattedOrderDate()</section>
+                    <section class="col-3">$@_order.GetFormattedTotal()</section>
+                    <section class="col-3">@_order.OrderStatus</section>
+                </article>
+
+                <h2 class="esh-orders_detail-title mt-5">Shipping address</h2>
+                <div class="u-mb-5">@_order.Address.Street @_order.Address.City @_order.Address.Country</div>
+
+                @foreach (var item in _order.OrderItems)
+                {
+                    <article class="esh-orders_detail-items divider divider--bottom d-flex align-items-center pb-3 mt-3 u-text-sm">
+                        <div class="esh-orders_detail-thumbnail-container">
+                            <div class="esh-orders_detail-thumbnail-wrapper">
+                                <img class="esh-orders_detail-thumbnail" src="@item.GetPictureUrl(_settings)">
+                            </div>
+                        </div>
+                        <div class="row w-100 ml-3">
+                            <div class="col-6">@item.ProductName</div>
+                            <div class="col-2">$@item.GetFormattedUnitPrice()</div>
+                            <div class="col-2">@item.Units</div>
+                            <div class="col-2 text-right">$ @item.GetFormattedTotal()</div>
+                        </div>
+                    </article>
+                }
+
+                <div class="d-flex align-items-center justify-content-end mt-4 mb-4 text-uppercase u-text-xl">
+                    <div>Total</div>
+                    <div class="ml-3">$@_order.GetFormattedTotal()</div>
+                </div>
+
+                <aside class="d-flex justify-content-end mt-5">
+                    <a class="btn btn-secondary" href="/orders">Back to list</a>
+                </aside>
+            }
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    private Order _order;
+    private string _error;
+
+    [Parameter]
+    public int OrderNumber { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrderDetailsAsync();
+    }
+
+    private async Task LoadOrderDetailsAsync()
+    {
+        try
+        {
+            _order = await _orderClient.GetOrderDetailsAsync(OrderNumber);
+        }
+        catch (AccessTokenNotAvailableException ex)
+        {
+            ex.Redirect();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+}
