@@ -17,7 +17,7 @@ Dapr enables developers using any language or framework to easily write microser
 
 eShopOnDapr evolves (or, *Daprizes*, if you will) the earlier eShopOnContainers application by integrating Dapr building blocks and components: 
 
-![eShopOnDapr reference application architecture.](./docs/media/eshop-on-dapr-buildingblocks.png)
+![eShopOnDapr reference application architecture.](./docs/media/buildingblocks.png)
 
 As focus of the eShopOnDapr reference application is on Dapr, the original application has been updated. The updated architecture consists of:
 
