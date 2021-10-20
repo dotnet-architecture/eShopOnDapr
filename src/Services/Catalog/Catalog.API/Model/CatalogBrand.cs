@@ -1,9 +1,3 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Model
-{
-    public class CatalogBrand
-    {
-        public int Id { get; set; }
+﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Model;
 
-        public string Name { get; set; }
-    }
-}
+public record CatalogBrand(int Id, string Name);
