@@ -22,21 +22,21 @@ public class CatalogItem
 
     public int Id { get; private set; }
 
-    public string Name { get; set; }
+    public string Name { get; private set; }
 
-    public decimal Price { get; set; }
+    public decimal Price { get; private set; }
 
-    public string PictureFileName { get; set; }
+    public string PictureFileName { get; private set; }
 
-    public int CatalogTypeId { get; set; }
+    public int CatalogTypeId { get; private set; }
 
-    public CatalogType CatalogType { get; set; } = null!;
+    public CatalogType CatalogType { get; private set; } = null!;
 
-    public int CatalogBrandId { get; set; }
+    public int CatalogBrandId { get; private set; }
 
-    public CatalogBrand CatalogBrand { get; set; } = null!;
+    public CatalogBrand CatalogBrand { get; private set; } = null!;
 
-    public int AvailableStock { get; set; }
+    public int AvailableStock { get; private set; }
 
     /// <summary>
     /// Simply decrement the quantity of a particular item in inventory.
