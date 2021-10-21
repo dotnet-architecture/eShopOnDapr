@@ -13,6 +13,8 @@ public static class ProgramExtensions
             .WriteTo.Seq(seqServerUrl)
             .Enrich.WithProperty("ApplicationName", "Catalog.API")
             .CreateLogger();
+
+        builder.Host.UseSerilog();
     }
 
     public static void AddCustomSwagger(this WebApplicationBuilder builder) =>

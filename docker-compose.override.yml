@@ -22,6 +22,12 @@ services:
     ports:
       - "5340:80"
 
+  seq-gelf:
+    environment:
+      - SEQ_ADDRESS=http://seq
+    ports:
+      - "5350:12201"
+
   sqldata:
     environment:
       - SA_PASSWORD=Pass@word
@@ -144,6 +150,10 @@ services:
       "-components-path", "/components",
       "-config", "/configuration/eshop-config.yaml"
       ]
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5350"
     volumes:
       - "./dapr/components/:/components"
       - "./dapr/configuration/:/configuration"

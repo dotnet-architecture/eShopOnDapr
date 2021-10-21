@@ -11,6 +11,9 @@ services:
   seq:
     image: datalust/seq:latest
 
+  seq-gelf:
+    image: datalust/seq-input-gelf
+
   sqldata:
     image: mcr.microsoft.com/mssql/server:2017-latest 
 
