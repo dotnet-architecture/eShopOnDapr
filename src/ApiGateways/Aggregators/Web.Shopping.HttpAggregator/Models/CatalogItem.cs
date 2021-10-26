@@ -1,13 +1,3 @@
-﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models
-{
-    public class CatalogItem
-    {
-        public int Id { get; set; }
+﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
 
-        public string Name { get; set; }
-
-        public decimal Price { get; set; }
-
-        public string PictureFileName { get; set; }
-    }
-}
+public record CatalogItem(int Id, string Name, decimal Price, string PictureFileName);

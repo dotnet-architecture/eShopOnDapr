@@ -1,0 +1,17 @@
+﻿global using Dapr.Client;
+global using HealthChecks.UI.Client;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+global using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
+global using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
+global using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Filters;
+global using Microsoft.Extensions.Diagnostics.HealthChecks;
+global using Microsoft.OpenApi.Models;
+global using Newtonsoft.Json.Converters;
+global using Serilog;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Net.Http.Headers;
+global using System.Net;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Swashbuckle.AspNetCore.SwaggerGen;

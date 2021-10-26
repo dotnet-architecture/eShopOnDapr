@@ -1,28 +1,33 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Serilog;
+﻿using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator;
 
-namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
+var builder = WebApplication.CreateBuilder();
+
+builder.AddCustomSerilog();
+builder.AddCustomMvc();
+builder.AddCustomAuthentication();
+builder.AddCustomApplicationServices();
+builder.AddCustomHealthChecks();
+
+var app = builder.Build();
+
+app.UseCustomPathBase();
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
-
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseSerilog((builderContext, config) =>
-                {
-                    config
-                        .MinimumLevel.Information()
-                        .Enrich.FromLogContext()
-                        .WriteTo.Console();
-                })
-                .Build();
-
-    }
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseCors("CorsPolicy");
+app.UseHttpsRedirection();
+
+app.UseCustomSwagger();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapDefaultControllerRoute();
+app.MapCustomHealthChecks();
+
+await app.RunAsync();
+
