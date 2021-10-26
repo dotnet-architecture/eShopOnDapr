@@ -1,30 +1,25 @@
-﻿using System.Collections.Generic;
-using IdentityServer4;
-using IdentityServer4.Models;
-using Microsoft.Extensions.Configuration;
+﻿namespace Microsoft.eShopOnDapr.Services.Identity.API;
 
-namespace Microsoft.eShopOnDapr.Services.Identity.API
+public class Config
 {
-    public class Config
-    {
-        public static IEnumerable<IdentityResource> IdentityResources =>
-            new IdentityResource[]
-            {
+    public static IEnumerable<IdentityResource> IdentityResources =>
+        new IdentityResource[]
+        {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile()
-            };
+        };
 
-        public static IEnumerable<ApiScope> ApiScopes =>
-            new ApiScope[]
-            {
+    public static IEnumerable<ApiScope> ApiScopes =>
+        new ApiScope[]
+        {
                 new ApiScope("basket", "Access to Basket API"),
                 new ApiScope("ordering", "Access to Ordering API"),
                 new ApiScope("shoppingaggr", "Access to Shopping Aggregator API")
-            };
-    
-        public static IEnumerable<ApiResource> ApiResources =>
-            new ApiResource[]
-            {
+        };
+
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        {
                 new ApiResource("basket-api", "Basket API")
                 {
                     Scopes = { "basket" }
@@ -38,11 +33,11 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                 {
                     Scopes = { "shoppingaggr" }
                 }
-            };
+        };
 
-        public static IEnumerable<Client> GetClients(IConfiguration configuration)
-        {
-            return new List<Client>
+    public static IEnumerable<Client> GetClients(IConfiguration configuration)
+    {
+        return new List<Client>
             {
                 new Client
                 {
@@ -121,6 +116,5 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API
                     }
                 }
             };
-        }
     }
 }
