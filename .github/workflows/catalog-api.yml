@@ -22,7 +22,8 @@ on:
 env:
   SERVICE: catalog-api
   IMAGE: catalog.api
-  DOTNET_VERSION: 5.0.x
+  DOTNET_VERSION: 6.0.x
+  USE_DOTNET_PREVIEW: true
 
 jobs:
 
@@ -37,16 +38,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
     - name: Build and run unit tests
       run: |
-        dotnet restore "eShopOnDapr.sln"
+        dotnet restore "src/Services/Catalog/Catalog.API/Catalog.API.csproj"
         cd src/Services/Catalog/Catalog.API
         dotnet build --no-restore
-        # cd -
-        # cd src/Services/Catalog/Catalog.UnitTests
-        # dotnet build --no-restore
-        # dotnet test --no-build -v=normal
       
     - name: Compose build ${{ env.SERVICE }}
       run: sudo -E docker-compose build ${{ env.SERVICE }}
@@ -67,16 +65,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
     - name: Build and run unit tests
       run: |
-        dotnet restore "eShopOnDapr.sln"
+        dotnet restore "src/Services/Catalog/Catalog.API/Catalog.API.csproj"
         cd src/Services/Catalog/Catalog.API
         dotnet build --no-restore
-        # cd -
-        # cd src/Services/Catalog/Catalog.UnitTests
-        # dotnet build --no-restore
-        # dotnet test --no-build -v=normal
 
     - name: Enable experimental features for the Docker daemon and CLI
       run: |
