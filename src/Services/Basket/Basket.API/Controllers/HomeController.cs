@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers;
 
-namespace Microsoft.eShopOnDapr.Services.Basket.API.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    // GET: /<controller>/
+    public IActionResult Index()
     {
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return new RedirectResult("~/swagger");
-        }
+        return new RedirectResult("~/swagger");
     }
 }
