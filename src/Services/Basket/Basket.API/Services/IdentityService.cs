@@ -9,7 +9,7 @@ public class IdentityService : IIdentityService
         _context = context;
     }
 
-    public string? GetUserIdentity()
+    public string GetUserIdentity()
     {
         return _context.HttpContext?.User.FindFirst("sub")?.Value ?? "";
     }

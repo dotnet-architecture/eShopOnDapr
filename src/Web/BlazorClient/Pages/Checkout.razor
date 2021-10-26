@@ -84,15 +84,15 @@
                         <ValidationMessage For="@(() => _orderForm.CardExpirationDate)" />
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Security code</label>
-                        <InputText @bind-Value="@_orderForm.CardSecurityCode"
-                                   class="form-control form-input w-50 u-maxwidth-unset"
-                                   placeholder="000" />
-                        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
-                    </div>
-                </div>
+<div class="col-md-6">
+    <div class="form-group">
+        <label>Security code</label>
+        <InputText @bind-Value="@_orderForm.CardSecurityCode"
+                    class="form-control form-input w-50 u-maxwidth-unset"
+                    placeholder="000" />
+        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
+    </div>
+</div>
             </div>
 
             <h2 class="mt-5 mb-4">Order details</h2>

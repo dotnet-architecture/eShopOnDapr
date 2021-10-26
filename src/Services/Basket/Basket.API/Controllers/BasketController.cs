@@ -71,7 +71,7 @@ public class BasketController : ControllerBase
             basketCheckout.CardNumber,
             basketCheckout.CardHolderName,
             basketCheckout.CardExpiration,
-            basketCheckout.CardSecurityNumber,
+            basketCheckout.CardSecurityCode,
             eventRequestId,
             basket);
 
