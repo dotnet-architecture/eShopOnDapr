@@ -2,6 +2,9 @@ version: '3.4'
 
 services:
 
+  maildev:
+    image: maildev/maildev
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 

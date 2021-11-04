@@ -10,8 +10,8 @@ public class EmailService : IEmailService
 
     public EmailService(DaprClient daprClient, ILogger<EmailService> logger)
     {
-        _daprClient = daprClient ?? throw new ArgumentNullException(nameof(daprClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _daprClient = daprClient;
+        _logger = logger;
     }
 
     public Task SendOrderConfirmationAsync(Order order)
@@ -23,30 +23,29 @@ public class EmailService : IEmailService
             SendMailBinding,
             CreateBindingOperation,
             CreateEmailBody(order),
-            new System.Collections.Generic.Dictionary<string, string>
+            new Dictionary<string, string>
             {
-                ["emailFrom"] = "eShopOn@dapr.io",
+                ["emailFrom"] = "eshopondapr@example.com",
                 ["emailTo"] = order.BuyerEmail,
                 ["subject"] = $"Your eShopOnDapr Order #{order.OrderNumber}"
             });
     }
 
-    private string CreateEmailBody(Order order)
-    {
-        var body = new StringBuilder();
-
-        body.AppendLine($"Thank you for your order. The order number is: {order.OrderNumber}.");
-        body.AppendLine();
-        body.AppendLine("To follow the status of your order:");
-        body.AppendLine();
-        body.AppendLine("  1. log into the eShopOnDapr website,");
-        body.AppendLine("  2. hover your mouse cursor over your account icon in the top-right corner,");
-        body.AppendLine("  3. select 'My Orders' in the context-menu that appears,");
-        body.AppendLine($"  4. click the 'Details' link for order with number {order.OrderNumber}.");
-        body.AppendLine();
-        body.AppendLine("Greetings,");
-        body.AppendLine("The eShopOnDapr Team");
-
-        return body.ToString();
-    }
+    private string CreateEmailBody(Order order) =>
+        $@"
+            <html>
+            <body>
+                <h1>Your order confirmation</h1>
+                <p>Thank you for your order! The order number is {order.OrderNumber}.</p>
+                <p>To follow the status of your order:</p>
+                <ol>
+                	<li>Log onto the eShopOnDapr website</li>
+                    <li>Hover your mouse cursor over your account icon in the top-right corner</li>
+                    <li>Select 'My Orders' in the context-menu that appears</li>
+                    <li>Click the 'Details' link for order with number {order.OrderNumber}</li>
+                </ol>
+                <p>Greetings,</p>
+                <p>The eShopOnDapr Team</p>
+            </body>
+            </html>";
 }

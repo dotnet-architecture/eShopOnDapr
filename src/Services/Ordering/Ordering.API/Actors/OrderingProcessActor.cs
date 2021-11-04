@@ -13,20 +13,17 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
     private readonly IEventBus _eventBus;
     private readonly IOptions<OrderingSettings> _settings;
-    private readonly ILogger<OrderingProcessActor> _logger;
 
     private int? _preMethodOrderStatusId;
 
     public OrderingProcessActor(
         ActorHost host,
         IEventBus eventBus,
-        IOptions<OrderingSettings> settings,
-        ILogger<OrderingProcessActor> logger)
+        IOptions<OrderingSettings> settings)
         : base(host)
     {
-        _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _eventBus = eventBus;
+        _settings = settings;
     }
 
     private Guid OrderId => Guid.Parse(Id.GetId());
@@ -145,7 +142,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
         var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
         if (!orderStatus.HasValue)
         {
-            _logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it doesn't exist",
+            Logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it doesn't exist",
                 OrderId);
 
             return false;
@@ -153,7 +150,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
         if ( orderStatus.Value.Id == OrderStatus.Paid.Id || orderStatus.Value.Id == OrderStatus.Shipped.Id)
         {
-            _logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it's in status {Status}",
+            Logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it's in status {Status}",
                 OrderId, orderStatus.Value.Name);
 
             return false;
@@ -198,7 +195,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
     public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
     {
-        _logger.LogInformation(
+        Logger.LogInformation(
             "Received {Actor}[{ActorId}] reminder: {Reminder}",
             nameof(OrderingProcessActor), OrderId, reminderName);
 
@@ -297,7 +294,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
         if (_preMethodOrderStatusId != postMethodOrderStatus.Id)
         {
-            _logger.LogInformation("Order with Id: {OrderId} has been updated to status {Status}",
+            Logger.LogInformation("Order with Id: {OrderId} has been updated to status {Status}",
                 OrderId, postMethodOrderStatus.Name);
         }
     }
@@ -307,7 +304,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
         var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
         if (!orderStatus.HasValue)
         {
-            _logger.LogWarning("Order with Id: {OrderId} cannot be updated because it doesn't exist",
+            Logger.LogWarning("Order with Id: {OrderId} cannot be updated because it doesn't exist",
                 OrderId);
 
             return false;
@@ -315,7 +312,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
         if (orderStatus.Value.Id != expectedOrderStatus.Id)
         {
-            _logger.LogWarning("Order with Id: {OrderId} is in status {Status} instead of expected status {ExpectedStatus}",
+            Logger.LogWarning("Order with Id: {OrderId} is in status {Status} instead of expected status {ExpectedStatus}",
                 OrderId, orderStatus.Value.Name, expectedOrderStatus.Name);
 
             return false;

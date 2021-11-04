@@ -7,6 +7,10 @@ version: '3.4'
 
 services:
 
+  maildev:
+    ports:
+      - "5500:80"
+
   rabbitmq:
     ports:
       - "5672:5672"
