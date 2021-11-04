@@ -1,4 +1,4 @@
-﻿var AppName = "Identity.API";
+﻿var appName = "Identity API";
 var builder = WebApplication.CreateBuilder();
 
 builder.AddCustomSerilog();
@@ -40,7 +40,7 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 
 try
 {
-    app.Logger.LogInformation("Seeding database ({ApplicationName})...", AppName);
+    app.Logger.LogInformation("Seeding database ({ApplicationName})...", appName);
 
     // Apply database migration automatically. Note that this approach is not
     // recommended for production scenarios. Consider generating SQL scripts from
@@ -50,14 +50,14 @@ try
         await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
     }
 
-    app.Logger.LogInformation("Starting web host ({ApplicationName})...", AppName);
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
     app.Run();
 
     return 0;
 }
 catch (Exception ex)
 {
-    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", AppName);
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
     return 1;
 }
 finally

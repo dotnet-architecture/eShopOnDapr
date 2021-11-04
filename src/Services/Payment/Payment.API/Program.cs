@@ -1,4 +1,5 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿var appName = "Payment.API";
+var builder = WebApplication.CreateBuilder(args);
 
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
@@ -34,12 +35,12 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 
 try
 {
-    app.Logger.LogInformation("Starting web host...");
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
     app.Run();
 }
 catch (Exception ex)
 {
-    app.Logger.LogCritical(ex, "Host terminated unexpectedly...");
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
 }
 finally
 {

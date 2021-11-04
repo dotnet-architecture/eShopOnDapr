@@ -1,7 +1,10 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Basket.API;
+﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
+using Serilog;
 
 public static class ProgramExtensions
 {
+    private const string AppName = "Basket API";
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
@@ -10,15 +13,17 @@ public static class ProgramExtensions
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", "Catalog.API")
+            .Enrich.WithProperty("ApplicationName", AppName)
             .CreateLogger();
+
+        builder.Host.UseSerilog();
     }
 
     public static void AddCustomSwagger(this WebApplicationBuilder builder)
     {
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "eShopOnDapr - Basket API", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {AppName}", Version = "v1" });
 
             var identityUrlExternal = builder.Configuration.GetValue<string>("IdentityUrlExternal");
 
@@ -33,7 +38,7 @@ public static class ProgramExtensions
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
                             {
-                                { "basket", "Basket API" }
+                                { "basket", AppName }
                             }
                     }
                 }
@@ -43,8 +48,20 @@ public static class ProgramExtensions
         });
     }
 
+    public static void UseCustomSwagger(this WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
+            c.OAuthClientId("orderingswaggerui");
+            c.OAuthAppName("Ordering Swagger UI");
+        });
+    }
+
     public static void AddCustomMvc(this WebApplicationBuilder builder)
     {
+        // TODO DaprClient good enough?
         builder.Services.AddControllers().AddDapr();
     }
 

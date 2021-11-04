@@ -3,7 +3,7 @@ using Serilog;
 
 public static class ProgramExtensions
 {
-    private const string AppName = "Catalog API";
+    private const string AppName = "Ordering API";
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
@@ -13,17 +13,40 @@ public static class ProgramExtensions
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", AppName)
+            .Enrich.WithProperty("ApplicationName", "Ordering.API")
             .CreateLogger();
 
         builder.Host.UseSerilog();
     }
 
-    public static void AddCustomSwagger(this WebApplicationBuilder builder) =>
+    public static void AddCustomSwagger(this WebApplicationBuilder builder)
+    {
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {AppName}", Version = "v1" });
+
+            var identityUrlExternal = builder.Configuration.GetValue<string>("IdentityUrlExternal");
+
+            c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows()
+                {
+                    Implicit = new OpenApiOAuthFlow()
+                    {
+                        AuthorizationUrl = new Uri($"{identityUrlExternal}/connect/authorize"),
+                        TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
+                        Scopes = new Dictionary<string, string>()
+                            {
+                                { "ordering", AppName }
+                            }
+                    }
+                }
+            });
+
+            c.OperationFilter<AuthorizeCheckOperationFilter>();
         });
+    }
 
     public static void UseCustomSwagger(this WebApplication app)
     {
@@ -31,6 +54,34 @@ public static class ProgramExtensions
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
+            c.OAuthClientId("orderingswaggerui");
+            c.OAuthAppName("Ordering Swagger UI");
+        });
+    }
+
+    public static void AddCustomAuthentication(this WebApplicationBuilder builder)
+    {
+        // Prevent mapping "sub" claim to nameidentifier.
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+        builder.Services.AddAuthentication("Bearer")
+            .AddJwtBearer(options =>
+            {
+                options.Audience = "ordering-api";
+                options.Authority = builder.Configuration.GetValue<string>("IdentityUrl");
+                options.RequireHttpsMetadata = false;
+            });
+    }
+
+    public static void AddCustomAuthorization(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ApiScope", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("scope", "ordering");
+            });
         });
     }
 
@@ -40,18 +91,22 @@ public static class ProgramExtensions
             .AddDapr()
             .AddSqlServer(
                 builder.Configuration["SqlConnectionString"],
-                name: "CatalogDB-check",
-                tags: new string[] { "catalogdb" });
+                name: "OrderingDB-check",
+                tags: new string[] { "orderdb" });
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
-        builder.Services.AddScoped<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();
-        builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
+        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IIdentityService, IdentityService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
+
+        builder.Services.Configure<OrderingSettings>(builder.Configuration);
     }
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
-        builder.Services.AddDbContext<CatalogDbContext>(
+        builder.Services.AddDbContext<OrderingDbContext>(
             options => options.UseSqlServer(builder.Configuration["SqlConnectionString"]));
 
     public static void ApplyDatabaseMigration(this WebApplication app)
@@ -62,7 +117,7 @@ public static class ProgramExtensions
         using var scope = app.Services.CreateScope();
         
         var retryPolicy = CreateRetryPolicy(app.Configuration, Log.Logger);
-        var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<OrderingDbContext>();
 
         retryPolicy.Execute(context.Database.Migrate);
     }

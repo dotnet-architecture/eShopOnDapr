@@ -1,4 +1,5 @@
-﻿var builder = WebApplication.CreateBuilder();
+﻿var appName = "Basket API";
+var builder = WebApplication.CreateBuilder();
 
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
@@ -13,13 +14,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API V1");
-        c.OAuthClientId("basketswaggerui");
-        c.OAuthAppName("Basket Swagger UI");
-    });
+    app.UseCustomSwagger();
 }
 
 app.UseCloudEvents();
@@ -43,12 +38,12 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 
 try
 {
-    app.Logger.LogInformation("Starting web host...");
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
     app.Run();
 }
 catch (Exception ex)
 {
-    app.Logger.LogCritical(ex, "Host terminated unexpectedly...");
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
 }
 finally
 {

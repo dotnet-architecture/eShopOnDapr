@@ -2,6 +2,8 @@
 
 public static class ProgramExtensions
 {
+    private const string AppName = "Identity API";
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
@@ -10,8 +12,10 @@ public static class ProgramExtensions
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", "Identity.API")
+            .Enrich.WithProperty("ApplicationName", AppName)
             .CreateLogger();
+
+        builder.Host.UseSerilog();
     }
 
     public static void AddCustomMvc(this WebApplicationBuilder builder)

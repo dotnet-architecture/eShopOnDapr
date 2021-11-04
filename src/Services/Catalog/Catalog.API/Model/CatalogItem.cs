@@ -2,24 +2,6 @@
 
 public class CatalogItem
 {
-    public CatalogItem(
-        int id,
-        string name,
-        decimal price,
-        string pictureFileName,
-        int catalogTypeId,
-        int catalogBrandId,
-        int availableStock) 
-    {
-        Id = id;
-        Name = name;
-        Price = price;
-        PictureFileName = pictureFileName;
-        CatalogTypeId = catalogTypeId;
-        CatalogBrandId = catalogBrandId;
-        AvailableStock = availableStock;
-    }
-
     public int Id { get; private set; }
 
     public string Name { get; private set; }
@@ -37,6 +19,24 @@ public class CatalogItem
     public CatalogBrand CatalogBrand { get; private set; } = null!;
 
     public int AvailableStock { get; private set; }
+
+    public CatalogItem(
+        int id,
+        string name,
+        decimal price,
+        string pictureFileName,
+        int catalogTypeId,
+        int catalogBrandId,
+        int availableStock) 
+    {
+        Id = id;
+        Name = name;
+        Price = price;
+        PictureFileName = pictureFileName;
+        CatalogTypeId = catalogTypeId;
+        CatalogBrandId = catalogBrandId;
+        AvailableStock = availableStock;
+    }
 
     /// <summary>
     /// Simply decrement the quantity of a particular item in inventory.

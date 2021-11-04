@@ -2,14 +2,14 @@
 
 public class CatalogDbContext : DbContext
 {
+    public DbSet<CatalogBrand> CatalogBrands => Set<CatalogBrand>();
+    public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
+    public DbSet<CatalogType> CatalogTypes => Set<CatalogType>();
+
     public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
         : base(options)
     {
     }
-
-    public DbSet<CatalogBrand> CatalogBrands => Set<CatalogBrand>();
-    public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
-    public DbSet<CatalogType> CatalogTypes => Set<CatalogType>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

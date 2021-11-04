@@ -1,7 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+
+public interface IIdentityService
 {
-    public interface IIdentityService
-    {
-        string GetUserIdentity();
-    }
+    string GetUserIdentity();
 }
