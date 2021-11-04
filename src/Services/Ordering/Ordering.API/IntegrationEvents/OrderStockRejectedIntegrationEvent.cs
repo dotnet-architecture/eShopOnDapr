@@ -3,4 +3,4 @@
 public record OrderStockRejectedIntegrationEvent(
     Guid OrderId,
     List<ConfirmedOrderStockItem> OrderStockItems)
-    : IntegrationEvent2;
+    : IntegrationEvent;

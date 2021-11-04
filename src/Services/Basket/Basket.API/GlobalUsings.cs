@@ -7,6 +7,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+global using Microsoft.eShopOnDapr.Services.Basket.API;
 global using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Filters;
 global using Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Repositories;
 global using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.EventHandling;

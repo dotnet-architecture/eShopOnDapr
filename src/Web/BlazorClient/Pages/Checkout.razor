@@ -129,11 +129,11 @@
 
 @code {
 
-    private OrderForm _orderForm;
-    private string _error;
+    private OrderForm _orderForm = null!;
+    private string? _error;
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,7 +160,7 @@
         _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
-    private void OnBasketItemsChanged(object sender, EventArgs e)
+    private void OnBasketItemsChanged(object? sender, EventArgs? e)
     {
         StateHasChanged();
     }
@@ -169,7 +169,7 @@
     {
         try
         {
-            await _basket.CheckoutAsync(_orderForm);
+            await _basket.CheckoutAsync(_orderForm!);
 
             _navigationManager.NavigateTo("/orders");
         }

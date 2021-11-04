@@ -6,4 +6,4 @@ public record OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
     string Description,
     IEnumerable<OrderStockItem> OrderStockItems,
     string BuyerId)
-    : IntegrationEvent2;
+    : IntegrationEvent;

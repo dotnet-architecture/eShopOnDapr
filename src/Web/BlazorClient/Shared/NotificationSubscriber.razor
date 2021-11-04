@@ -8,19 +8,19 @@
 
 @code {
 
-    private HubConnection _hubConnection;
-    private OrderState _orderState;
+    private HubConnection? _hubConnection;
+    private OrderState? _orderState;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = null!;
 
     [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
 
     protected override async Task OnParametersSetAsync()
     {
         var authenticationState = await AuthenticationStateTask;
-        if (authenticationState.User.Identity.IsAuthenticated)
+        if (authenticationState.User!.Identity!.IsAuthenticated)
         {
             await ConnectToNotificationHub();
         }
@@ -44,7 +44,7 @@
         }
     }
 
-    private async Task<string> GetAccessTokenAsync()
+    private async Task<string?> GetAccessTokenAsync()
     {
         var accessTokenResult = await _accessTokenProvider.RequestAccessToken();
         if (accessTokenResult.TryGetToken(out AccessToken accessToken))
@@ -54,7 +54,7 @@
 
         _navigationManager.NavigateTo("authentication/login");
 
-        return string.Empty;
+        return null;
     }
 
     private void OnUpdatedOrderState(OrderState orderState)

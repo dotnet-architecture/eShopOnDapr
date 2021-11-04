@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Filters;
+﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Infrastructure.Filters;
 
 public class AuthorizeCheckOperationFilter : IOperationFilter
 {
@@ -22,7 +22,7 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
         {
             new OpenApiSecurityRequirement
             {
-                [ oAuthScheme ] = new [] { "Microsoft.eShopOnContainers.Web.Shopping.HttpAggregator" }
+                [ oAuthScheme ] = new [] { "shoppingaggr" }
             }
         };
     }

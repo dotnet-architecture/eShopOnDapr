@@ -75,7 +75,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
             TimeSpan.FromSeconds(_settings.Value.GracePeriodTime),
             TimeSpan.FromMilliseconds(-1));
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToSubmittedIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(
             OrderId,
             OrderStatus.Submitted.Name,
             buyerId,
@@ -163,7 +163,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
         var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToCancelledIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
             OrderId,
             OrderStatus.Cancelled.Name,
             $"The order was cancelled by buyer.",
@@ -179,7 +179,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
         {
             var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-            await _eventBus.PublishAsync2(new OrderStatusChangedToShippedIntegrationEvent(
+            await _eventBus.PublishAsync(new OrderStatusChangedToShippedIntegrationEvent(
                 OrderId,
                 OrderStatus.Shipped.Name,
                 "The order was shipped.",
@@ -221,7 +221,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
         {
             var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-            await _eventBus.PublishAsync2(new OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
+            await _eventBus.PublishAsync(new OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
                 OrderId,
                 OrderStatus.AwaitingStockValidation.Name,
                 "Grace period elapsed; waiting for stock validation.",
@@ -235,7 +235,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {
         var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToValidatedIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToValidatedIntegrationEvent(
             OrderId,
             OrderStatus.Validated.Name,
             "All the items were confirmed with available stock.",
@@ -253,7 +253,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
         var rejectedDescription = string.Join(", ", rejectedProductNames);
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToCancelledIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
             OrderId,
             OrderStatus.Cancelled.Name,
             $"The following product items don't have stock: ({rejectedDescription}).",
@@ -264,7 +264,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {
         var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToPaidIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToPaidIntegrationEvent(
             OrderId,
             OrderStatus.Paid.Name,
             "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"",
@@ -277,7 +277,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
     {
         var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 
-        await _eventBus.PublishAsync2(new OrderStatusChangedToCancelledIntegrationEvent(
+        await _eventBus.PublishAsync(new OrderStatusChangedToCancelledIntegrationEvent(
             OrderId,
             OrderStatus.Cancelled.Name,
             "The order was cancelled because payment failed.",

@@ -1,33 +1,51 @@
-﻿using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator;
-
-var builder = WebApplication.CreateBuilder();
+﻿var appName = "Shopping Aggregator API";
+var builder = WebApplication.CreateBuilder(args);
 
 builder.AddCustomSerilog();
-builder.AddCustomMvc();
+builder.AddCustomSwagger();
 builder.AddCustomAuthentication();
-builder.AddCustomApplicationServices();
+builder.AddCustomAuthorization();
 builder.AddCustomHealthChecks();
+builder.AddCustomApplicationServices();
+
+builder.Services.AddDaprClient();
+builder.Services.AddControllers();
 
 var app = builder.Build();
-
-app.UseCustomPathBase();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseCustomSwagger();
 }
 
-app.UseCors("CorsPolicy");
-app.UseHttpsRedirection();
-
-app.UseCustomSwagger();
+app.UseCloudEvents();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
 app.MapControllers();
-app.MapDefaultControllerRoute();
-app.MapCustomHealthChecks();
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
 
-await app.RunAsync();
-
+try
+{
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Run();
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+}
+finally
+{
+    Serilog.Log.CloseAndFlush();
+}

@@ -16,7 +16,7 @@
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
       },
-      "WebApplication1.Server": {
+      "Microsoft.eShopOnDapr.BlazorClient.Host": {
         "commandName": "Project",
         "dotnetRunMessages": "true",
         "launchBrowser": true,

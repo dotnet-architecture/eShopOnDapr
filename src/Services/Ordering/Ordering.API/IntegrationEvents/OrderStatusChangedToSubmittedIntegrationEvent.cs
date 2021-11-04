@@ -5,4 +5,4 @@ public record OrderStatusChangedToSubmittedIntegrationEvent(
     string OrderStatus,
     string BuyerId,
     string BuyerEmail)
-    : IntegrationEvent2;
+    : IntegrationEvent;

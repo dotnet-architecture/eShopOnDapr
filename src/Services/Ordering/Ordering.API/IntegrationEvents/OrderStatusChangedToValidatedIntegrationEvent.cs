@@ -6,4 +6,4 @@ public record OrderStatusChangedToValidatedIntegrationEvent(
     string Description,
     decimal Total,
     string BuyerId)
-    : IntegrationEvent2;
+    : IntegrationEvent;

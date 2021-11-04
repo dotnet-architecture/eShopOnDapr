@@ -1,6 +1,8 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
 using Serilog;
 
+namespace Microsoft.eShopOnDapr.Services.Basket.API;
+
 public static class ProgramExtensions
 {
     private const string AppName = "Basket API";

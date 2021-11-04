@@ -1,5 +1,7 @@
 ﻿using Serilog;
 
+namespace Microsoft.eShopOnDapr.Services.Identity.API;
+
 public static class ProgramExtensions
 {
     private const string AppName = "Identity API";

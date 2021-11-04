@@ -3,4 +3,4 @@
 public record OrderStatusChangedToValidatedIntegrationEvent(
     Guid OrderId,
     decimal Total)
-    : IntegrationEvent2;
+    : IntegrationEvent;

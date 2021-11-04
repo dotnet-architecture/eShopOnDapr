@@ -3,4 +3,4 @@
 public record OrderStatusChangedToPaidIntegrationEvent(
     int OrderId,
     IEnumerable<OrderStockItem> OrderStockItems)
-    : IntegrationEvent2;
+    : IntegrationEvent;

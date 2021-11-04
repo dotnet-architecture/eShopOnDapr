@@ -1,30 +1,14 @@
-﻿using System;
+﻿namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 
-namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events
+public record IntegrationEvent
 {
-    public class IntegrationEvent
+    public Guid Id { get; }
+
+    public DateTime CreationDate { get; }
+
+    public IntegrationEvent()
     {
-        public IntegrationEvent()
-        {
-            Id = Guid.NewGuid();
-            CreationDate = DateTime.UtcNow;
-        }
-
-        public Guid Id { get; private set; }
-
-        public DateTime CreationDate { get; private set; }
-    }
-
-    public record IntegrationEvent2
-    {
-        public IntegrationEvent2()
-        {
-            Id = Guid.NewGuid();
-            CreationDate = DateTime.UtcNow;
-        }
-
-        public Guid Id { get; }
-
-        public DateTime CreationDate { get; }
+        Id = Guid.NewGuid();
+        CreationDate = DateTime.UtcNow;
     }
 }

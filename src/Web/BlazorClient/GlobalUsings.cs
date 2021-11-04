@@ -1,0 +1,10 @@
+﻿global using Blazored.Toast;
+global using Microsoft.AspNetCore.Components;
+global using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+global using Microsoft.eShopOnDapr.BlazorClient.Basket;
+global using Microsoft.eShopOnDapr.BlazorClient.Catalog;
+global using Microsoft.eShopOnDapr.BlazorClient.Ordering;
+global using System.ComponentModel.DataAnnotations;
+global using System.Net.Http.Json;
+global using System.Text.RegularExpressions;

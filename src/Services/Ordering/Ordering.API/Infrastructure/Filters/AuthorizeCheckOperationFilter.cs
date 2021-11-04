@@ -22,7 +22,7 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
                 {
                     new OpenApiSecurityRequirement
                     {
-                        [ oAuthScheme ] = new [] { "basketapi" }
+                        [ oAuthScheme ] = new [] { "ordering" }
                     }
                 };
     }

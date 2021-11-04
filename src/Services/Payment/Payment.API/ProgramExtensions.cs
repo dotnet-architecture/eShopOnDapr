@@ -1,8 +1,12 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
 using Serilog;
 
+namespace Microsoft.eShopOnDapr.Services.Payment.API;
+
 public static class ProgramExtensions
 {
+    private const string AppName = "Payment API";
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
@@ -11,7 +15,7 @@ public static class ProgramExtensions
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", "Payment.API")
+            .Enrich.WithProperty("ApplicationName", AppName)
             .CreateLogger();
 
         builder.Host.UseSerilog();
@@ -20,7 +24,7 @@ public static class ProgramExtensions
     public static void AddCustomSwagger(this WebApplicationBuilder builder) =>
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "eShopOnDapr - Payment API", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {AppName}", Version = "v1" });
         });
 
     public static void UseCustomSwagger(this WebApplication app)
@@ -28,7 +32,7 @@ public static class ProgramExtensions
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment.API V1");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
         });
     }
 

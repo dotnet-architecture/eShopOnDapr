@@ -13,4 +13,4 @@ public record UserCheckoutAcceptedIntegrationEvent(
     string CardSecurityNumber,
     Guid RequestId,
     CustomerBasket Basket)
-    : IntegrationEvent2;
+    : IntegrationEvent;

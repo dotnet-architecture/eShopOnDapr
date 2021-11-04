@@ -1,4 +1,3 @@
-﻿namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
-{
-    public record OrderState(int OrderNumber, string Status);
-}
+﻿namespace Microsoft.eShopOnDapr.BlazorClient.Ordering;
+
+public record OrderState(int OrderNumber, string Status);

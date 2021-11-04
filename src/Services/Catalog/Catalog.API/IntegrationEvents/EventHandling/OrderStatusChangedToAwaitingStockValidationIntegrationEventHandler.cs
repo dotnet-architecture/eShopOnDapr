@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
 
 public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler : 
-    IIntegrationEventHandler2<OrderStatusChangedToAwaitingStockValidationIntegrationEvent>
+    IIntegrationEventHandler<OrderStatusChangedToAwaitingStockValidationIntegrationEvent>
 {
     private readonly CatalogDbContext _context;
     private readonly IEventBus _eventBus;
@@ -34,9 +34,9 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler 
         await Task.Delay(3000);
 
         var confirmedIntegrationEvent = confirmedOrderStockItems.Any(c => !c.HasStock)
-            ? (IntegrationEvent2)new OrderStockRejectedIntegrationEvent(@event.OrderId, confirmedOrderStockItems)
+            ? (IntegrationEvent)new OrderStockRejectedIntegrationEvent(@event.OrderId, confirmedOrderStockItems)
             : new OrderStockConfirmedIntegrationEvent(@event.OrderId);
 
-        await _eventBus.PublishAsync2(confirmedIntegrationEvent);
+        await _eventBus.PublishAsync(confirmedIntegrationEvent);
     }
 }

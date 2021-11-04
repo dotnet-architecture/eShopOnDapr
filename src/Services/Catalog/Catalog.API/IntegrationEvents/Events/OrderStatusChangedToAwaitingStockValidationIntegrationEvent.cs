@@ -3,4 +3,4 @@
 public record OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
     Guid OrderId,
     IEnumerable<OrderStockItem> OrderStockItems)
-    : IntegrationEvent2;
+    : IntegrationEvent;

@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.EventHandling;
 
 public class OrderStatusChangedToValidatedIntegrationEventHandler :
-    IIntegrationEventHandler2<OrderStatusChangedToValidatedIntegrationEvent>
+    IIntegrationEventHandler<OrderStatusChangedToValidatedIntegrationEvent>
 {
     private readonly PaymentSettings _settings;
     private readonly IEventBus _eventBus;
@@ -19,7 +19,7 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler :
 
     public async Task Handle(OrderStatusChangedToValidatedIntegrationEvent @event)
     {
-        IntegrationEvent2 orderPaymentIntegrationEvent;
+        IntegrationEvent orderPaymentIntegrationEvent;
 
         // Business feature comment:
         // When OrderStatusChangedToValidated Integration Event is handled.
@@ -44,6 +44,6 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler :
             orderPaymentIntegrationEvent = new OrderPaymentFailedIntegrationEvent(@event.OrderId);
         }
 
-        await _eventBus.PublishAsync2(orderPaymentIntegrationEvent);
+        await _eventBus.PublishAsync(orderPaymentIntegrationEvent);
     }
 }

@@ -1,3 +1,3 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
 
-public record GracePeriodConfirmedIntegrationEvent(int OrderId) : IntegrationEvent2;
+public record GracePeriodConfirmedIntegrationEvent(int OrderId) : IntegrationEvent;

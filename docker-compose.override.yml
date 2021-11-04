@@ -69,6 +69,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ApiGatewayUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq
     ports:
       - "5104:80"
 
@@ -161,14 +162,12 @@ services:
   webshoppingagg:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - urls__basket=http://basket-api
-      - urls__catalog=http://catalog-api
-      - urls__identity=http://identity-api
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - IdentityUrlHC=http://identity-api/hc
-      - PaymentUrlHC=http://payment-api/hc
-      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
     ports:
       - "5121:80"
       - "50007:50001"
@@ -218,7 +217,7 @@ services:
       - HealthChecksUI__HealthChecks__4__Uri=http://payment-api/hc
       - HealthChecksUI__HealthChecks__5__Name=Web Shopping Aggregator
       - HealthChecksUI__HealthChecks__5__Uri=http://webshoppingagg/hc
-      - HealthChecksUI__HealthChecks__6__Name=Blazor Client
+      - HealthChecksUI__HealthChecks__6__Name=Blazor UI Host
       - HealthChecksUI__HealthChecks__6__Uri=http://blazor-client/hc
     ports:
       - "5107:80"

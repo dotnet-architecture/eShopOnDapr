@@ -5,4 +5,4 @@ public record OrderStatusChangedToShippedIntegrationEvent(
     string OrderStatus,
     string Description,
     string BuyerId)
-    : IntegrationEvent2;
+    : IntegrationEvent;

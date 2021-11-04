@@ -1,4 +1,4 @@
-﻿var appName = "Payment.API";
+﻿var appName = "Payment API";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddCustomSerilog();

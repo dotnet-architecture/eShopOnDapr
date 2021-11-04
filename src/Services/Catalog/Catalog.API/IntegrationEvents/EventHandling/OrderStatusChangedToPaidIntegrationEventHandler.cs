@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
 
 public class OrderStatusChangedToPaidIntegrationEventHandler : 
-    IIntegrationEventHandler2<OrderStatusChangedToPaidIntegrationEvent>
+    IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent>
 {
     private readonly CatalogDbContext _context;
 

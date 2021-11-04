@@ -1,6 +1,8 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
 using Serilog;
 
+namespace Microsoft.eShopOnDapr.Services.Ordering.API;
+
 public static class ProgramExtensions
 {
     private const string AppName = "Ordering API";
@@ -13,7 +15,7 @@ public static class ProgramExtensions
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", "Ordering.API")
+            .Enrich.WithProperty("ApplicationName", AppName)
             .CreateLogger();
 
         builder.Host.UseSerilog();
@@ -124,12 +126,9 @@ public static class ProgramExtensions
 
     private static Policy CreateRetryPolicy(IConfiguration configuration, Serilog.ILogger logger)
     {
-        var retryMigrations = false;
-        bool.TryParse(configuration["RetryMigrations"], out retryMigrations);
-
         // Only use a retry policy if configured to do so.
         // When running in an orchestrator/K8s, it will take care of restarting failed services.
-        if (retryMigrations)
+        if (bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations))
         {
             return Policy.Handle<Exception>().
                 WaitAndRetryForever(

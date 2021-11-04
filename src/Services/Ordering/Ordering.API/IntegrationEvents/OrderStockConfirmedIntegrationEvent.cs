@@ -2,4 +2,4 @@
 
 public record OrderStockConfirmedIntegrationEvent(
     Guid OrderId)
-    : IntegrationEvent2;
+    : IntegrationEvent;

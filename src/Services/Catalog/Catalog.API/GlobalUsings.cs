@@ -8,6 +8,7 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+global using Microsoft.eShopOnDapr.Services.Catalog.API;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
