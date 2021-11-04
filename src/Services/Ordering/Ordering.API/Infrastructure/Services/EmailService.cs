@@ -31,7 +31,7 @@ public class EmailService : IEmailService
             });
     }
 
-    private string CreateEmailBody(Order order) =>
+    private static string CreateEmailBody(Order order) =>
         $@"
             <html>
             <body>

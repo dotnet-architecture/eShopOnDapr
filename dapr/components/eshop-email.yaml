@@ -13,12 +13,12 @@ spec:
     value: 25
   - name: user
     secretKeyRef:
-      name: smtp.user
-      key: smtp.user
+      name: Smtp.User
+      key: Smtp.User
   - name: password
     secretKeyRef:
-      name: smtp.password
-      key: smtp.password
+      name: Smtp.Password
+      key: Smtp.Password
   - name: skipTLSVerify
     value: true
 auth:

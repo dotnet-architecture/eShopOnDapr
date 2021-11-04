@@ -1,6 +1,7 @@
 ﻿var appName = "Catalog API";
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddCustomConfiguration();
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
 builder.AddCustomHealthChecks();

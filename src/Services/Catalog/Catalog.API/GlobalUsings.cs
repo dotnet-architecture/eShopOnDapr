@@ -1,4 +1,6 @@
 ﻿global using Dapr;
+global using Dapr.Client;
+global using Dapr.Extensions.Configuration;
 global using HealthChecks.UI.Client;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using Microsoft.AspNetCore.Hosting;
