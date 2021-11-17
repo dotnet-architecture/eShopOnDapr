@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="5.0.1" />
-    <PackageReference Include="Dapr.AspNetCore" Version="1.4.0" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0-rc.2.21480.10" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0-rc.2.21480.10" />
