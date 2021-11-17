@@ -6,6 +6,17 @@ public static class ProgramExtensions
 {
     private const string AppName = "Identity API";
 
+    public static void AddCustomConfiguration(this WebApplicationBuilder builder)
+    {
+        builder.Configuration.AddDaprSecretStore(
+            "eshop-secretstore",
+            new DaprSecretDescriptor[]
+            {
+                new DaprSecretDescriptor("ConnectionStrings.IdentityDB")
+            },
+            new DaprClientBuilder().Build());
+    }
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
@@ -25,11 +36,9 @@ public static class ProgramExtensions
         builder.Services.AddControllersWithViews();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder)
-    {
+    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(builder.Configuration["SqlConnectionString"]));
-    }
+            options => options.UseSqlServer(builder.Configuration["ConnectionStrings.IdentityDB"]));
 
     public static void AddCustomIdentity(this WebApplicationBuilder builder)
     {
@@ -69,7 +78,7 @@ public static class ProgramExtensions
     {
         builder.Services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddSqlServer(builder.Configuration["SqlConnectionString"],
+                .AddSqlServer(builder.Configuration["ConnectionStrings.IdentityDB"],
                     name: "IdentityDB-check",
                     tags: new string[] { "IdentityDB" });
     }

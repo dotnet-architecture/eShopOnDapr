@@ -7,6 +7,17 @@ public static class ProgramExtensions
 {
     private const string AppName = "Ordering API";
 
+    public static void AddCustomConfiguration(this WebApplicationBuilder builder)
+    {
+        builder.Configuration.AddDaprSecretStore(
+            "eshop-secretstore",
+            new DaprSecretDescriptor[]
+            {
+                new DaprSecretDescriptor("ConnectionStrings.OrderingDB")
+            },
+            new DaprClientBuilder().Build());
+    }
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
@@ -92,7 +103,7 @@ public static class ProgramExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
             .AddSqlServer(
-                builder.Configuration["SqlConnectionString"],
+                builder.Configuration["ConnectionStrings.OrderingDB"],
                 name: "OrderingDB-check",
                 tags: new string[] { "orderdb" });
 
@@ -109,7 +120,7 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<OrderingDbContext>(
-            options => options.UseSqlServer(builder.Configuration["SqlConnectionString"]));
+            options => options.UseSqlServer(builder.Configuration["ConnectionStrings.OrderingDB"]));
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {

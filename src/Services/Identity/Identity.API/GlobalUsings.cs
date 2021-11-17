@@ -1,4 +1,6 @@
-﻿global using Duende.IdentityServer;
+﻿global using Dapr.Client;
+global using Dapr.Extensions.Configuration;
+global using Duende.IdentityServer;
 global using Duende.IdentityServer.Configuration;
 global using Duende.IdentityServer.Events;
 global using Duende.IdentityServer.Extensions;

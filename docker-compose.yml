@@ -14,9 +14,6 @@ services:
   seq:
     image: datalust/seq:latest
 
-  seq-gelf:
-    image: datalust/seq-input-gelf
-
   sqldata:
     image: mcr.microsoft.com/mssql/server:2017-latest 
 
@@ -65,6 +62,12 @@ services:
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
     depends_on:
       - sqldata
+
+  identity-api-dapr:
+    image: "daprio/daprd:1.4.0"
+    network_mode: "service:identity-api"
+    depends_on:
+      - identity-api
 
   ordering-api:
     image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}

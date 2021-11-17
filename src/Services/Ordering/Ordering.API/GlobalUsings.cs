@@ -3,6 +3,7 @@ global using Dapr.Actors;
 global using Dapr.Actors.Client;
 global using Dapr.Actors.Runtime;
 global using Dapr.Client;
+global using Dapr.Extensions.Configuration;
 global using HealthChecks.UI.Client;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
