@@ -10,10 +10,6 @@ public static class ProgramExtensions
     {
         builder.Configuration.AddDaprSecretStore(
             "eshop-secretstore",
-            new DaprSecretDescriptor[]
-            {
-                new DaprSecretDescriptor("ConnectionStrings.IdentityDB")
-            },
             new DaprClientBuilder().Build());
     }
 

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailserver
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: mailserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: mailserver
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: mailserver
+    spec:
+      containers:
+      - name: mailserver
+        image: maildev/maildev
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+          - name: smtp
+            containerPort: 25
+            protocol: TCP
+      restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailserver
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: mailserver
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30012
+      protocol: TCP
+      name: http
+    - port: 25
+      targetPort: 25
+      nodePort: 30013
+      protocol: TCP
+      name: smtp
+  selector:
+    service: mailserver

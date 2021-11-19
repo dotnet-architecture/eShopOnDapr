@@ -1,0 +1,25 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sendmail
+  namespace: {{ .Values.namespace }}
+spec:
+  type: bindings.smtp
+  version: v1
+  metadata:
+  - name: host
+    value: mailserver
+  - name: port
+    value: 25
+  - name: user
+    secretKeyRef:
+      name: eshop-secrets
+      key: Smtp.User
+  - name: password
+    secretKeyRef:
+      name: eshop-secrets
+      key: Smtp.Password
+  - name: skipTLSVerify
+    value: true
+scopes:
+  - finecollectionservice

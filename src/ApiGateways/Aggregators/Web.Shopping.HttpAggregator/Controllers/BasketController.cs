@@ -18,41 +18,62 @@ public class BasketController : ControllerBase
     [HttpPut]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(BasketData), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<BasketData>> UpdateAllBasketAsync([FromBody] UpdateBasketRequest data, [FromHeader] string authorization)
+    public async Task<ActionResult<BasketData>> UpdateAllBasketAsync(
+        [FromBody] UpdateBasketRequest data,
+        [FromHeader] string authorization)
+    {
+        BasketData basket;
+
+        if (data.Items is null || !data.Items.Any())
+        {
+            basket = new();
+        }
+        else
+        {
+            // Get the item details from the catalog API.
+            var catalogItems = await _catalog.GetCatalogItemsAsync(
+                data.Items.Select(x => x.ProductId));
+            
+            if (catalogItems == null)
+            {
+                return BadRequest(
+                    "Catalog items were not available for the specified items in the basket.");
+            }
+
+            // Check item availability and prices; store results in basket object.
+            basket = CreateValidatedBasket(data.Items, catalogItems);
+        }
+
+        // Save the updated shopping basket.
+        await _basket.UpdateAsync(basket, authorization.Substring("Bearer ".Length));
+
+        return basket;
+    }
+
+    private BasketData CreateValidatedBasket(
+        IEnumerable<UpdateBasketRequestItemData> basketItems,
+        IEnumerable<CatalogItem> catalogItems)
     {
         var basket = new BasketData();
 
-        if (data.Items != null && data.Items.Any())
+        var itemsCalculated = basketItems.GroupBy(
+            x => x.ProductId,
+            x => x,
+            (k, i) => new UpdateBasketRequestItemData(k, i.Sum(j => j.Quantity)));
+
+        foreach (var bitem in itemsCalculated)
         {
-            var catalogItems = await _catalog.GetCatalogItemsAsync(data.Items.Select(x => x.ProductId));
-
-            if (catalogItems == null)
+            var catalogItem = catalogItems.SingleOrDefault(ci => ci.Id == bitem.ProductId);
+            if (catalogItem is not null)
             {
-                return BadRequest("Catalog items were not available for the specified items in the basket.");
-            }
-
-            var itemsCalculated = data.Items
-                    .GroupBy(x => x.ProductId, x => x, (k, i) => new UpdateBasketRequestItemData(k, i.Sum(j => j.Quantity)));
-
-            foreach (var bitem in itemsCalculated)
-            {
-                var catalogItem = catalogItems.SingleOrDefault(ci => ci.Id == bitem.ProductId);
-
-                if (catalogItem == null)
-                {
-                    return BadRequest($"Basket refers to a non-existing catalog item ({bitem.ProductId})");
-                }
-
                 basket.Items.Add(new BasketDataItem(
-                    catalogItem.Id, 
-                    catalogItem.Name, 
-                    catalogItem.Price, 
-                    bitem.Quantity, 
+                    catalogItem.Id,
+                    catalogItem.Name,
+                    catalogItem.Price,
+                    bitem.Quantity,
                     catalogItem.PictureFileName));
             }
         }
-
-        await _basket.UpdateAsync(basket, authorization.Substring("Bearer ".Length));
 
         return basket;
     }

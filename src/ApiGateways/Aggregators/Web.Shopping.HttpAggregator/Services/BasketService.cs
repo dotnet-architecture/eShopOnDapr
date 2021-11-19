@@ -6,7 +6,7 @@ public class BasketService : IBasketService
 
     public BasketService(HttpClient httpClient)
     {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _httpClient = httpClient;
     }
 
     public async Task UpdateAsync(BasketData currentBasket, string accessToken)

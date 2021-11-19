@@ -4,28 +4,24 @@ public class DaprBasketRepository : IBasketRepository
 {
     private const string StoreName = "eshop-statestore";
 
-    private readonly ILogger<DaprBasketRepository> _logger;
-    private readonly DaprClient _dapr;
+    private readonly DaprClient _daprClient;
+    private readonly ILogger _logger;
 
-    public DaprBasketRepository(ILoggerFactory loggerFactory, DaprClient dapr)
+    public DaprBasketRepository(DaprClient daprClient, ILogger<DaprBasketRepository> logger)
     {
-        _logger = loggerFactory.CreateLogger<DaprBasketRepository>();
-        _dapr = dapr;
+        _daprClient = daprClient;
+        _logger = logger;
     }
 
-    public async Task DeleteBasketAsync(string id)
-    {
-        await _dapr.DeleteStateAsync(StoreName, id);
-    }
+    public Task DeleteBasketAsync(string id) =>
+        _daprClient.DeleteStateAsync(StoreName, id);
 
-    public async Task<CustomerBasket> GetBasketAsync(string customerId)
-    {
-        return await _dapr.GetStateAsync<CustomerBasket>(StoreName, customerId);
-    }
+    public Task<CustomerBasket> GetBasketAsync(string customerId) =>
+        _daprClient.GetStateAsync<CustomerBasket>(StoreName, customerId);
 
     public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
     {
-        var state = await _dapr.GetStateEntryAsync<CustomerBasket>(StoreName, basket.BuyerId);
+        var state = await _daprClient.GetStateEntryAsync<CustomerBasket>(StoreName, basket.BuyerId);
         state.Value = basket;
 
         await state.SaveAsync();

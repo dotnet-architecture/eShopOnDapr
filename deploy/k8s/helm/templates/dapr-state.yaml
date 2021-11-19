@@ -11,9 +11,7 @@ spec:
     value: redis:6379
   - name: redisPassword
     secretKeyRef:
-      name: eshopsecrets
-      key: redisPassword
+      name: eshop-secrets
+      key: RedisPassword
   - name: actorStateStore
     value: "true"
-auth:
-  secretStore: kubernetes

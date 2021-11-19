@@ -2,6 +2,5 @@
 
 public interface IEventBus
 {
-    Task PublishAsync<TIntegrationEvent>(TIntegrationEvent @event)
-        where TIntegrationEvent : IntegrationEvent;
+    Task PublishAsync(IntegrationEvent integrationEvent);
 }

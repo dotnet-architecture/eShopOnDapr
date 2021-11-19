@@ -35,7 +35,7 @@ data:
                         google_re2: {}
                         regex: \*
                     allow_methods: "GET, POST, PUT"
-                    allow_headers: "authorization, content-type, x-requestid, x-requested-with"
+                    allow_headers: "authorization, content-type, x-requestid, x-requested-with, x-signalr-user-agent"
                     allow_credentials: true
                   routes:
                   - name: "pics"

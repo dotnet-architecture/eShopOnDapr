@@ -10,7 +10,6 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   SeqServerUrl: http://seq
-  SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word
   BlazorClientUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30000
   BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
   OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
@@ -36,6 +35,12 @@ spec:
       labels:
         app: eshop
         service: identity
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "identity-api"
+        dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
     spec:
       containers:
         - name: identity-api
@@ -48,6 +53,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: identity-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

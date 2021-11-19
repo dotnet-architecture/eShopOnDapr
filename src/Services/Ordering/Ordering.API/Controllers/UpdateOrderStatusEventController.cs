@@ -27,7 +27,8 @@ public class UpdateOrderStatusEventController : ControllerBase
     [Topic(DAPR_PUBSUB_NAME, nameof(OrderStatusChangedToSubmittedIntegrationEvent))]
     public async Task HandleAsync(
         OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
-        [FromServices] IOptions<OrderingSettings> settings, [FromServices] IEmailService emailService)
+        [FromServices] IOptions<OrderingSettings> settings,
+        [FromServices] IEmailService emailService)
     {
         // Gets the order details from Actor state.
         var actorId = new ActorId(integrationEvent.OrderId.ToString());
@@ -106,7 +107,7 @@ public class UpdateOrderStatusEventController : ControllerBase
         Guid orderId, string orderStatus, string description, string buyerId)
     {
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
-        if (order != null)
+        if (order is not null)
         {
             order.OrderStatus = orderStatus;
             order.Description = description;

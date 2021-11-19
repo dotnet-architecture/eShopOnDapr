@@ -19,10 +19,12 @@ public class EmailService : IEmailService
         _logger.LogInformation("Sending order confirmation email for order {OrderId} to {BuyerEmail}.",
             order.Id, order.BuyerEmail);
 
+        var message = CreateEmailBody(order);
+
         return _daprClient.InvokeBindingAsync(
             SendMailBinding,
             CreateBindingOperation,
-            CreateEmailBody(order),
+            message,
             new Dictionary<string, string>
             {
                 ["emailFrom"] = "eshopondapr@example.com",

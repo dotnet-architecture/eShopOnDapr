@@ -44,6 +44,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: blazorclient-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

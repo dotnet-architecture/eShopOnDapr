@@ -9,10 +9,10 @@ public class CatalogService : ICatalogService
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<CatalogItem>?> GetCatalogItemsAsync(IEnumerable<int> ids)
+    public Task<IEnumerable<CatalogItem>?> GetCatalogItemsAsync(IEnumerable<int> ids)
     {
         var requestUri = $"api/v1/catalog/items/by_ids?ids={string.Join(",", ids)}";
 
-        return await _httpClient.GetFromJsonAsync<IEnumerable<CatalogItem>>(requestUri);
+        return _httpClient.GetFromJsonAsync<IEnumerable<CatalogItem>>(requestUri);
     }
 }

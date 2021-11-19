@@ -12,7 +12,6 @@ data:
   CatalogUrlHC: http://catalog-api/hc
   IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
   IdentityUrlHC: http://identity-api/hc
-  PATH_BASE: /webshoppingagg
   PaymentUrlHC: http://payment-api/hc
   urls__basket: http://basket-api
   urls__catalog: http://catalog-api
@@ -55,6 +54,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: webshoppingagg-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

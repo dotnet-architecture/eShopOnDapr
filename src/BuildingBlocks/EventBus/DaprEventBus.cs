@@ -13,16 +13,19 @@ public class DaprEventBus : IEventBus
         _logger = logger;
     }
 
-    public async Task PublishAsync<TIntegrationEvent>(TIntegrationEvent @event)
-        where TIntegrationEvent : IntegrationEvent
+    public async Task PublishAsync(IntegrationEvent integrationEvent)
     {
-        var topicName = @event.GetType().Name;
+        var topicName = integrationEvent.GetType().Name;
 
-        _logger.LogInformation("Publishing event {@Event} to {PubsubName}.{TopicName}", @event, DAPR_PUBSUB_NAME, topicName);
+        _logger.LogInformation(
+            "Publishing event {@Event} to {PubsubName}.{TopicName}",
+            integrationEvent,
+            DAPR_PUBSUB_NAME,
+            topicName);
 
         // We need to make sure that we pass the concrete type to PublishEventAsync,
         // which can be accomplished by casting the event to dynamic. This ensures
         // that all event fields are properly serialized.
-        await _dapr.PublishEventAsync(DAPR_PUBSUB_NAME, topicName, (object)@event);
+        await _dapr.PublishEventAsync(DAPR_PUBSUB_NAME, topicName, (object)integrationEvent);
     }
 }
