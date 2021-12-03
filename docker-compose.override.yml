@@ -7,6 +7,10 @@ version: '3.4'
 
 services:
 
+  maildev:
+    ports:
+      - "5500:80"
+
   rabbitmq:
     ports:
       - "5672:5672"
@@ -63,6 +67,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ApiGatewayUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq
     ports:
       - "5104:80"
 
@@ -72,7 +77,6 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5101:80"
       - "50002:50001"
@@ -93,7 +97,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - SeqServerUrl=http://seq
-      - SqlConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word}
       - RetryMigrations=true
       - BlazorClientUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
       - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
@@ -101,6 +104,19 @@ services:
       - ShoppingAggregatorApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
     ports:
       - "5105:80"
+      - "50009:50001"
+
+  identity-api-dapr:
+    command: ["./daprd",
+      "-app-id", "identity-api",
+      "-app-port", "80",
+      "-placement-host-address", "dapr-placement:50000",
+      "-components-path", "/components",
+      "-config", "/configuration/eshop-config.yaml"
+      ]
+    volumes:
+      - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
 
   ordering-api:
     environment:
@@ -110,7 +126,6 @@ services:
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      - SqlConnectionString=${ESHOPONDAPR_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true}
     ports:
       - "5102:80"
       - "50003:50001"
@@ -151,14 +166,12 @@ services:
   webshoppingagg:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - urls__basket=http://basket-api
-      - urls__catalog=http://catalog-api
-      - urls__identity=http://identity-api
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - IdentityUrlHC=http://identity-api/hc
-      - PaymentUrlHC=http://payment-api/hc
-      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
     ports:
       - "5121:80"
       - "50007:50001"
@@ -208,7 +221,7 @@ services:
       - HealthChecksUI__HealthChecks__4__Uri=http://payment-api/hc
       - HealthChecksUI__HealthChecks__5__Name=Web Shopping Aggregator
       - HealthChecksUI__HealthChecks__5__Uri=http://webshoppingagg/hc
-      - HealthChecksUI__HealthChecks__6__Name=Blazor Client
+      - HealthChecksUI__HealthChecks__6__Name=Blazor UI Host
       - HealthChecksUI__HealthChecks__6__Uri=http://blazor-client/hc
     ports:
       - "5107:80"

@@ -1,9 +1,8 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API
-{
-    public class OrderingSettings
-    {
-        public int GracePeriodTime { get; set; }
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API;
 
-        public bool SendConfirmationEmail { get; set; }
-    }
+public class OrderingSettings
+{
+    public int GracePeriodTime { get; set; }
+
+    public bool SendConfirmationEmail { get; set; }
 }

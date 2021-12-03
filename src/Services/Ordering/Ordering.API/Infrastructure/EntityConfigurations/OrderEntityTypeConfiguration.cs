@@ -1,27 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
-
-namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations;
+    
+public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
 {
-    class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
+    public void Configure(EntityTypeBuilder<Order> orderConfiguration)
     {
-        public void Configure(EntityTypeBuilder<Order> orderConfiguration)
-        {
-            orderConfiguration.ToTable("Orders");
+        orderConfiguration.ToTable("Orders");
 
-            orderConfiguration.HasKey(o => o.Id);
+        orderConfiguration.HasKey(o => o.Id);
 
-            orderConfiguration.HasAlternateKey(o => o.OrderNumber);
+        orderConfiguration.HasAlternateKey(o => o.OrderNumber);
 
-            orderConfiguration.Property(o => o.OrderNumber)
-                .UseHiLo("orderseq");
+        orderConfiguration.Property(o => o.OrderNumber)
+            .UseHiLo("orderseq");
 
-            orderConfiguration
-                .OwnsOne(o => o.Address, a =>
-                {
-                    a.WithOwner();
-                });
-        }
+        orderConfiguration
+            .OwnsOne(o => o.Address, a =>
+            {
+                a.WithOwner();
+            });
     }
 }

@@ -55,11 +55,11 @@
 
 @code {
 
-    private IEnumerable<OrderSummary> _orders;
-    private string _error;
+    private IEnumerable<OrderSummary> _orders = null!;
+    private string? _error;
 
     [CascadingParameter]
-    private OrderState OrderState { get; set; }
+    private OrderState? OrderState { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {

@@ -12,7 +12,6 @@ data:
   IdentityUrl: http://identity-api
   IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
   SeqServerUrl: http://seq
-  SqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word
 
 ---
 
@@ -52,6 +51,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: ordering-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

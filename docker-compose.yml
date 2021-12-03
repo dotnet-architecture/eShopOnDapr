@@ -2,6 +2,9 @@ version: '3.4'
 
 services:
 
+  maildev:
+    image: maildev/maildev
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
@@ -59,6 +62,12 @@ services:
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
     depends_on:
       - sqldata
+
+  identity-api-dapr:
+    image: "daprio/daprd:1.4.0"
+    network_mode: "service:identity-api"
+    depends_on:
+      - identity-api
 
   ordering-api:
     image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}

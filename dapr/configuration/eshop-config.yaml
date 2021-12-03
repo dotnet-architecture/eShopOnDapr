@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
   name: config
-  namespace: default
+  namespace: eshop
 spec:
   tracing:
     samplingRate: "1"

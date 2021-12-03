@@ -1,51 +1,46 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+﻿namespace Microsoft.eShopOnDapr.BlazorClient.Ordering;
 
-namespace Microsoft.eShopOnDapr.BlazorClient.Ordering
+public static class CardExpirationDate
 {
-    public static class CardExpirationDate
+    private static readonly Regex Pattern = new(@"(?<month>\d{2})\/(?<year>\d{2})");
+
+    public static DateTime Parse(string value)
     {
-        private static readonly Regex Pattern = new Regex(@"(?<month>\d{2})\/(?<year>\d{2})");
-
-        public static DateTime Parse(string value)
+        if (TryParse(value, out DateTime result))
         {
-            if (TryParse(value, out DateTime result))
-            {
-                return result;
-            }
-
-            return DateTime.MinValue;
+            return result;
         }
 
-        public static bool TryParse(string value, out DateTime result)
+        return DateTime.MinValue;
+    }
+
+    public static ValidationResult Validate(string value, ValidationContext _)
+    {
+        if (Pattern.IsMatch(value))
         {
-            var match = Pattern.Match(value);
-            if (match.Success)
+            return ValidationResult.Success!;
+        }
+        return new ValidationResult("Expiration date must be in MM/YY format.");
+    }
+
+    private static bool TryParse(string value, out DateTime result)
+    {
+        var match = Pattern.Match(value);
+        if (match.Success)
+        {
+            var year = int.Parse($"20{match.Groups["year"].Value}");
+            var month = int.Parse(match.Groups["month"].Value);
+
+            if (month > 0 && month <= 12)
             {
-                var year = int.Parse($"20{match.Groups["year"].Value}");
-                var month = int.Parse(match.Groups["month"].Value);
+                var day = DateTime.DaysInMonth(year, month);
 
-                if (month > 0 && month <= 12)
-                {
-                    var day = DateTime.DaysInMonth(year, month);
-
-                    result = new DateTime(year, month, day);
-                    return true;
-                }
+                result = new DateTime(year, month, day);
+                return true;
             }
-
-            result = DateTime.MinValue;
-            return false;
         }
 
-        public static ValidationResult Validate(string value, ValidationContext context)
-        {
-            if (!TryParse(value, out _))
-            {
-                return new ValidationResult("Expiration date must be in MM/YY format.");
-            }
-            return ValidationResult.Success;
-        }
+        result = DateTime.MinValue;
+        return false;
     }
 }

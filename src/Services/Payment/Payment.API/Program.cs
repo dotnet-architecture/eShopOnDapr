@@ -1,66 +1,48 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Serilog;
+﻿var appName = "Payment API";
+var builder = WebApplication.CreateBuilder(args);
 
-namespace Microsoft.eShopOnDapr.Services.Payment.API
+builder.AddCustomSerilog();
+builder.AddCustomSwagger();
+builder.AddCustomHealthChecks();
+builder.AddCustomApplicationServices();
+
+builder.Services.AddDaprClient();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        private const string AppName = "Payment.API";
+    app.UseDeveloperExceptionPage();
+    app.UseCustomSwagger();
+}
 
-        public static int Main(string[] args)
-        {
-            var configuration = GetConfiguration();
-            var seqServerUrl = configuration["SeqServerUrl"];
+app.UseCloudEvents();
 
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .WriteTo.Console()
-                .WriteTo.Seq(seqServerUrl)
-                .Enrich.WithProperty("ApplicationName", AppName)
-                .CreateLogger();
+app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
+app.MapControllers();
+app.MapSubscribeHandler();
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
 
-            try
-            {
-                Log.Information("Configuring web host ({ApplicationName})...", AppName);
-                var host = CreateHostBuilder(args).Build();
-
-                Log.Information("Starting web host ({ApplicationName})...", AppName);
-                host.Run();
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Host terminated unexpectedly ({ApplicationName})...", AppName);
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-
-        private static IConfiguration GetConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            return builder.Build();
-        }
-    }
+try
+{
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Run();
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+}
+finally
+{
+    Serilog.Log.CloseAndFlush();
 }

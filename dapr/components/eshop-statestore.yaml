@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: eshop-statestore
-  namespace: default
+  namespace: eshop
 spec:
   type: state.redis
   version: v1
@@ -10,6 +10,13 @@ spec:
   - name: redisHost
     value: redis:6379
   - name: redisPassword
-    value: ""
+    secretKeyRef:
+      name: State.RedisPassword
+      key: State.RedisPassword
   - name: actorStateStore
     value: "true"
+auth:
+  secretStore: eshop-secretstore
+scopes:
+- basket-api
+- ordering-api

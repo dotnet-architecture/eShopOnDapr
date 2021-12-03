@@ -1,77 +1,67 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
+﻿var appName = "Identity API";
+var builder = WebApplication.CreateBuilder();
 
-namespace Microsoft.eShopOnDapr.Services.Identity.API
+builder.AddCustomConfiguration();
+builder.AddCustomSerilog();
+builder.AddCustomMvc();
+builder.AddCustomDatabase();
+builder.AddCustomIdentity();
+builder.AddCustomIdentityServer();
+builder.AddCustomAuthentication();
+builder.AddCustomHealthChecks();
+builder.AddCustomApplicationServices();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        private const string AppName = "Identity.API";
-
-        public static int Main(string[] args)
-        {
-            var configuration = GetConfiguration();
-            var seqServerUrl = configuration["SeqServerUrl"];
-
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .WriteTo.Console()
-                .WriteTo.Seq(seqServerUrl)
-                .Enrich.WithProperty("ApplicationName", AppName)
-                .CreateLogger();
-
-            try
-            {
-                Log.Information("Configuring web host ({ApplicationName})...", AppName);
-                var host = CreateHostBuilder(args).Build();
-
-                Log.Information("Seeding database ({ApplicationName})...", AppName);
-
-                // Apply database migration automatically. Note that this approach is not
-                // recommended for production scenarios. Consider generating SQL scripts from
-                // migrations instead.
-                using (var scope = host.Services.CreateScope())
-                {
-                    SeedData.EnsureSeedData(scope, configuration, Log.Logger);
-                }
-
-                Log.Information("Starting web host ({ApplicationName})...", AppName);
-                host.Run();
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Host terminated unexpectedly ({ApplicationName})...", AppName);
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-
-        private static IConfiguration GetConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            return builder.Build();
-        }
-    }
+    app.UseDeveloperExceptionPage();
 }
 
+app.UseStaticFiles();
+
+// This cookie policy fixes login issues with Chrome 80+ using HHTP
+app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
+
+app.UseRouting();
+app.UseIdentityServer();
+app.UseAuthorization();
+
+app.MapDefaultControllerRoute();
+
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
+
+try
+{
+    app.Logger.LogInformation("Seeding database ({ApplicationName})...", appName);
+
+    // Apply database migration automatically. Note that this approach is not
+    // recommended for production scenarios. Consider generating SQL scripts from
+    // migrations instead.
+    using (var scope = app.Services.CreateScope())
+    {
+        await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
+    }
+
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Run();
+
+    return 0;
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+    return 1;
+}
+finally
+{
+    Serilog.Log.CloseAndFlush();
+}

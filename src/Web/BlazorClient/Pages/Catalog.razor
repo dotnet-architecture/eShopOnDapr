@@ -82,8 +82,7 @@
 </div>
 
 @code {
-
-    private CatalogPage _catalogPage;
+    private CatalogPage? _catalogPage;
     private IEnumerable<CatalogBrand> _brands = Enumerable.Empty<CatalogBrand>();
     private IEnumerable<CatalogType> _types = Enumerable.Empty<CatalogType>();
 
@@ -92,10 +91,10 @@
     private int _typeId = -1;
 
     private bool _isAuthenticated;
-    private string _error;
+    private string? _error;
 
     [CascadingParameter]
-    private Task<AuthenticationState> _authenticationStateTask { get; set; }
+    private Task<AuthenticationState> _authenticationStateTask { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,7 +104,7 @@
             LoadItemsAsync(),
             _authenticationStateTask.ContinueWith(task =>
             {
-                _isAuthenticated = task.Result.User.Identity.IsAuthenticated;
+                _isAuthenticated = task!.Result!.User!.Identity!.IsAuthenticated;
             }));
     }
 
@@ -118,7 +117,7 @@
 
     private async Task OnBrandChangedAsync(ChangeEventArgs e)
     {
-        _brandId = int.Parse(e.Value.ToString());
+        _brandId = int.Parse(e.Value!.ToString()!);
         _pageIndex = 0;
 
         await LoadItemsAsync();
@@ -126,7 +125,7 @@
 
     private async Task OnTypeChangedAsync(ChangeEventArgs e)
     {
-        _typeId = int.Parse(e.Value.ToString());
+        _typeId = int.Parse(e.Value!.ToString()!);
         _pageIndex = 0;
 
         await LoadItemsAsync();

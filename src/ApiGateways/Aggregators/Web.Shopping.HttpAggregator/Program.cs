@@ -1,28 +1,51 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Serilog;
+﻿var appName = "Shopping Aggregator API";
+var builder = WebApplication.CreateBuilder(args);
 
-namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator
+builder.AddCustomSerilog();
+builder.AddCustomSwagger();
+builder.AddCustomAuthentication();
+builder.AddCustomAuthorization();
+builder.AddCustomHealthChecks();
+builder.AddCustomApplicationServices();
+
+builder.Services.AddDaprClient();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
+    app.UseDeveloperExceptionPage();
+    app.UseCustomSwagger();
+}
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseSerilog((builderContext, config) =>
-                {
-                    config
-                        .MinimumLevel.Information()
-                        .Enrich.FromLogContext()
-                        .WriteTo.Console();
-                })
-                .Build();
+app.UseCloudEvents();
 
-    }
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
+app.MapControllers();
+app.MapHealthChecks("/hc", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
+
+try
+{
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Run();
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+}
+finally
+{
+    Serilog.Log.CloseAndFlush();
 }

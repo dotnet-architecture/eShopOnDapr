@@ -51,6 +51,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: basket-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

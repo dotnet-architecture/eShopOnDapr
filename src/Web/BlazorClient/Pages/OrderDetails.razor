@@ -67,8 +67,8 @@
 
 @code {
 
-    private Order _order;
-    private string _error;
+    private Order _order = null!;
+    private string? _error;
 
     [Parameter]
     public int OrderNumber { get; set; }

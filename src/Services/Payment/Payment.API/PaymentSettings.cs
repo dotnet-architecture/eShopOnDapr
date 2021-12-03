@@ -1,8 +1,8 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Payment.API
+﻿namespace Microsoft.eShopOnDapr.Services.Payment.API;
+
+public class PaymentSettings
 {
-    public class PaymentSettings
-    {
-        public bool PaymentSucceeded { get; set; }
-        public decimal? MaxOrderTotal { get; set; }
-    }
+    public bool PaymentSucceeded { get; set; } = true;
+
+    public decimal? MaxOrderTotal { get; set; } = null!;
 }

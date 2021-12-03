@@ -22,7 +22,8 @@ on:
 env:
   SERVICE: basket-api
   IMAGE: basket.api
-  DOTNET_VERSION: 5.0.x
+  DOTNET_VERSION: 6.0.x
+  USE_DOTNET_PREVIEW: true
 
 jobs:
 
@@ -37,10 +38,11 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
     - name: Build
       run: |
-        dotnet restore "eShopOnDapr.sln"
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
         cd src/Services/Basket/Basket.API
         dotnet build --no-restore
 
@@ -63,10 +65,11 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
     - name: Build
       run: |
-        dotnet restore "eShopOnDapr.sln"
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
         cd src/Services/Basket/Basket.API
         dotnet build --no-restore
 

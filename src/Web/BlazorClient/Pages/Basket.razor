@@ -79,14 +79,14 @@
 
 @code {
 
-    private string _error;
+    private string? _error;
 
     protected override void OnInitialized()
     {
         _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
-    private void OnBasketItemsChanged(object sender, EventArgs e)
+    private void OnBasketItemsChanged(object? sender, EventArgs? e)
     {
         StateHasChanged();
     }

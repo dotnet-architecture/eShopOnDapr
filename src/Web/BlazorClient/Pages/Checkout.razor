@@ -84,15 +84,15 @@
                         <ValidationMessage For="@(() => _orderForm.CardExpirationDate)" />
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Security code</label>
-                        <InputText @bind-Value="@_orderForm.CardSecurityCode"
-                                   class="form-control form-input w-50 u-maxwidth-unset"
-                                   placeholder="000" />
-                        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
-                    </div>
-                </div>
+<div class="col-md-6">
+    <div class="form-group">
+        <label>Security code</label>
+        <InputText @bind-Value="@_orderForm.CardSecurityCode"
+                    class="form-control form-input w-50 u-maxwidth-unset"
+                    placeholder="000" />
+        <ValidationMessage For="@(() => _orderForm.CardSecurityCode)" />
+    </div>
+</div>
             </div>
 
             <h2 class="mt-5 mb-4">Order details</h2>
@@ -129,11 +129,11 @@
 
 @code {
 
-    private OrderForm _orderForm;
-    private string _error;
+    private OrderForm _orderForm = null!;
+    private string? _error;
 
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,7 +160,7 @@
         _basket.ItemsChanged += OnBasketItemsChanged;
     }
 
-    private void OnBasketItemsChanged(object sender, EventArgs e)
+    private void OnBasketItemsChanged(object? sender, EventArgs? e)
     {
         StateHasChanged();
     }
@@ -169,7 +169,7 @@
     {
         try
         {
-            await _basket.CheckoutAsync(_orderForm);
+            await _basket.CheckoutAsync(_orderForm!);
 
             _navigationManager.NavigateTo("/orders");
         }

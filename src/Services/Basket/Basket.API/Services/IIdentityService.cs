@@ -1,7 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Services
+﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Services;
+
+public interface IIdentityService
 {
-    public interface IIdentityService
-    {
-        string GetUserIdentity();
-    }
+    string GetUserIdentity();
 }

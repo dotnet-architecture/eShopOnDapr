@@ -2,13 +2,26 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: sendmail
-  namespace: default
+  namespace: eshop
 spec:
-  type: bindings.twilio.sendgrid
+  type: bindings.smtp
   version: v1
   metadata:
-  - name: apiKey
+  - name: host
+    value: maildev
+  - name: port
+    value: 25
+  - name: user
     secretKeyRef:
-      name: sendgridAPIKey
+      name: Smtp.User
+      key: Smtp.User
+  - name: password
+    secretKeyRef:
+      name: Smtp.Password
+      key: Smtp.Password
+  - name: skipTLSVerify
+    value: true
 auth:
   secretStore: eshop-secretstore
+scopes:
+- ordering-api

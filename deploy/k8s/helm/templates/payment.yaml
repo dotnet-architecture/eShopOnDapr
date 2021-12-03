@@ -49,6 +49,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: payment-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 

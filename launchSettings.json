@@ -2,7 +2,10 @@
   "profiles": {
     "Docker Compose": {
       "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
       "composeLaunchServiceName": "blazor-client",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "commandVersion": "1.0",
       "serviceActions": {
         "basket-api": "StartDebugging",
         "basket-api-dapr": "StartWithoutDebugging",
@@ -11,6 +14,7 @@
         "catalog-api-dapr": "StartWithoutDebugging",
         "dapr-placement": "StartWithoutDebugging",
         "identity-api": "StartDebugging",
+        "identity-api-dapr": "StartWithoutDebugging",
         "ordering-api": "StartDebugging",
         "ordering-api-dapr": "StartWithoutDebugging",
         "payment-api": "StartDebugging",
@@ -25,10 +29,7 @@
         "webshoppingapigw-dapr": "StartWithoutDebugging",
         "webstatus": "StartWithoutDebugging",
         "zipkin": "StartWithoutDebugging"
-      },
-      "composeLaunchAction": "LaunchBrowser",
-      "commandVersion": "1.0",
-      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}"
+      }
     }
   }
 }
