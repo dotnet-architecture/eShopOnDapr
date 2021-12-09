@@ -126,4 +126,4 @@ services:
     image: xabarilcoding/healthchecksui:5.0.0
 
   dapr-placement:
-    image: "daprio/dapr:1.0.0"
+    image: "daprio/dapr:1.4.0"
