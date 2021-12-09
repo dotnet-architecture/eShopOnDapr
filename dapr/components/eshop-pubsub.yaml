@@ -4,16 +4,18 @@ metadata:
   name: pubsub
   namespace: eshop
 spec:
-  type: pubsub.redis
+  type: pubsub.rabbitmq
   version: v1
   metadata:
-  - name: redisHost
-    value: redis:6379
-  - name: redisPassword
-    secretKeyRef:
-      name: State.RedisPassword
-      key: State.RedisPassword
-  - name: actorStateStore
-    value: "true"
-auth:
-  secretStore: eshop-secretstore
+  - name: host
+    value: "amqp://rabbitmq:5672"
+  - name: durable
+    value: "false"
+  - name: deletedWhenUnused
+    value: "false"
+  - name: autoAck
+    value: "false"
+  - name: reconnectWait
+    value: "0"
+  - name: concurrency
+    value: parallel
