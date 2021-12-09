@@ -11,8 +11,12 @@ public class CustomerBasket
 
     }
 
-    public CustomerBasket(string customerId)
+    public CustomerBasket(string buyerId)
     {
-        BuyerId = customerId;
+        BuyerId = buyerId;
     }
+
+    public decimal GetTotal() => Items.Sum(o => o.Quantity * o.UnitPrice);
+
+    public bool IsVerified => Items.All(i => i.IsVerified);
 }

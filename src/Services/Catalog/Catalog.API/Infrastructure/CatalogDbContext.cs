@@ -1,4 +1,7 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Model;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 
 public class CatalogDbContext : DbContext
 {

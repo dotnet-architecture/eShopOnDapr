@@ -11,6 +11,7 @@ public class UserBasket
     }
 
     public List<BasketItem> Items { get; set; } = new();
+    public bool IsVerified { get; set;} = false;
 
     public int TotalItemCount => Items.Sum(item => item.Quantity);
 
@@ -21,8 +22,9 @@ public class UserBasket
 
     public async Task LoadAsync()
     {
-        Items = (await _basketClient.GetItemsAsync())
-            .ToList();
+        var basket = await _basketClient.GetBasketAsync();
+        Items = basket.Items.ToList();
+        IsVerified = basket.IsVerified;
 
         OnItemsChanged(EventArgs.Empty);
     }

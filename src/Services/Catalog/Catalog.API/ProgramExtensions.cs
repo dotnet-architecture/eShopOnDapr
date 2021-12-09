@@ -1,4 +1,5 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 using Serilog;
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API;
@@ -57,6 +58,8 @@ public static class ProgramExtensions
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
         builder.Services.AddScoped<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();
         builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
+        builder.Services.AddScoped<VerifyProductIntegrationEventHandler>();
+        builder.Services.AddScoped<ICatalogReader, CatalogReader>();
     }
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>

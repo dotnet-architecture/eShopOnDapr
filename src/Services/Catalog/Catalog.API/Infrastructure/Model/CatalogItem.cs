@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Model;
+﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Model;
 
 public class CatalogItem
 {

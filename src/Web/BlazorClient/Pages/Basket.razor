@@ -62,10 +62,13 @@
                         <div>$@_basket.GetFormattedTotalPrice()</div>
                     </div>
                 </div>
-
                 <div class="divider u-background-brightest p-4">
+                    @if(!_basket.IsVerified)
+                    {
+                        <div>Products have not been verified yet but should shortly.  Check back in a few seconds and they should be verified.</div>
+                    }
                     <div>
-                        <button class="btn btn-primary u-width-100 u-minwidth-unset" @onclick=@Checkout>Checkout</button>
+                        <button class="btn btn-primary u-width-100 u-minwidth-unset" disabled="@(!_basket.IsVerified)" @onclick=@Checkout>Checkout</button>
                     </div>
                 </div>
                 <div class="p-4">
@@ -81,8 +84,9 @@
 
     private string? _error;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await _basket.LoadAsync();
         _basket.ItemsChanged += OnBasketItemsChanged;
     }
 

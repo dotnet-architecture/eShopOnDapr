@@ -17,7 +17,7 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler :
         _logger = logger;
     }
 
-    public async Task Handle(OrderStatusChangedToValidatedIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToValidatedIntegrationEvent @event)
     {
         IntegrationEvent orderPaymentIntegrationEvent;
 

@@ -4,28 +4,27 @@
 [ApiController]
 public class CatalogController : ControllerBase
 {
-    private readonly CatalogDbContext _context;
+    private readonly ICatalogReader _catalogReader;
 
-    public CatalogController(CatalogDbContext context)
+    public CatalogController(ICatalogReader catalogReader)
     {
-        _context = context;
-        _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        _catalogReader = catalogReader;
     }
 
     [HttpGet("brands")]
-    [ProducesResponseType(typeof(List<CatalogBrand>), (int)HttpStatusCode.OK)]
-    public Task<List<CatalogBrand>> CatalogBrandsAsync() =>
-        _context.CatalogBrands.ToListAsync();
+    [ProducesResponseType(typeof(List<IdNameViewModel>), (int)HttpStatusCode.OK)]
+    public Task<List<IdNameViewModel>> CatalogBrandsAsync() =>
+        _catalogReader.ReadBrandsAsync();
 
     [HttpGet("types")]
-    [ProducesResponseType(typeof(List<CatalogType>), (int)HttpStatusCode.OK)]
-    public Task<List<CatalogType>> CatalogTypesAsync() =>
-        _context.CatalogTypes.ToListAsync();
+    [ProducesResponseType(typeof(List<IdNameViewModel>), (int)HttpStatusCode.OK)]
+    public Task<List<IdNameViewModel>> CatalogTypesAsync() =>
+        _catalogReader.ReadTypesAsync();
 
     [HttpGet("items/by_ids")]
-    [ProducesResponseType(typeof(List<CatalogItem>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<ItemViewModel>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<List<CatalogItem>>> ItemsAsync([FromQuery] string ids)
+    public async Task<ActionResult<List<ItemViewModel>>> ItemsAsync([FromQuery] string ids)
     {
         if (!string.IsNullOrEmpty(ids))
         {
@@ -34,21 +33,14 @@ public class CatalogController : ControllerBase
             {
                 var idsToSelect = numIds.Select(id => id.Value);
 
-                var items = await _context.CatalogItems
-                    .Where(ci => idsToSelect.Contains(ci.Id))
-                    .Select(item => new ItemViewModel(
-                        item.Id,
-                        item.Name,
-                        item.Price,
-                        item.PictureFileName))
-                    .ToListAsync();
+                var items = await _catalogReader.ReadAsync(idsToSelect);
 
                 return Ok(items);
             }
         }
 
         return BadRequest("Ids value is invalid. Must be comma-separated list of numbers.");
-    }        
+    }
 
     [HttpGet("items/by_page")]
     [ProducesResponseType(typeof(PaginatedItemsViewModel), (int)HttpStatusCode.OK)]
@@ -58,32 +50,8 @@ public class CatalogController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] int pageIndex = 0)
     {
-        var query = (IQueryable<CatalogItem>)_context.CatalogItems;
+        var result = await _catalogReader.ReadAsync(typeId, brandId, pageSize, pageIndex);
 
-        if (typeId > -1)
-        {
-            query = query.Where(ci => ci.CatalogTypeId == typeId);
-        }
-
-        if (brandId > -1)
-        {
-            query = query.Where(ci => ci.CatalogBrandId == brandId);
-        }
-
-        var totalItems = await query
-            .LongCountAsync();
-
-        var itemsOnPage = await query
-            .OrderBy(item => item.Name)
-            .Skip(pageSize * pageIndex)
-            .Take(pageSize)
-            .Select(item => new ItemViewModel(
-                item.Id,
-                item.Name,
-                item.Price,
-                item.PictureFileName))
-            .ToListAsync();
-
-        return new PaginatedItemsViewModel(pageIndex, pageSize, totalItems, itemsOnPage);
+        return new PaginatedItemsViewModel(pageIndex, pageSize, result.TotalItems, result.ItemsOnPage);
     }
 }

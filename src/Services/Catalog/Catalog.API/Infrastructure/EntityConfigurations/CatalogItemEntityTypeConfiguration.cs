@@ -1,5 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Model;
 
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 public class CatalogItemEntityTypeConfiguration : IEntityTypeConfiguration<CatalogItem>
 {
     public void Configure(EntityTypeBuilder<CatalogItem> builder)

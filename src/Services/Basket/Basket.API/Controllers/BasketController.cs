@@ -53,7 +53,7 @@ public class BasketController : ControllerBase
         var userId = _identityService.GetUserIdentity();
 
         var basket = await _repository.GetBasketAsync(userId);
-        if (basket == null)
+        if (basket == null || !basket.IsVerified)
         {
             return BadRequest();
         }

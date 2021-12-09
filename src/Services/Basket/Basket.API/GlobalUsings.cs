@@ -1,4 +1,5 @@
 ﻿global using Dapr;
+global using Dapr.Actors.Runtime;
 global using Dapr.Client;
 global using HealthChecks.UI.Client;
 global using Microsoft.AspNetCore.Authorization;

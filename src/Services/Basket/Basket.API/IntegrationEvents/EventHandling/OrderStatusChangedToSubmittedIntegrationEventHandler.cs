@@ -11,7 +11,7 @@ public class OrderStatusChangedToSubmittedIntegrationEventHandler
         _repository = repository;
     }
 
-    public Task Handle(OrderStatusChangedToSubmittedIntegrationEvent @event) =>
+    public Task HandleAsync(OrderStatusChangedToSubmittedIntegrationEvent @event) =>
         _repository.DeleteBasketAsync(@event.BuyerId);
 }
 

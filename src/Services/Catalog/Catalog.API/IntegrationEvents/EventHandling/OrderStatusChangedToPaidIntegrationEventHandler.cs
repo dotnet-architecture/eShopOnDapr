@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
 
 public class OrderStatusChangedToPaidIntegrationEventHandler : 
     IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent>
@@ -10,7 +12,7 @@ public class OrderStatusChangedToPaidIntegrationEventHandler :
         _context = context;
     }
 
-    public async Task Handle(OrderStatusChangedToPaidIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToPaidIntegrationEvent @event)
     {
         //we're not blocking stock/inventory
         foreach (var orderStockItem in @event.OrderStockItems)

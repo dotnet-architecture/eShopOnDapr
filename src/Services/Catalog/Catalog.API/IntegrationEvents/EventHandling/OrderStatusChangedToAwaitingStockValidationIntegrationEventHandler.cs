@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
 
 public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler : 
     IIntegrationEventHandler<OrderStatusChangedToAwaitingStockValidationIntegrationEvent>
@@ -14,7 +16,7 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler 
         _eventBus = eventBus;
     }
 
-    public async Task Handle(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
     {
         var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
 
