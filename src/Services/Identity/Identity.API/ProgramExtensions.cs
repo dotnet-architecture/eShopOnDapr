@@ -8,9 +8,10 @@ public static class ProgramExtensions
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
-        builder.Configuration.AddDaprSecretStore(
-            "eshop-secretstore",
-            new DaprClientBuilder().Build());
+        // Disabled temporarily until https://github.com/dapr/dotnet-sdk/issues/779 is resolved.
+        //builder.Configuration.AddDaprSecretStore(
+        //    "eshop-secretstore",
+        //    new DaprClientBuilder().Build());
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
@@ -34,7 +35,7 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseSqlServer(builder.Configuration["ConnectionStrings.IdentityDB"]));
+            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"]));
 
     public static void AddCustomIdentity(this WebApplicationBuilder builder)
     {
@@ -74,7 +75,7 @@ public static class ProgramExtensions
     {
         builder.Services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddSqlServer(builder.Configuration["ConnectionStrings.IdentityDB"],
+                .AddSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"],
                     name: "IdentityDB-check",
                     tags: new string[] { "IdentityDB" });
     }
