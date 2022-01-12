@@ -14,12 +14,12 @@ spec:
   - name: user
     secretKeyRef:
       name: eshop-secrets
-      key: Smtp.User
+      key: SmtpUser
   - name: password
     secretKeyRef:
       name: eshop-secrets
-      key: Smtp.Password
+      key: SmtpPassword
   - name: skipTLSVerify
     value: true
 scopes:
-  - finecollectionservice
+  - ordering-api
