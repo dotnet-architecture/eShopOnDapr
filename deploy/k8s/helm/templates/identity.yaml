@@ -14,6 +14,8 @@ data:
   BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
   OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
   ShoppingAggregatorApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30006
+  # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
+  ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
 ---
 

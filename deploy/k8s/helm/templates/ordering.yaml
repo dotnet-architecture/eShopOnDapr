@@ -12,6 +12,8 @@ data:
   IdentityUrl: http://identity-api
   IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
   SeqServerUrl: http://seq
+  # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
+  ConnectionStrings__OrderingDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
 ---
 
