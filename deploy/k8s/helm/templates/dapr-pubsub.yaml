@@ -4,8 +4,27 @@ metadata:
   name: pubsub
   namespace: {{ .Values.namespace }}
 spec:
-  type: pubsub.rabbitmq
+# Temporarily use Redis for pub/sub while waiting for https://github.com/dapr/components-contrib/issues/1372 to be released in 1.6.
+  type: pubsub.redis
+#  type: pubsub.rabbitmq
   version: v1
   metadata:
-  - name: host
-    value: "amqp://rabbitmq:5672"
+  #- name: host
+  #  value: "amqp://rabbitmq:5672"
+  #- name: durable
+  #  value: "false"
+  #- name: deletedWhenUnused
+  #  value: "false"
+  #- name: autoAck
+  #  value: "false"
+  #- name: reconnectWait
+  #  value: "0"
+  #- name: concurrency
+  #  value: parallel
+  - name: redisHost
+    value: redis:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: eshop-secrets
+      key: RedisPassword
+
