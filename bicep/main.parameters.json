@@ -16,7 +16,11 @@
                 {
                   "name": "snet-jumpbox",
                   "addressPrefix": "10.1.0.0/24"
-                }
+                },
+                {
+                  "name": "snet-private-endpoint",
+                  "addressPrefix": "10.2.0.0/24"
+                }                
               ]
             }
         }

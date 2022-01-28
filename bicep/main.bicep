@@ -26,3 +26,11 @@ module vnet 'modules/network/vnet.bicep' = {
     vnetSettings: vnetSettings    
   }
 }
+
+module acr 'modules/acr/registry.bicep' = {
+  name: 'acr'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}

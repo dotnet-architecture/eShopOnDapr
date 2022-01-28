@@ -41,3 +41,10 @@ resource subnetRunner 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
     }
   }
 }
+
+resource subnetPrivateEndpoint 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
+  name: '${virtualNetwork.name}/${vnetSettings.subnets[2].name}'
+  properties: {
+    addressPrefix: vnetSettings.subnets[2].addressPrefix
+  }
+}
