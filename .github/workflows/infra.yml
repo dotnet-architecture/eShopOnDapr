@@ -1,0 +1,72 @@
+on:
+  workflow_call:
+    inputs:
+      location:
+        required: true
+        type: string
+        description: 'The location where the Azure resource will be created'
+        default: 'eastus'
+      resourceGroupName:
+        required: true
+        type: string
+        description: 'The name of the resource group where all resources will be created'
+        default: 'rg-aks-devsecops'
+        
+  push:
+    branches:
+    - main
+
+    paths:
+    - bicep/**    
+    - .github/workflows/infra.yml        
+
+jobs:
+  create-azure-resources:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}    
+
+      - name: Create Resource Group
+        run: |
+          az group create -n ${{ inputs.resourceGroupName }} -l ${{ inputs.location }} 
+
+      # If any error is present the GH action will stop there
+      # this avoid to try to deploy the template for nothing
+      - name: Convert to ARM template
+        run: |
+          bicep build ./bicep/main.bicep  
+
+      # Replace parameter in parameter file
+      - name: Replace tokens
+        uses: cschleiden/replace-tokens@v1.0
+        with:        
+          tokenPrefix: __        
+          tokenSuffix: __        
+          files: '["bicep/main.parameters.json"]'
+        env:
+          location: ${{ inputs.location  }}
+
+      - name: what-if
+        run: |
+          az deployment group what-if --resource-group ${{ inputs.resourceGroupName }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
+
+      - name: Deploy Azure Resources
+        id: armDeployment
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ inputs.resourceGroupName }}
+          template: ./bicep/main.json
+          parameters: environmentName=${{ inputs.environmentName }}
+
+      - name: logout
+        run: |
+          az logout                              
