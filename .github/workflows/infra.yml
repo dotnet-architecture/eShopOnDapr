@@ -42,7 +42,7 @@ jobs:
           tokenSuffix: __        
           files: '["bicep/main.parameters.json"]'
         env:
-          location: ${{ inputs.location  }}
+          location: ${{ env.LOCATION  }}
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
