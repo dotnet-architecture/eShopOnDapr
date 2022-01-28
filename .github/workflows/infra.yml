@@ -58,6 +58,7 @@ jobs:
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
           parameters: ./bicep/main.parameters.json
+          deploymentName: ${{ GITHUB_RUN_ID }}
 
       - name: logout
         run: |
