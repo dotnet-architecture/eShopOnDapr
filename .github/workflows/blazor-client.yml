@@ -2,23 +2,23 @@ name: blazor-client
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Web/**
-    - .github/workflows/blazor-client.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Web/**
+  #   - .github/workflows/blazor-client.yml
   
-  pull_request:
-    branches:
-    - main
+  # pull_request:
+  #   branches:
+  #   - main
     
-    paths:
-    - src/BuildingBlocks/**
-    - src/Web/**
-    - .github/workflows/blazor-client.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Web/**
+  #   - .github/workflows/blazor-client.yml
 env:
   SERVICE: blazor-client
   IMAGE: blazor.client

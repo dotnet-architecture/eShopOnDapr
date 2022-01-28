@@ -2,21 +2,21 @@ name: webshoppingagg
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
-    - .github/workflows/webshoppingagg.yml
+  #   paths:
+  #   - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
+  #   - .github/workflows/webshoppingagg.yml
   
-  pull_request:
-    branches:
-    - main
+  # pull_request:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
-    - .github/workflows/webshoppingagg.yml
+  #   paths:
+  #   - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
+  #   - .github/workflows/webshoppingagg.yml
 env:
   SERVICE: webshoppingagg
   IMAGE: webshoppingagg

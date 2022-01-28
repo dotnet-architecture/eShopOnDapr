@@ -2,23 +2,23 @@ name: ordering-api
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Ordering/**
-    - .github/workflows/ordering-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Ordering/**
+  #   - .github/workflows/ordering-api.yml
   
-  pull_request:
-    branches:
-    - main
+  # pull_request:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Ordering/**
-    - .github/workflows/ordering-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Ordering/**
+  #   - .github/workflows/ordering-api.yml
 env:
   SERVICE: ordering-api
   IMAGE: ordering.api

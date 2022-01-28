@@ -2,23 +2,23 @@ name: basket-api
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Basket/**
-    - .github/workflows/basket-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Basket/**
+  #   - .github/workflows/basket-api.yml
   
-  pull_request:
-    branches:
-    - main
+  # pull_request:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Basket/**
-    - .github/workflows/basket-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Basket/**
+  #   - .github/workflows/basket-api.yml
 env:
   SERVICE: basket-api
   IMAGE: basket.api

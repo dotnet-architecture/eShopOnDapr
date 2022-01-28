@@ -2,23 +2,23 @@ name: payment-api
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Payment/**
-    - .github/workflows/payment-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Payment/**
+  #   - .github/workflows/payment-api.yml
   
-  pull_request:
-    branches:
-    - main
+  # pull_request:
+  #   branches:
+  #   - main
 
-    paths:
-    - src/BuildingBlocks/**
-    - src/Services/Payment/**
-    - .github/workflows/payment-api.yml
+  #   paths:
+  #   - src/BuildingBlocks/**
+  #   - src/Services/Payment/**
+  #   - .github/workflows/payment-api.yml
 env:
   SERVICE: payment-api
   IMAGE: payment.api
