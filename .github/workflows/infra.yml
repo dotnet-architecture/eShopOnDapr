@@ -1,17 +1,4 @@
 on:
-  workflow_call:
-    inputs:
-      location:
-        required: true
-        type: string
-        description: 'The location where the Azure resource will be created'
-        default: 'eastus'
-      resourceGroupName:
-        required: true
-        type: string
-        description: 'The name of the resource group where all resources will be created'
-        default: 'rg-aks-devsecops'
-        
   push:
     branches:
     - main
@@ -19,10 +6,13 @@ on:
     paths:
     - bicep/**    
     - .github/workflows/infra.yml        
-
 jobs:
   create-azure-resources:
     
+    env:
+      LOCATION: 'eastus'
+      RESOURCE_GROUP_NAME: 'rg-aks-devsecops'
+
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +26,7 @@ jobs:
 
       - name: Create Resource Group
         run: |
-          az group create -n ${{ inputs.resourceGroupName }} -l ${{ inputs.location }} 
+          az group create -n ${{ env.RESOURCE_GROUP_NAME }} -l ${{ env.LOCATION }} 
 
       # If any error is present the GH action will stop there
       # this avoid to try to deploy the template for nothing
@@ -54,18 +44,20 @@ jobs:
         env:
           location: ${{ inputs.location  }}
 
+      # See the change to be deployed, a good practice
+      # will be to leverage environment and approvers
       - name: what-if
         run: |
-          az deployment group what-if --resource-group ${{ inputs.resourceGroupName }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
+          az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
 
       - name: Deploy Azure Resources
         id: armDeployment
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ inputs.resourceGroupName }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
-          parameters: environmentName=${{ inputs.environmentName }}
+          parameters: ./bicep/main.parameters.json
 
       - name: logout
         run: |
