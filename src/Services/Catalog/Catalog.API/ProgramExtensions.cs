@@ -60,9 +60,13 @@ public static class ProgramExtensions
         builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
+    public static void AddCustomDatabase(this WebApplicationBuilder builder)
+    {
+
+
         builder.Services.AddDbContext<CatalogDbContext>(
             options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]));
+    }
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {
@@ -79,25 +83,19 @@ public static class ProgramExtensions
 
     private static Policy CreateRetryPolicy(IConfiguration configuration, Serilog.ILogger logger)
     {
-        // Only use a retry policy if configured to do so.
-        // When running in an orchestrator/K8s, it will take care of restarting failed services.
-        if (bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations))
-        {
-            return Policy.Handle<Exception>().
-                WaitAndRetryForever(
-                    sleepDurationProvider: retry => TimeSpan.FromSeconds(5),
-                    onRetry: (exception, retry, timeSpan) =>
-                    {
-                        logger.Warning(
-                            exception,
-                            "Exception {ExceptionType} with message {Message} detected during database migration (retry attempt {retry})",
-                            exception.GetType().Name,
-                            exception.Message,
-                            retry);
-                    }
-                );
-        }
-
-        return Policy.NoOp();
+        return Policy.Handle<Exception>().
+            WaitAndRetryForever(
+                sleepDurationProvider: retry => TimeSpan.FromSeconds(5),
+                onRetry: (exception, retry, timeSpan) =>
+                {
+                    logger.Warning(
+                        exception,
+                        "Exception {ExceptionType} with message {Message} detected during database migration (retry attempt {retry}, connection {connection})",
+                        exception.GetType().Name,
+                        exception.Message,
+                        retry,
+                        configuration["ConnectionStrings:CatalogDB"]);
+                }
+            );
     }
 }
