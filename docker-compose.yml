@@ -114,7 +114,10 @@ services:
       - webshoppingagg
 
   webshoppingapigw:
-    image: envoyproxy/envoy:v1.14.2
+    image: ${REGISTRY:-eshopdapr}/webshoppingapigw:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/Envoy/Dockerfile
 
   webshoppingapigw-dapr:
     image: "daprio/daprd:1.5.1"

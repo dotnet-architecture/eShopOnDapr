@@ -194,8 +194,6 @@ services:
       - "./dapr/configuration/:/configuration"
 
   webshoppingapigw:
-    volumes:
-      - ./src/ApiGateways/Envoy:/etc/envoy
     ports:
     - "5202:80"
     - "15202:8001"

@@ -1,5 +1,6 @@
 param location string
 param containerAppsEnvironmentId string
+param containerAppsDomain string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'webshopping-gw'
@@ -10,8 +11,16 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: 'webshopping-gw'
-          image: 'envoyproxy/envoy:v1.14.2'
+          image: 'eshopdapr/webshoppingapigw:latest'
           env: [
+            {
+              name: 'ENVOY_CATALOG_API_ADDRESS'
+              value: 'https://catalog-api.${containerAppsDomain}'
+            }
+            {
+              name: 'ENVOY_ORDERING_API_ADDRESS'
+              value: 'https://ordering-api.${containerAppsDomain}'
+            }
           ]
         }
       ]
