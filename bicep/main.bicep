@@ -35,11 +35,11 @@ module acr 'modules/acr/registry.bicep' = {
   }
 }
 
-// module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
-//   name: 'privateZoneAcr'
-//   params: {
-//     privateLinkResourceId: acr.outputs.acrId
-//     subnetId: vnet.outputs.prvEndpointSubnetId
-//     vnetId: vnet.outputs.vnetId
-//   }
-// }
+module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
+  name: 'privateZoneAcr'
+  params: {
+    privateLinkResourceId: acr.outputs.acrId
+    subnetId: vnet.outputs.prvEndpointSubnetId
+    vnetId: vnet.outputs.vnetId
+  }
+}
