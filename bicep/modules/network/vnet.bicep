@@ -49,4 +49,5 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 output vnetId string = virtualNetwork.id
+output jumpboxSubnetId string = virtualNetwork.properties.subnets[1].id
 output prvEndpointSubnetId string = virtualNetwork.properties.subnets[2].id

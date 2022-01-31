@@ -1,4 +1,5 @@
 param vnetId string
+param location string
 param subnetId string
 param privateLinkResourceId string
 
@@ -36,6 +37,7 @@ resource privateDNSZoneGroups 'Microsoft.Network/privateEndpoints/privateDnsZone
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   name: privateEndpointName
+  location: location
   properties: {
     subnet: {
       id: subnetId

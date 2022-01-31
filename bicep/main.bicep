@@ -16,6 +16,9 @@ param vnetSettings object = {
   ]
 }
 
+@description('The SKU Family of the VM')
+param vmSku string
+
 var suffix = uniqueString(resourceGroup().id)
 
 module vnet 'modules/network/vnet.bicep' = {
@@ -38,8 +41,18 @@ module acr 'modules/acr/registry.bicep' = {
 module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
   name: 'privateZoneAcr'
   params: {
+    location: location
     privateLinkResourceId: acr.outputs.acrId
     subnetId: vnet.outputs.prvEndpointSubnetId
     vnetId: vnet.outputs.vnetId
+  }
+}
+
+module jumpbox 'modules/compute/linux.bicep' = {
+  name: 'jumpbox'
+  params: {
+    location: location
+    subnetId: vnet.outputs.jumpboxSubnetId
+    vmSku: vmSku
   }
 }
