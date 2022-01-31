@@ -42,6 +42,7 @@ module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
   name: 'privateZoneAcr'
   params: {
     location: location
+    vnetName: vnet.outputs.virtualNetworkName
     privateLinkResourceId: acr.outputs.acrId
     subnetId: vnet.outputs.prvEndpointSubnetId
     vnetId: vnet.outputs.vnetId
@@ -51,7 +52,7 @@ module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
 module jumpbox 'modules/compute/linux.bicep' = {
   name: 'jumpbox'
   params: {
-    location: location
+    location: location    
     subnetId: vnet.outputs.jumpboxSubnetId
     vmSku: vmSku
   }
