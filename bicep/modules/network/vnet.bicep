@@ -46,5 +46,10 @@ resource subnetPrivateEndpoint 'Microsoft.Network/virtualNetworks/subnets@2020-0
   name: '${virtualNetwork.name}/${vnetSettings.subnets[2].name}'
   properties: {
     addressPrefix: vnetSettings.subnets[2].addressPrefix
+    privateEndpointNetworkPolicies: 'Disabled'
+    privateLinkServiceNetworkPolicies: 'Enabled'
   }
 }
+
+output vnetId string = virtualNetwork.id
+output prvEndpointSubnetId string = subnetPrivateEndpoint.id
