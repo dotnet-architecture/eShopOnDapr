@@ -23,33 +23,33 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 
 
 
-resource subnetAks 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  name: '${virtualNetwork.name}/${vnetSettings.subnets[0].name}'
-  properties: {
-    addressPrefix: vnetSettings.subnets[0].addressPrefix
-    privateEndpointNetworkPolicies: 'Enabled'
-    privateLinkServiceNetworkPolicies: 'Enabled'    
-  }
-}
+// resource subnetAks 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
+//   name: '${virtualNetwork.name}/${vnetSettings.subnets[0].name}'
+//   properties: {
+//     addressPrefix: vnetSettings.subnets[0].addressPrefix
+//     privateEndpointNetworkPolicies: 'Enabled'
+//     privateLinkServiceNetworkPolicies: 'Enabled'    
+//   }
+// }
 
-resource subnetRunner 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  name: '${virtualNetwork.name}/${vnetSettings.subnets[1].name}'
-  properties: {
-    addressPrefix: vnetSettings.subnets[1].addressPrefix
-    networkSecurityGroup: {
-      id: nsgRunner.id
-    }
-  }
-}
+// resource subnetRunner 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
+//   name: '${virtualNetwork.name}/${vnetSettings.subnets[1].name}'
+//   properties: {
+//     addressPrefix: vnetSettings.subnets[1].addressPrefix
+//     networkSecurityGroup: {
+//       id: nsgRunner.id
+//     }
+//   }
+// }
 
-resource subnetPrivateEndpoint 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  name: '${virtualNetwork.name}/${vnetSettings.subnets[2].name}'
-  properties: {
-    addressPrefix: vnetSettings.subnets[2].addressPrefix
-    privateEndpointNetworkPolicies: 'Disabled'
-    privateLinkServiceNetworkPolicies: 'Enabled'
-  }
-}
+// resource subnetPrivateEndpoint 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
+//   name: '${virtualNetwork.name}/${vnetSettings.subnets[2].name}'
+//   properties: {
+//     addressPrefix: vnetSettings.subnets[2].addressPrefix
+//     privateEndpointNetworkPolicies: 'Disabled'
+//     privateLinkServiceNetworkPolicies: 'Enabled'
+//   }
+// }
 
 output vnetId string = virtualNetwork.id
-output prvEndpointSubnetId string = subnetPrivateEndpoint.id
+//output prvEndpointSubnetId string = subnetPrivateEndpoint.id
