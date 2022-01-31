@@ -18,6 +18,15 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' = {
         vnetSettings.addressPrefixe
       ]
     }
+    subnets: [
+      {
+        name: '${virtualNetwork.name}/${vnetSettings.subnets[0].name}'
+        properties: {
+          addressPrefix: vnetSettings.subnets[0].addressPrefix
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'          
+      }
+    ]
   }
 }
 
