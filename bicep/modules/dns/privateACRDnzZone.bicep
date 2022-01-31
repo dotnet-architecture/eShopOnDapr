@@ -1,4 +1,5 @@
 param vnetId string
+param vnetName string
 param location string
 param subnetId string
 param privateLinkResourceId string
@@ -11,28 +12,14 @@ resource privateAcrDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
 }
 
 resource vnetLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {
-  name: '${privateAcrDnsZone.name}/vnetLink'
+  name: '${privateAcrDnsZone.name}/link_to_${toLower(vnetName)}'
   location: 'global'
   properties: {
     virtualNetwork: {
       id: vnetId
     }
-    registrationEnabled: true
+    registrationEnabled: false
   }
-}
-
-resource privateDNSZoneGroups 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
-  name: '${privateEndpointName}/default' 
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'privatelink-azurecr-io'
-        properties: {
-          privateDnsZoneId: privateAcrDnsZone.id
-        }
-      }
-    ]
-  } 
 }
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
@@ -55,3 +42,19 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
     ]
   }
 }
+
+resource privateDNSZoneGroups 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
+  name: '${privateEndpointName}/default' 
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'privatelink-azurecr-io'
+        properties: {
+          privateDnsZoneId: privateAcrDnsZone.id
+        }
+      }
+    ]
+  } 
+}
+
+
