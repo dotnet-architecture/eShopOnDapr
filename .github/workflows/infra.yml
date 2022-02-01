@@ -43,8 +43,6 @@ jobs:
           files: '["bicep/main.parameters.json"]'
         env:
           location: ${{ env.LOCATION  }}
-          adminUsername: ${{ env.ADMIN_USERNAME }}
-          adminPassword: ${{ env.ADMIN_PASSWORD }}
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
@@ -59,7 +57,7 @@ jobs:
           subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
-          parameters: ./bicep/main.parameters.json          
+          parameters: ./bicep/main.parameters.json adminUsername=${{ env.ADMIN_USERNAME }} adminPassword=${{ env.ADMIN_PASSWORD }}     
 
       - name: logout
         run: |
