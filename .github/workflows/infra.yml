@@ -6,6 +6,9 @@ on:
     paths:
     - bicep/**    
     - .github/workflows/infra.yml        
+    - .github/workflows/script.sh
+  workflow_dispatch:
+        
 jobs:
   create-azure-resources:
     
