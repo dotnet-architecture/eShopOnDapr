@@ -48,9 +48,9 @@ jobs:
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
-      - name: what-if
-        run: |
-          az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
+      # - name: what-if
+      #   run: |
+      #     az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
 
       - name: Deploy Azure Resources
         id: armDeployment
