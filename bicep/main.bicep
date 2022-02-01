@@ -79,3 +79,5 @@ module jumpbox 'modules/compute/linux.bicep' = {
     vmSize: vmSize
   }
 }
+
+output jumpboxVmName string = jumpbox.outputs.vmName

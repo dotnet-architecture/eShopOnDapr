@@ -63,7 +63,7 @@ jobs:
 
       - name: Install Tool Jumpbox
         run: |
-          az vm run-command invoke -g myResourceGroup -n myVm --command-id RunShellScript --scripts @scripth.sh
+          az vm run-command invoke -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ steps.armDeployment.outputs.jumpboxVmName }} --command-id RunShellScript --scripts @scripth.sh
 
       - name: logout
         run: |
