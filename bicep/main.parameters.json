@@ -31,12 +31,10 @@
           "value": "Standard_B2ms"
         },
         "adminUsername": {
-          "value": "__adminUsername__",
-          "type": "secureObject"
+          "value": "__adminUsername__"
         },
         "adminPassword": {
-          "value": "__adminUsername__",
-          "type": "secureObject"
+          "value": "__adminUsername__"
         }        
     }
 }
