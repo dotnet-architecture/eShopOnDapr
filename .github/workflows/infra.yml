@@ -43,6 +43,8 @@ jobs:
           files: '["bicep/main.parameters.json"]'
         env:
           location: ${{ env.LOCATION  }}
+          adminUsername: ${{ env.ADMIN_USERNAME }}
+          adminPassword: ${{ env.ADMIN_PASSWORD }}
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers

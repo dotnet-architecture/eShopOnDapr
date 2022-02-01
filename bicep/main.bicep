@@ -16,8 +16,19 @@ param vnetSettings object = {
   ]
 }
 
-@description('The SKU Family of the VM')
-param vmSku string
+@description('The username of the admin of the VM')
+@secure()
+param adminUsername string
+
+@description('The admin password to connect to the VM')
+@secure()
+param adminPassword string
+
+@description('The version of Ubuntu OS')
+param ubuntuVersion string
+
+@description('The size of the VM')
+param vmSize string
 
 var suffix = uniqueString(resourceGroup().id)
 
@@ -49,11 +60,22 @@ module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
   }
 }
 
+module storage 'modules/storage/storage.bicep' = {
+  name: 'storage'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
 module jumpbox 'modules/compute/linux.bicep' = {
   name: 'jumpbox'
   params: {
     location: location    
     subnetId: vnet.outputs.jumpboxSubnetId
-    vmSku: vmSku
+    adminPassword: adminPassword
+    adminUsername: adminUsername
+    ubuntuVersion: ubuntuVersion
+    vmSize: vmSize
   }
 }

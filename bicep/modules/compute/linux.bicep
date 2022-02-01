@@ -1,9 +1,13 @@
 param location string
-// param suffix string
 
-// param ubuntuVersion string
-// param vmSize string
-param vmSku string
+param ubuntuVersion string
+param vmSize string
+
+@secure()
+param adminUsername string
+
+@secure()
+param adminPassword string
 
 param subnetId string
 
@@ -11,7 +15,7 @@ resource pip 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
   name: 'pip-jumpbox'
   location: location
   sku: {
-    name: vmSku
+    name: 'Basic'
   }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -40,4 +44,51 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
   }
 }
 
-
+resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: 'jumpbox'
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {    
+    hardwareProfile: {
+      vmSize: vmSize
+    }
+    storageProfile: {
+      osDisk: {
+        createOption: 'FromImage'
+        managedDisk: {
+          storageAccountType: 'Standard_LRS'
+        }
+      }
+      imageReference: {
+        publisher: 'Canonical'
+        offer: 'UbuntuServer'
+        sku: ubuntuVersion
+        version: 'latest'
+      }
+    }
+    networkProfile: {
+      networkInterfaces: [
+        {
+          id: nic.id
+        }
+      ]
+    }
+    osProfile: {
+      computerName: 'jumpbox'
+      adminUsername: adminUsername
+      adminPassword: adminPassword
+      linuxConfiguration: {        
+        patchSettings: {
+          patchMode: 'ImageDefault'
+        }
+      }      
+    }
+    diagnosticsProfile: {
+      bootDiagnostics: {
+        enabled: true
+      }
+    }
+  }
+}
