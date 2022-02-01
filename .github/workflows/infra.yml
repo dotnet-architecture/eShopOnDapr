@@ -43,16 +43,14 @@ jobs:
           files: '["bicep/main.parameters.json"]'
         env:
           location: ${{ env.LOCATION  }}
+          adminUsername: ${{ secrets.ADMIN_USERNAME }}
+          adminPassword: ${{ secrets.ADMIN_PASSWORD }}          
 
-      # - name: Replace secrets parameterts tokens
-      #   uses: cschleiden/replace-tokens@v1.0
-      #   with:        
-      #     tokenPrefix: __        
-      #     tokenSuffix: __        
-      #     files: '["bicep/main.parameters.json"]'
-      #   env:          
-      #     adminUsername: ${{ env.ADMIN_USERNAME }}
-      #     adminPassword: ${{ env.ADMIN_PASSWORD }}
+      # See the change to be deployed, a good practice
+      # will be to leverage environment and approvers
+      - name: what-if
+        run: |
+          az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
 
       - name: Deploy Azure Resources
         id: armDeployment

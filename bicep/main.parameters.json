@@ -29,6 +29,14 @@
         },
         "vmSize": {
           "value": "Standard_B2ms"
-        } 
+        },
+        "adminUsername": {
+          "value": "__adminUsername__",
+          "type": "secureObject"
+        },
+        "adminPassword": {
+          "value": "__adminUsername__",
+          "type": "secureObject"
+        }        
     }
 }
