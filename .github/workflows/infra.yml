@@ -61,6 +61,10 @@ jobs:
           template: ./bicep/main.json
           parameters: ./bicep/main.parameters.json     
 
+      - name: Install Tool Jumpbox
+        run: |
+          az vm run-command invoke -g myResourceGroup -n myVm --command-id RunShellScript --scripts @scripth.sh
+
       - name: logout
         run: |
           az logout                              
