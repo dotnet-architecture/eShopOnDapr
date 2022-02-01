@@ -34,7 +34,7 @@
           "value": "__adminUsername__"
         },
         "adminPassword": {
-          "value": "__adminUsername__"
+          "value": "__adminPassword__"
         }        
     }
 }
