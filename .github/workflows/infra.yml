@@ -35,7 +35,7 @@ jobs:
           bicep build ./bicep/main.bicep  
 
       # Replace parameter in parameter file
-      - name: Replace tokens
+      - name: Replace token location
         uses: cschleiden/replace-tokens@v1.0
         with:        
           tokenPrefix: __        
@@ -50,6 +50,16 @@ jobs:
         run: |
           az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
 
+      # - name: Replace secrets parameterts tokens
+      #   uses: cschleiden/replace-tokens@v1.0
+      #   with:        
+      #     tokenPrefix: __        
+      #     tokenSuffix: __        
+      #     files: '["bicep/main.parameters.json"]'
+      #   env:          
+      #     adminUsername: ${{ env.ADMIN_USERNAME }}
+      #     adminPassword: ${{ env.ADMIN_PASSWORD }}
+
       - name: Deploy Azure Resources
         id: armDeployment
         uses: azure/arm-deploy@v1
@@ -57,7 +67,7 @@ jobs:
           subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
-          parameters: ./bicep/main.parameters.json adminUsername=${{ env.ADMIN_USERNAME }} adminPassword=${{ env.ADMIN_PASSWORD }}     
+          parameters: ./bicep/main.parameters.json adminUsername=${{ env.ADMIN_USERNAME }} adminPassword=${{ env.ADMIN_PASSWORD }}       
 
       - name: logout
         run: |

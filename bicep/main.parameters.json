@@ -29,6 +29,6 @@
         },
         "vmSize": {
           "value": "Standard_B2ms"
-        }  
+        } 
     }
 }
