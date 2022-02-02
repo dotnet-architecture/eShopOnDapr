@@ -66,7 +66,7 @@ jobs:
 
       - name: Install Tool Jumpbox
         run: |
-          az vm run-command invoke -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ steps.armDeployment.outputs.jumpboxVmName }} --command-id RunShellScript --scripts "sudo apt-get update"
+          az vm run-command invoke -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ steps.armDeployment.outputs.jumpboxVmName }} --command-id RunShellScript --scripts ./script.sh
 
       - name: logout
         run: |
