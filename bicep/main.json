@@ -1,0 +1,606 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1272.37030",
+      "templateHash": "8676582530996517495"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The location where the Azure resources will be deployed"
+      }
+    },
+    "vnetSettings": {
+      "type": "object",
+      "defaultValue": {
+        "addressPrefixe": "10.0.0.0/8",
+        "subnets": [
+          {
+            "name": "snet-aks",
+            "addressPrefix": "10.0.0.0/16"
+          },
+          {
+            "name": "snet-jumpbox",
+            "addressPrefix": "10.0.0.0/27"
+          }
+        ]
+      },
+      "metadata": {
+        "description": "The settings of the virtual network"
+      }
+    },
+    "adminUsername": {
+      "type": "secureString",
+      "metadata": {
+        "description": "The username of the admin of the VM"
+      }
+    },
+    "adminPassword": {
+      "type": "secureString",
+      "metadata": {
+        "description": "The admin password to connect to the VM"
+      }
+    },
+    "ubuntuVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The version of Ubuntu OS"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The size of the VM"
+      }
+    }
+  },
+  "variables": {
+    "suffix": "[uniqueString(resourceGroup().id)]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "vnet",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "suffix": {
+            "value": "[variables('suffix')]"
+          },
+          "vnetSettings": {
+            "value": "[parameters('vnetSettings')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "15278932258428841083"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            },
+            "vnetSettings": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "vnetName": "[format('vnet-aks-{0}', parameters('suffix'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2021-02-01",
+              "name": "nsg-runner",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2021-05-01",
+              "name": "[variables('vnetName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('vnetSettings').addressPrefixe]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[format('{0}', parameters('vnetSettings').subnets[0].name)]",
+                    "properties": {
+                      "addressPrefix": "[parameters('vnetSettings').subnets[0].addressPrefix]",
+                      "privateEndpointNetworkPolicies": "Enabled",
+                      "privateLinkServiceNetworkPolicies": "Enabled"
+                    }
+                  },
+                  {
+                    "name": "[format('{0}', parameters('vnetSettings').subnets[1].name)]",
+                    "properties": {
+                      "addressPrefix": "[parameters('vnetSettings').subnets[1].addressPrefix]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-runner')]"
+                      }
+                    }
+                  },
+                  {
+                    "name": "[format('{0}', parameters('vnetSettings').subnets[2].name)]",
+                    "properties": {
+                      "addressPrefix": "[parameters('vnetSettings').subnets[2].addressPrefix]",
+                      "privateEndpointNetworkPolicies": "Disabled",
+                      "privateLinkServiceNetworkPolicies": "Enabled"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-runner')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            },
+            "virtualNetworkName": {
+              "type": "string",
+              "value": "[variables('vnetName')]"
+            },
+            "jumpboxSubnetId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))).subnets[1].id]"
+            },
+            "prvEndpointSubnetId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))).subnets[2].id]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "acr",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "suffix": {
+            "value": "[variables('suffix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "12517177105568542020"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerRegistry/registries",
+              "apiVersion": "2021-09-01",
+              "name": "[format('acr{0}', parameters('suffix'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Premium"
+              },
+              "properties": {
+                "adminUserEnabled": false
+              }
+            }
+          ],
+          "outputs": {
+            "acrId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ContainerRegistry/registries', format('acr{0}', parameters('suffix')))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "privateZoneAcr",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vnetName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet')).outputs.virtualNetworkName.value]"
+          },
+          "privateLinkResourceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'acr')).outputs.acrId.value]"
+          },
+          "subnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet')).outputs.prvEndpointSubnetId.value]"
+          },
+          "vnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet')).outputs.vnetId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "9786095919138487282"
+            }
+          },
+          "parameters": {
+            "vnetId": {
+              "type": "string"
+            },
+            "vnetName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "subnetId": {
+              "type": "string"
+            },
+            "privateLinkResourceId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "privateEndpointName": "pe-acr"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/privateDnsZones",
+              "apiVersion": "2020-06-01",
+              "name": "privatelink.azurecr.io",
+              "location": "global"
+            },
+            {
+              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+              "apiVersion": "2018-09-01",
+              "name": "[format('{0}/link_to_{1}', 'privatelink.azurecr.io', toLower(parameters('vnetName')))]",
+              "location": "global",
+              "properties": {
+                "virtualNetwork": {
+                  "id": "[parameters('vnetId')]"
+                },
+                "registrationEnabled": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.azurecr.io')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2021-05-01",
+              "name": "[variables('privateEndpointName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "subnet": {
+                  "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                  {
+                    "name": "[variables('privateEndpointName')]",
+                    "properties": {
+                      "privateLinkServiceId": "[parameters('privateLinkResourceId')]",
+                      "groupIds": [
+                        "registry"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+              "apiVersion": "2021-05-01",
+              "name": "[format('{0}/default', variables('privateEndpointName'))]",
+              "properties": {
+                "privateDnsZoneConfigs": [
+                  {
+                    "name": "privatelink-azurecr-io",
+                    "properties": {
+                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.azurecr.io')]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.azurecr.io')]",
+                "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'acr')]",
+        "[resourceId('Microsoft.Resources/deployments', 'vnet')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "storage",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "suffix": {
+            "value": "[variables('suffix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "13057065525635633649"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "suffix": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-06-01",
+              "name": "[format('strv{0}', parameters('suffix'))]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "description": "vm storage diagnostics"
+              },
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2"
+            }
+          ],
+          "outputs": {
+            "strVmName": {
+              "type": "string",
+              "value": "[format('strv{0}', parameters('suffix'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "jumpbox",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "subnetId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnet')).outputs.jumpboxSubnetId.value]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "ubuntuVersion": {
+            "value": "[parameters('ubuntuVersion')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "15707169247277367229"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "ubuntuVersion": {
+              "type": "string"
+            },
+            "vmSize": {
+              "type": "string"
+            },
+            "adminUsername": {
+              "type": "secureString"
+            },
+            "adminPassword": {
+              "type": "secureString"
+            },
+            "subnetId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2021-05-01",
+              "name": "pip-jumpbox",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Basic"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAddressVersion": "IPv4"
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2021-05-01",
+              "name": "nic-jumpbox",
+              "location": "[parameters('location')]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig-jumpbox",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      },
+                      "privateIPAllocationMethod": "Dynamic",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'pip-jumpbox')]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'pip-jumpbox')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2020-06-01",
+              "name": "jumpbox",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+                },
+                "storageProfile": {
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "Standard_LRS"
+                    }
+                  },
+                  "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "UbuntuServer",
+                    "sku": "[parameters('ubuntuVersion')]",
+                    "version": "latest"
+                  }
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nic-jumpbox')]"
+                    }
+                  ]
+                },
+                "osProfile": {
+                  "computerName": "jumpbox",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]",
+                  "linuxConfiguration": {
+                    "patchSettings": {
+                      "patchMode": "ImageDefault"
+                    }
+                  },
+                  "customData": "I2Nsb3VkLWNvbmZpZw0KcGFja2FnZV91cGdyYWRlOiB0cnVlDQpwYWNrYWdlczoNCiAgLSBjdXJsDQpydW5jbWQ6DQogICMgSW5zdGFsbGluZyBrdWJlY3RsDQogIC0gY3VybCAtTE8gImh0dHBzOi8vZGwuazhzLmlvL3JlbGVhc2UvJChjdXJsIC1MIC1zIGh0dHBzOi8vZGwuazhzLmlvL3JlbGVhc2Uvc3RhYmxlLnR4dCkvYmluL2xpbnV4L2FtZDY0L2t1YmVjdGwiDQogIC0gc3VkbyBpbnN0YWxsIC1vIHJvb3QgLWcgcm9vdCAtbSAwNzU1IGt1YmVjdGwgL3Vzci9sb2NhbC9iaW4va3ViZWN0bA0KICAtIGNobW9kICt4IGt1YmVjdGwNCiAgLSBta2RpciAtcCB+Ly5sb2NhbC9iaW4va3ViZWN0bA0KICAtIG12IC4va3ViZWN0bCB+Ly5sb2NhbC9iaW4va3ViZWN0bA=="
+                },
+                "diagnosticsProfile": {
+                  "bootDiagnostics": {
+                    "enabled": true
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'nic-jumpbox')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vmName": {
+              "type": "string",
+              "value": "jumpbox"
+            },
+            "privateIp": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', 'nic-jumpbox')).ipConfigurations[0].properties.privateIPAddress]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'vnet')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "jumpboxVmName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'jumpbox')).outputs.vmName.value]"
+    },
+    "privateIp": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'jumpbox')).outputs.privateIp.value]"
+    }
+  }
+}
