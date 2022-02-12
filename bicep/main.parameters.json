@@ -5,6 +5,9 @@
         "location": {
             "value": "__location__"
         },
+        "aadAdminGroupId": {
+          "value": "__aadAdminGroupId__"
+        },
         "vnetSettings": {
             "value": {
               "addressPrefixe": "10.0.0.0/8",
@@ -23,6 +26,13 @@
                 }                
               ]
             }
+        },
+        "aksAzureCniSettings": {
+          "value": {
+            "serviceCidr": "11.0.0.0/16",
+            "dnsServiceIP": "11.0.0.10",
+            "dockerBridgeCidr": "172.17.0.1/16"
+          }
         },
         "ubuntuVersion": {
           "value": "18_04-lts-gen2"

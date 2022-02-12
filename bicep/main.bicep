@@ -30,6 +30,12 @@ param ubuntuVersion string
 @description('The size of the VM')
 param vmSize string
 
+@description('The objectID in Azure AD of the AKS Admin Group')
+param aadAdminGroupId string
+
+@description('The setting for the AzureCNI networking')
+param aksAzureCniSettings object
+
 var suffix = uniqueString(resourceGroup().id)
 
 module vnet 'modules/network/vnet.bicep' = {
@@ -79,5 +85,17 @@ module storage 'modules/storage/storage.bicep' = {
   params: {
     location: location
     suffix: suffix
+  }
+}
+
+module aks 'modules/aks/aks.bicep' = {
+  name: 'aks'
+  params: {
+    aadAdminGroupId: aadAdminGroupId
+    acrId: acr.outputs.acrId
+    acrName: acr.outputs.acrName
+    aksAzureCniSettings: aksAzureCniSettings
+    location: location
+    subnetId: vnet.outputs.aksSubnetId
   }
 }
