@@ -55,6 +55,17 @@ jobs:
         run: |
           az deployment group what-if --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file ./bicep/main.json --parameters ./bicep/main.parameters.json
 
+      # This steps is needed only if running the deployment multiple times
+      # if the VM exists already the cloudinit failed the deployment
+      - name: Delete Jumpbox if exists
+        run: |
+          $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
+          $vmExists = $vmCheck.Length -gt 0
+          if ($vmExists) {
+            az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name jumpbox --resource-type "Microsoft.Compute/virtualMachines"
+          }
+        shell: pwsh
+
       - name: Deploy Azure Resources
         id: armDeployment
         uses: azure/arm-deploy@v1
@@ -63,10 +74,6 @@ jobs:
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
           parameters: ./bicep/main.parameters.json     
-
-      # - name: Install Tool Jumpbox
-      #   run: |
-      #     az vm run-command invoke -g ${{ env.RESOURCE_GROUP_NAME }} -n ${{ steps.armDeployment.outputs.jumpboxVmName }} --command-id RunShellScript --scripts @./script.sh
 
       - name: logout
         run: |
