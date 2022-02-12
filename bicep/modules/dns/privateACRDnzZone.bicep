@@ -3,12 +3,26 @@ param vnetName string
 param location string
 param subnetId string
 param privateLinkResourceId string
+param jumpboxPrivateIP string
+param jumpboxname string
 
 var privateEndpointName = 'pe-acr'
 
 resource privateAcrDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.azurecr.io'
   location: 'global'
+}
+
+resource aRecordJumpbox 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
+  name: jumpboxname
+  parent: privateAcrDnsZone
+  properties: {
+    aRecords: [
+      {
+        ipv4Address: jumpboxPrivateIP
+      }
+    ]
+  }
 }
 
 resource vnetLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {

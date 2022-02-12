@@ -49,6 +49,18 @@ module acr 'modules/acr/registry.bicep' = {
   }
 }
 
+module jumpbox 'modules/compute/linux.bicep' = {
+  name: 'jumpbox'
+  params: {
+    location: location    
+    subnetId: vnet.outputs.jumpboxSubnetId
+    adminPassword: adminPassword
+    adminUsername: adminUsername
+    ubuntuVersion: ubuntuVersion
+    vmSize: vmSize    
+  }
+}
+
 module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
   name: 'privateZoneAcr'
   params: {
@@ -57,6 +69,8 @@ module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
     privateLinkResourceId: acr.outputs.acrId
     subnetId: vnet.outputs.prvEndpointSubnetId
     vnetId: vnet.outputs.vnetId
+    jumpboxname: jumpbox.outputs.jumpboxname
+    jumpboxPrivateIP: jumpbox.outputs.privateIp
   }
 }
 
@@ -67,18 +81,3 @@ module storage 'modules/storage/storage.bicep' = {
     suffix: suffix
   }
 }
-
-module jumpbox 'modules/compute/linux.bicep' = {
-  name: 'jumpbox'
-  params: {
-    location: location    
-    subnetId: vnet.outputs.jumpboxSubnetId
-    adminPassword: adminPassword
-    adminUsername: adminUsername
-    ubuntuVersion: ubuntuVersion
-    vmSize: vmSize
-  }
-}
-
-output jumpboxVmName string = jumpbox.outputs.vmName
-output privateIp string = jumpbox.outputs.privateIp
