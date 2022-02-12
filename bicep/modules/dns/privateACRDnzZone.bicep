@@ -14,9 +14,9 @@ resource privateAcrDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
 }
 
 resource aRecordJumpbox 'Microsoft.Network/privateDnsZones/A@2020-06-01' = {
-  name: jumpboxname
-  parent: privateAcrDnsZone
+  name: '${privateAcrDnsZone.name}/${jumpboxname}'
   properties: {
+    ttl: 3600
     aRecords: [
       {
         ipv4Address: jumpboxPrivateIP
