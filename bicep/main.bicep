@@ -81,3 +81,4 @@ module jumpbox 'modules/compute/linux.bicep' = {
 }
 
 output jumpboxVmName string = jumpbox.outputs.vmName
+output privateIp string = jumpbox.outputs.privateIp

@@ -83,7 +83,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
         patchSettings: {
           patchMode: 'ImageDefault'
         }
-      }      
+      }
+      customData: loadFileAsBase64('jumpbox-cloud-init.yaml')
     }
     diagnosticsProfile: {
       bootDiagnostics: {
@@ -95,3 +96,4 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
 
 
 output vmName string = vm.name
+output privateIp string = nic.properties.ipConfigurations[0].properties.privateIPAddress
