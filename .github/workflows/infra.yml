@@ -1,3 +1,5 @@
+name: Create Azure Resources
+
 on:
   push:
     branches:
@@ -47,19 +49,9 @@ jobs:
         env:
           location: ${{ env.LOCATION  }}
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
-          adminPassword: ${{ secrets.ADMIN_PASSWORD }}
-          runnertoken: ${{ secrets.RUNNER_TOKEN }}       
+          adminPassword: ${{ secrets.ADMIN_PASSWORD }}              
           aadAdminGroupId: ${{ secrets.AAD_ADMIN_GROUP_ID }}
-
-      - name: Replace token runner cloudinit
-        uses: cschleiden/replace-tokens@v1.0
-        with:        
-          tokenPrefix: __        
-          tokenSuffix: __        
-          files: '["bicep/modules/compute/jumpbox-cloud-init.yaml"]'
-        env:
-          runnertoken: ${{ secrets.RUNNER_TOKEN }}          
-
+      
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
       - name: what-if
