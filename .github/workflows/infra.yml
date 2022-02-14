@@ -61,13 +61,8 @@ jobs:
         run: |
           $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
           $vmExists = $vmCheck.Length -gt 0
-          if ($vmExists) {
-            az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name jumpbox --resource-type "Microsoft.Compute/virtualMachines"
-            $disks=az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks'
-
-            foreach ($disk in $disks) {
-              az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
-            }
+          if ($vmExists) {            
+            az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox
           }
         shell: pwsh
 
