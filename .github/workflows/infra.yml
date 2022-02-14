@@ -64,7 +64,7 @@ jobs:
           $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
           $vmExists = $vmCheck.Length -gt 0
           if ($vmExists) {            
-            az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox
+            az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
           }
         shell: pwsh
 
