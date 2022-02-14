@@ -56,7 +56,7 @@ jobs:
         with:        
           tokenPrefix: __        
           tokenSuffix: __        
-          files: '["bicep/compute/jumpbox-cloud-init.yaml"]'
+          files: '["bicep/compute/modules/jumpbox-cloud-init.yaml"]'
         env:
           runnertoken: ${{ secrets.RUNNER_TOKEN }}          
 
