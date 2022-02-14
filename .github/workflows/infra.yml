@@ -47,7 +47,8 @@ jobs:
         env:
           location: ${{ env.LOCATION  }}
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
-          adminPassword: ${{ secrets.ADMIN_PASSWORD }}          
+          adminPassword: ${{ secrets.ADMIN_PASSWORD }}
+          runnertoken: ${{ secrets.RUNNER_TOKEN }}       
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
