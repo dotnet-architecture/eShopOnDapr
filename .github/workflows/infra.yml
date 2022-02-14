@@ -49,6 +49,7 @@ jobs:
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
           adminPassword: ${{ secrets.ADMIN_PASSWORD }}
           runnertoken: ${{ secrets.RUNNER_TOKEN }}       
+          aadAdminGroupId: ${{ secrets.AAD_ADMIN_GROUP_ID }}
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers

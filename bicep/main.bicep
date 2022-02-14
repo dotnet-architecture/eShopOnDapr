@@ -88,14 +88,14 @@ module storage 'modules/storage/storage.bicep' = {
   }
 }
 
-// module aks 'modules/aks/aks.bicep' = {
-//   name: 'aks'
-//   params: {
-//     aadAdminGroupId: aadAdminGroupId
-//     acrId: acr.outputs.acrId
-//     acrName: acr.outputs.acrName
-//     aksAzureCniSettings: aksAzureCniSettings
-//     location: location
-//     subnetId: vnet.outputs.aksSubnetId
-//   }
-// }
+module aks 'modules/aks/aks.bicep' = {
+  name: 'aks'
+  params: {
+    aadAdminGroupId: aadAdminGroupId
+    acrId: acr.outputs.acrId
+    acrName: acr.outputs.acrName
+    aksAzureCniSettings: aksAzureCniSettings
+    location: location
+    subnetId: vnet.outputs.aksSubnetId
+  }
+}
