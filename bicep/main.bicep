@@ -99,3 +99,5 @@ module storage 'modules/storage/storage.bicep' = {
 //     subnetId: vnet.outputs.aksSubnetId
 //   }
 // }
+
+output arcName string = acr.outputs.acrName

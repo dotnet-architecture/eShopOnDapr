@@ -38,7 +38,7 @@ jobs:
           bicep build ./bicep/main.bicep  
 
       # Replace parameter in parameter file
-      - name: Replace token location
+      - name: Replace token parameters file
         uses: cschleiden/replace-tokens@v1.0
         with:        
           tokenPrefix: __        
@@ -50,6 +50,15 @@ jobs:
           adminPassword: ${{ secrets.ADMIN_PASSWORD }}
           runnertoken: ${{ secrets.RUNNER_TOKEN }}       
           aadAdminGroupId: ${{ secrets.AAD_ADMIN_GROUP_ID }}
+
+      - name: Replace token runner cloudinit
+        uses: cschleiden/replace-tokens@v1.0
+        with:        
+          tokenPrefix: __        
+          tokenSuffix: __        
+          files: '["bicep/compute/jumpbox-cloud-init.yaml"]'
+        env:
+          runnertoken: ${{ secrets.RUNNER_TOKEN }}          
 
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
@@ -76,6 +85,13 @@ jobs:
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./bicep/main.json
           parameters: ./bicep/main.parameters.json     
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write ACR registry name in secrets
+        with:
+          name: AZURE_CONTAINER_REGISTRY
+          value: ${{ steps.armDeployment.outputs.arcName }}
+          pa_token: ${{ secrets.PA_TOKEN }}          
 
       - name: logout
         run: |

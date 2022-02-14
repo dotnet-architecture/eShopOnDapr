@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+    - main
+
+    paths:
+    - src/HelloWorlExpress/** 
+    - .github/workflows/hello-world.yml            
+  workflow_dispatch:
+        
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - run: |
+          docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
