@@ -6,10 +6,10 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-
+    
     env:
       WEBAPP_PATH: src/HelloWorlExpress
-
+      
     steps:
 
       - uses: actions/checkout@v2
@@ -22,5 +22,5 @@ jobs:
 
       - run: |
           pushd './${{ env.WEBAPP_PATH }}'
-          docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
-          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
+          sudo docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
+          sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
