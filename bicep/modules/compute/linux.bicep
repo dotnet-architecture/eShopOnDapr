@@ -94,6 +94,16 @@ resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   }
 }
 
+resource rbacAcr 'Microsoft.ContainerRegistry/registries/providers/roleAssignments@2018-09-01-preview' = {
+  name: '${acrName}/Microsoft.Authorization/${guidValue}'
+  properties: {
+    principalId: aks.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
+    scope: acrId
+  }
+}
+
 
 output vmName string = vm.name
 output privateIp string = nic.properties.ipConfigurations[0].properties.privateIPAddress

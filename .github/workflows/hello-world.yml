@@ -1,18 +1,14 @@
 name: hello-world
 
 on:
-  push:
-    branches:
-    - main
-
-    paths:
-    - src/HelloWorlExpress/** 
-    - .github/workflows/hello-world.yml            
   workflow_dispatch:
         
 jobs:
   build:
     runs-on: self-hosted
+
+    env:
+      WEBAPP_PATH: src/HelloWorlExpress
 
     steps:
 
@@ -25,5 +21,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - run: |
+          pushd './${{ env.WEBAPP_PATH }}'
           docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
           docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
