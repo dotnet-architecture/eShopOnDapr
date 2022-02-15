@@ -65,6 +65,9 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-10-01' = {
       adminGroupObjectIDs: [
         aadAdminGroupId
       ]
+      enableAzureRBAC: true
+      managed: true
+      tenantID: subscription().tenantId
     }
     apiServerAccessProfile: {
       enablePrivateCluster: true
