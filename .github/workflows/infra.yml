@@ -45,7 +45,7 @@ jobs:
         with:        
           tokenPrefix: __        
           tokenSuffix: __        
-          files: '["bicep/main.parameters.json","bicep/modules/compute/jumpbox-cloud-init.yaml"]'
+          files: '["bicep/main.parameters.json"]'
         env:
           location: ${{ env.LOCATION  }}
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
