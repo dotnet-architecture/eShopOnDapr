@@ -88,6 +88,22 @@ module storage 'modules/storage/storage.bicep' = {
   }
 }
 
+module workspace 'modules/workspace/workspace.bicep' = {
+  name: 'workspace'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
+module identityAks 'modules/identity/userassigned.identity.bicep' = {
+  name: 'identityAks'
+  params: {
+    location: location
+    name: 'aks-identity'
+  }
+}
+
 // module aks 'modules/aks/aks.bicep' = {
 //   name: 'aks'
 //   params: {
