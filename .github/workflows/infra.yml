@@ -85,13 +85,19 @@ jobs:
           template: ./bicep/main.json
           parameters: ./bicep/main.parameters.json     
 
+      - name: Add jumpbox A record
+        run: |
+          $dns= az network private-dns zone list -g ${{ steps.armDeployment.outputs.aksRgName }} | ConvertFrom-Json
+          az network private-dns record-set a add-record -g ${{ steps.armDeployment.outputs.aksRgName }} -z $dns[0].name -n jumpbox -a ${{ steps.armDeployment.outputs.jumpboxPrivateIP }}
+        shell: pwsh
+
       - uses: gliech/create-github-secret-action@v1
         name: Write ACR registry name in secrets
         with:
           name: AZURE_CONTAINER_REGISTRY
           value: ${{ steps.armDeployment.outputs.arcName }}
           pa_token: ${{ secrets.PA_TOKEN }}          
-
+      
       - name: logout
         run: |
           az logout                              

@@ -129,3 +129,6 @@ module networkContributorRole 'modules/identity/role.bicep' = {
 }
 
 output arcName string = acr.outputs.acrName
+output jumpboxPrivateIP string = jumpbox.outputs.privateIp
+output aksRgName string = 'MC_${resourceGroup().name}_${aks.outputs.clusterName}_${location}'
+output aksName string = aks.outputs.clusterName
