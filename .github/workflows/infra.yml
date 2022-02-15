@@ -68,6 +68,8 @@ jobs:
             az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
 
             az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name jumpbox --resource-type "Microsoft.Compute/virtualMachines" | ConvertFrom-Json
+            
+            $disks = az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks' | ConvertFrom-Json
 
             foreach ($disk in $disks) {
               az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
