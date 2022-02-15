@@ -27,3 +27,7 @@ runcmd:
 
   # Installing docker
   - sudo apt-get install docker.io --yes
+
+  # Install Github Self-Runner
+  # - export RUNNER_CFG_PAT=__runnerPAT__
+  # - curl -s https://raw.githubusercontent.com/actions/runner/main/scripts/create-latest-svc.sh | bash -s __githubRepo__

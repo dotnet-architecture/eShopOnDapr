@@ -45,7 +45,7 @@ jobs:
         with:        
           tokenPrefix: __        
           tokenSuffix: __        
-          files: '["bicep/main.parameters.json"]'
+          files: '["bicep/main.parameters.json","bicep/modules/compute/jumpbox-cloud-init.yaml"]'
         env:
           location: ${{ env.LOCATION  }}
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
@@ -66,6 +66,13 @@ jobs:
           $vmExists = $vmCheck.Length -gt 0
           if ($vmExists) {            
             az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
+
+            az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name jumpbox --resource-type "Microsoft.Compute/virtualMachines" | ConvertFrom-Json
+
+            foreach ($disk in $disks) {
+              az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
+            }
+
           }
         shell: pwsh
 
