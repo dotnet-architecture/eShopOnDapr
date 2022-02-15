@@ -38,6 +38,8 @@ param aksAzureCniSettings object
 
 var suffix = uniqueString(resourceGroup().id)
 
+var networkContributorRoleId = '4d97b98b-1d4f-4787-a291-c67834d212e7'
+
 module vnet 'modules/network/vnet.bicep' = {
   name: 'vnet'
   params: {
@@ -104,16 +106,26 @@ module identityAks 'modules/identity/userassigned.identity.bicep' = {
   }
 }
 
-// module aks 'modules/aks/aks.bicep' = {
-//   name: 'aks'
-//   params: {
-//     aadAdminGroupId: aadAdminGroupId
-//     acrId: acr.outputs.acrId
-//     acrName: acr.outputs.acrName
-//     aksAzureCniSettings: aksAzureCniSettings
-//     location: location
-//     subnetId: vnet.outputs.aksSubnetId
-//   }
-// }
+module aks 'modules/aks/aks.bicep' = {
+  name: 'aks'
+  params: {
+    aadAdminGroupId: aadAdminGroupId
+    aksAzureCniSettings: aksAzureCniSettings
+    location: location
+    subnetId: vnet.outputs.aksSubnetId
+    identityAKS: {
+      '${identityAks.outputs.identityId}': {}
+    }
+    workspaceId: workspace.outputs.workSpaceId
+  }
+}
+
+module networkContributorRole 'modules/identity/role.bicep' = {
+  name: 'networkContributorRole'
+  params: {
+    principalId: identityAks.outputs.principalId
+    roleGuid: networkContributorRoleId
+  }
+}
 
 output arcName string = acr.outputs.acrName

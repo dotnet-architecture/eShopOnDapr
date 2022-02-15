@@ -1,11 +1,9 @@
 param location string
 param subnetId string
 param aadAdminGroupId string
-param acrName string
-param acrId string
 param aksAzureCniSettings object
-
-param guidValue string = newGuid()
+param identityAKS object
+param workspaceId string
 
 var kubernetesVersion = '1.22.6'
 var aksName = 'aksdevops'
@@ -15,12 +13,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-10-01' = {
   name: aksName
   location: location
   identity: {
-    type: 'SystemAssigned'    
+    type: 'UserAssigned'
+    userAssignedIdentities: identityAKS
   }
   properties: {
     kubernetesVersion: kubernetesVersion
     enableRBAC: true
-    dnsPrefix: '${aksName}-dns'
+    dnsPrefix: aksName
     agentPoolProfiles: [
       {
         name: 'systempool'
@@ -74,17 +73,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-10-01' = {
       azureKeyvaultSecretsProvider: {
         enabled: true
       }
+      omsagent: {
+        config: {
+          logAnalyticsWorkspaceResourceID: workspaceId
+        }
+        enabled: true
+      }
     }
-  }
-}
-
-resource rbacAcr 'Microsoft.ContainerRegistry/registries/providers/roleAssignments@2018-09-01-preview' = {
-  name: '${acrName}/Microsoft.Authorization/${guidValue}'
-  properties: {
-    principalId: aks.identity.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
-    scope: acrId
   }
 }
 
