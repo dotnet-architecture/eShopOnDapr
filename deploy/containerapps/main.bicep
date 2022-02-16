@@ -1,13 +1,6 @@
 param location string = resourceGroup().location
 param uniqueSeed string = '${resourceGroup().id}-${deployment().name}'
 
-// param containerAppsEnvironmentName string = 'containerappenv-${uniqueString(uniqueSeed)}'
-// param storageAccountName string = 'sa${uniqueString(uniqueSeed)}'
-// param serviceBusName string = 'sb-${uniqueString(uniqueSeed)}'
-// param storageBasketTableName string = 'basket'
-// param cosmosAccountName string = 'cosmos-${uniqueString(uniqueSeed)}'
-// param cosmosDbName string = 'eShop'
-
 ////////////////////////////////////////////////////////////////////////////////
 // Infrastructure
 ////////////////////////////////////////////////////////////////////////////////
