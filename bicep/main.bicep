@@ -153,9 +153,9 @@ module servicebus 'modules/servicebus/servicebus.bicep' = {
 module sql 'modules/sql/sql.bicep' = {
   name: 'sql'
   params: {
-    administratorLogin: 
-    administratorLoginPassword: 
-    location: 
+    administratorLogin: adminSqlUsername
+    administratorLoginPassword: adminSqlPassword
+    location: location
   }
 }
 
