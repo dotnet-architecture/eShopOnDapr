@@ -1,6 +1,7 @@
 param location string
+
 param containerAppsEnvironmentId string
-param containerAppsDomain string
+param containerAppsEnvironmentDomain string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'webstatus'
@@ -23,7 +24,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__0__Uri'
-              value: 'https://basket-api.${containerAppsDomain}/hc'
+              value: 'http://basket-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__1__Name'
@@ -31,7 +32,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__1__Uri'
-              value: 'https://catalog-api.${containerAppsDomain}/hc'
+              value: 'http://catalog-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__2__Name'
@@ -39,7 +40,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__2__Uri'
-              value: 'https://identity-api.${containerAppsDomain}/hc'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__3__Name'
@@ -47,7 +48,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__3__Uri'
-              value: 'https://ordering-api.${containerAppsDomain}/hc'
+              value: 'http://ordering-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__4__Name'
@@ -55,7 +56,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__4__Uri'
-              value: 'https://payment-api.${containerAppsDomain}/hc'
+              value: 'http://payment-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__5__Name'
@@ -63,7 +64,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__5__Uri'
-              value: 'https://webshopping-agg.${containerAppsDomain}/hc'
+              value: 'http://webshopping-agg.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__6__Name'
@@ -71,13 +72,14 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__6__Uri'
-              value: 'https://blazor-client.${containerAppsDomain}/hc'
+              value: 'https://blazor-client.${containerAppsEnvironmentDomain}/hc'
             }
           ]
         }
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
       }
     }
     configuration: {
@@ -89,5 +91,3 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
     }
   }
 }
-
-//output fqdn string = containerApp.properties.configuration.ingress.fqdn

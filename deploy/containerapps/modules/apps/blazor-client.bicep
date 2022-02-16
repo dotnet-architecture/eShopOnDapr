@@ -1,18 +1,19 @@
 param location string
-param containerAppsEnvironmentId string
-param containerAppsDomain string
 param seqFqdn string
 
+param containerAppsEnvironmentId string
+param containerAppsEnvironmentDomain string
+
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
-  name: 'basket-api'
+  name: 'blazor-client'
   location: location
   properties: {
     kubeEnvironmentId: containerAppsEnvironmentId
     template: {
       containers: [
         {
-          name: 'basket-api'
-          image: 'eshopdapr/basket.api:latest'
+          name: 'blazor-client'
+          image: 'eshopdapr/blazor.client:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -23,12 +24,12 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsDomain}'
-            }  
+              name: 'ApiGatewayUrlExternal'
+              value: 'https://webshopping-gw.${containerAppsEnvironmentDomain}'
+            }
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsDomain}'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }
             {
               name: 'SeqServerUrl'
@@ -39,6 +40,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
       }
     }
     configuration: {
@@ -50,5 +52,3 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
     }
   }
 }
-
-//output fqdn string = containerApp.properties.configuration.ingress.fqdn

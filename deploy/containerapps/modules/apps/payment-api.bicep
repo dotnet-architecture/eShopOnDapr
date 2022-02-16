@@ -1,18 +1,21 @@
 param location string
-param containerAppsEnvironmentId string
-param catalogDbConnectionString string
 param seqFqdn string
 
+param containerAppsEnvironmentId string
+
+@secure()
+param serviceBusConnectionString string
+
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
-  name: 'catalog-api'
+  name: 'payment-api'
   location: location
   properties: {
     kubeEnvironmentId: containerAppsEnvironmentId
     template: {
       containers: [
         {
-          name: 'catalog-api'
-          image: 'eshopdapr/catalog.api:latest'
+          name: 'payment-api'
+          image: 'eshopdapr/payment.api:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -23,14 +26,6 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'ConnectionStrings__CatalogDB'
-              secretRef: 'catalogdb-connection-string'
-            }
-            {
-              name: 'RetryMigrations'
-              value: 'true'
-            }
-            {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
             }
@@ -39,22 +34,40 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
+      }
+      dapr: {
+        enabled: true
+        appId: 'payment-api'
+        appPort: 80
+        components: [
+          {
+            name: 'pubsub'
+            type: 'pubsub.azure.servicebus'
+            version: 'v1'
+            metadata: [
+              {
+                name: 'connectionString'
+                secretRef: 'service-bus-connection-string'
+              }
+            ]
+          }
+        ]
       }
     }
     configuration: {
       activeResivionsMode: 'single'
       ingress: {
-        external: true
+        external: false
         targetPort: 80
+        allowInsecure: true
       }
       secrets: [
         {
-          name: 'catalogdb-connection-string'
-          value: catalogDbConnectionString
+          name: 'service-bus-connection-string'
+          value: serviceBusConnectionString
         }
       ]
     }
   }
 }
-
-output fqdn string = containerApp.properties.configuration.ingress.fqdn

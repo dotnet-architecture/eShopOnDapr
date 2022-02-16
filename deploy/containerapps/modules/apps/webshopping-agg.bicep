@@ -1,7 +1,8 @@
 param location string
-param containerAppsEnvironmentId string
-param containerAppsDomain string
 param seqFqdn string
+
+param containerAppsEnvironmentId string
+param containerAppsEnvironmentDomain string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'webshopping-agg'
@@ -24,11 +25,11 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsDomain}'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }  
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsDomain}'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }
             {
               name: 'SeqServerUrl'
@@ -36,31 +37,36 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'BasketUrlHC'
-              value: 'https://basket-api.${containerAppsDomain}/hc'
+              value: 'http://basket-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'CatalogUrlHC'
-              value: 'https://catalog-api.${containerAppsDomain}/hc'
+              value: 'http://catalog-api.internal.${containerAppsEnvironmentDomain}/hc'
             }
             {
               name: 'IdentityUrlHC'
-              value: 'https://identity-api.${containerAppsDomain}/hc'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}/hc'
             }
           ]
         }
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
+      }
+      dapr: {
+        enabled: true
+        appId: 'webshoppingagg'
+        appPort: 80
       }
     }
     configuration: {
       activeResivionsMode: 'single'
       ingress: {
-        external: true
+        external: false
         targetPort: 80
+        allowInsecure: true
       }
     }
   }
 }
-
-//output fqdn string = containerApp.properties.configuration.ingress.fqdn

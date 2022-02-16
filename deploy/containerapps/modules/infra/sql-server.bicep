@@ -1,5 +1,5 @@
-param uniqueSeed string
 param location string
+param uniqueSeed string
 param sqlServerName string = 'sql-${uniqueString(uniqueSeed)}'
 param sqlAdministratorLogin string = 'server_admin'
 param sqlAdministratorLoginPassword string = 'Pass@word'

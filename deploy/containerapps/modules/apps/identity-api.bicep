@@ -1,8 +1,11 @@
 param location string
-param containerAppsEnvironmentId string
-param containerAppsDomain string
-param identityDbConnectionString string
 param seqFqdn string
+
+param containerAppsEnvironmentId string
+param containerAppsEnvironmentDomain string
+
+@secure()
+param identityDbConnectionString string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'identity-api'
@@ -25,11 +28,11 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsDomain}'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsDomain}'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }
             {
               name: 'SeqServerUrl'
@@ -37,19 +40,11 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'BlazorClientUrlExternal'
-              value: 'https://blazor-client.${containerAppsDomain}'
+              value: 'https://blazor-client.${containerAppsEnvironmentDomain}'
             }
             {
-              name: 'BasketApiUrlExternal'
-              value: 'https://basket-api.${containerAppsDomain}'
-            }
-            {
-              name: 'OrderingApiUrlExternal'
-              value: 'https://ordering-api.${containerAppsDomain}'
-            }
-            {
-              name: 'ShoppingAggregatorApiUrlExternal'
-              value: 'https://webshoppingagg.${containerAppsDomain}'
+              name: 'IssuerUrl'
+              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
             }
             {
               name: 'ConnectionStrings__IdentityDB'
@@ -60,6 +55,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
       }
     }
     configuration: {
@@ -77,5 +73,3 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
     }
   }
 }
-
-output fqdn string = containerApp.properties.configuration.ingress.fqdn

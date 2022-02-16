@@ -1,31 +1,27 @@
 param location string
 param containerAppsEnvironmentId string
-param containerAppsDomain string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
-  name: 'webshopping-gw'
+  name: 'seq'
   location: location
   properties: {
     kubeEnvironmentId: containerAppsEnvironmentId
     template: {
       containers: [
         {
-          name: 'webshopping-gw'
-          image: 'eshopdapr/webshoppingapigw:latest'
+          name: 'seq'
+          image: 'datalust/seq:latest'
           env: [
             {
-              name: 'ENVOY_CATALOG_API_ADDRESS'
-              value: 'https://catalog-api.${containerAppsDomain}'
-            }
-            {
-              name: 'ENVOY_ORDERING_API_ADDRESS'
-              value: 'https://ordering-api.${containerAppsDomain}'
+              name: 'ACCEPT_EULA'
+              value: 'Y'
             }
           ]
         }
       ]
       scale: {
         minReplicas: 1
+        maxReplicas: 1
       }
     }
     configuration: {
@@ -38,4 +34,4 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   }
 }
 
-//output fqdn string = containerApp.properties.configuration.ingress.fqdn
+output fqdn string = containerApp.properties.configuration.ingress.fqdn

@@ -2,21 +2,15 @@ param location string
 param containerAppsEnvironmentId string
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
-  name: 'seq'
+  name: 'echo'
   location: location
   properties: {
     kubeEnvironmentId: containerAppsEnvironmentId
     template: {
       containers: [
         {
-          name: 'seq'
-          image: 'datalust/seq:latest'
-          env: [
-            {
-              name: 'ACCEPT_EULA'
-              value: 'Y'
-            }
-          ]
+          name: 'echo'
+          image: 'mendhak/http-https-echo:23'
         }
       ]
       scale: {
@@ -27,10 +21,9 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       activeResivionsMode: 'single'
       ingress: {
         external: true
-        targetPort: 80
+        targetPort: 8080
+        allowInsecure: true
       }
     }
   }
 }
-
-output fqdn string = containerApp.properties.configuration.ingress.fqdn
