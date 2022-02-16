@@ -24,6 +24,7 @@ global using Microsoft.eShopOnDapr.Services.Identity.API.Models;
 global using Microsoft.eShopOnDapr.Services.Identity.API.Services;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 global using Microsoft.Extensions.Options;
+global using Microsoft.Extensions.Primitives;
 global using Newtonsoft.Json;
 global using Polly;
 global using System.ComponentModel.DataAnnotations;

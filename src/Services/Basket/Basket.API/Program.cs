@@ -17,6 +17,12 @@ if (app.Environment.IsDevelopment())
     app.UseCustomSwagger();
 }
 
+var pathBase = builder.Configuration["PATH_BASE"];
+if (!string.IsNullOrEmpty(pathBase))
+{
+    app.UsePathBase(pathBase);
+}
+
 app.UseCloudEvents();
 
 app.UseAuthentication();
