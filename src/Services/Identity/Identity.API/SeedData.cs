@@ -9,7 +9,7 @@ public class SeedData
 
         await retryPolicy.ExecuteAsync(async () =>
         {
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
 
             var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var alice = await userMgr.FindByNameAsync("alice");
