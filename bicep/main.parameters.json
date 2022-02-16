@@ -45,6 +45,14 @@
         },
         "adminPassword": {
           "value": "__adminPassword__"
+        },
+        "adminSqlUsername": {
+          "value": "__adminSqlUsername__",
+          "type": "secureString"
+        },
+        "adminSqlPassword": {
+          "value": "__adminSqlPassword__",
+          "type": "secureString"
         }        
     }
 }

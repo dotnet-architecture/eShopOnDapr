@@ -51,6 +51,8 @@ jobs:
           adminUsername: ${{ secrets.ADMIN_USERNAME }}
           adminPassword: ${{ secrets.ADMIN_PASSWORD }}              
           aadAdminGroupId: ${{ secrets.AAD_ADMIN_GROUP_ID }}
+          adminSqlUsername: ${{ secrets.ADMIN_SQL_USERNAME }}
+          adminSqlPassword: ${{ secrets.ADMIN_SQL_PASSWORD }}
       
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers

@@ -36,6 +36,12 @@ param aadAdminGroupId string
 @description('The setting for the AzureCNI networking')
 param aksAzureCniSettings object
 
+@secure()
+param adminSqlUsername string
+
+@secure()
+param adminSqlPassword string
+
 var suffix = uniqueString(resourceGroup().id)
 
 var networkContributorRoleId = '4d97b98b-1d4f-4787-a291-c67834d212e7'
@@ -125,6 +131,31 @@ module networkContributorRole 'modules/identity/role.bicep' = {
   params: {
     principalId: identityAks.outputs.principalId
     roleGuid: networkContributorRoleId
+  }
+}
+
+module redis 'modules/redis/redis.bicep' = {
+  name: 'redis'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
+module servicebus 'modules/servicebus/servicebus.bicep' = {
+  name: 'servicebus'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
+module sql 'modules/sql/sql.bicep' = {
+  name: 'sql'
+  params: {
+    administratorLogin: 
+    administratorLoginPassword: 
+    location: 
   }
 }
 
