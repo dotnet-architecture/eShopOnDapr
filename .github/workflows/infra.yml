@@ -62,21 +62,21 @@ jobs:
 
       # This steps is needed only if running the deployment multiple times
       # if the VM exists already the cloudinit failed the deployment
-      - name: Delete Jumpbox if exists
-        run: |
-          $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
-          $vmExists = $vmCheck.Length -gt 0
-          if ($vmExists) {            
-            az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
+      # - name: Delete Jumpbox if exists
+      #   run: |
+      #     $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
+      #     $vmExists = $vmCheck.Length -gt 0
+      #     if ($vmExists) {            
+      #       az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
                         
-            $disks = az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks' | ConvertFrom-Json
+      #       $disks = az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks' | ConvertFrom-Json
 
-            foreach ($disk in $disks) {
-              az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
-            }
+      #       foreach ($disk in $disks) {
+      #         az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
+      #       }
 
-          }
-        shell: pwsh
+      #     }
+      #   shell: pwsh
 
       - name: Deploy Azure Resources
         id: armDeployment
