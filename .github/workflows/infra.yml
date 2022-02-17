@@ -1,14 +1,13 @@
 name: Create Azure Resources
 
 on:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
-    paths:
-    - bicep/**    
-    - .github/workflows/infra.yml        
-    - .github/workflows/script.sh
+  #   paths:
+  #   - bicep/**    
+  #   - .github/workflows/infra.yml
   workflow_dispatch:
         
 jobs:
@@ -62,21 +61,21 @@ jobs:
 
       # This steps is needed only if running the deployment multiple times
       # if the VM exists already the cloudinit failed the deployment
-      # - name: Delete Jumpbox if exists
-      #   run: |
-      #     $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
-      #     $vmExists = $vmCheck.Length -gt 0
-      #     if ($vmExists) {            
-      #       az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
+      - name: Delete Jumpbox if exists
+        run: |
+          $vmCheck = az vm list --query "[?name=='jumpbox']" | ConvertFrom-Json
+          $vmExists = $vmCheck.Length -gt 0
+          if ($vmExists) {            
+            az vm delete -g ${{ env.RESOURCE_GROUP_NAME }} -n jumpbox --yes
                         
-      #       $disks = az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks' | ConvertFrom-Json
+            $disks = az resource list -g ${{ env.RESOURCE_GROUP_NAME }} --resource-type 'Microsoft.Compute/disks' | ConvertFrom-Json
 
-      #       foreach ($disk in $disks) {
-      #         az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
-      #       }
+            foreach ($disk in $disks) {
+              az resource delete --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name $disk.name --resource-type $disk.type
+            }
 
-      #     }
-      #   shell: pwsh
+          }
+        shell: pwsh
 
       - name: Deploy Azure Resources
         id: armDeployment
@@ -92,6 +91,19 @@ jobs:
           $dns= az network private-dns zone list -g ${{ steps.armDeployment.outputs.aksRgName }} | ConvertFrom-Json
           az network private-dns record-set a add-record -g ${{ steps.armDeployment.outputs.aksRgName }} -z $dns[0].name -n jumpbox -a ${{ steps.armDeployment.outputs.jumpboxPrivateIP }}
         shell: pwsh
+
+      # - name: Enabled Flux Addon
+      #   run: |
+      #     az feature register --namespace Microsoft.ContainerService --name AKS-ExtensionManager
+      #     az provider register --namespace Microsoft.Kubernetes
+      #     az provider register --namespace Microsoft.ContainerService
+      #     az provider register --namespace Microsoft.KubernetesConfiguration
+      #     az extension add -n k8s-configuration
+      #     az extension add -n k8s-extension  
+      #     az extension update -n k8s-configuration
+      #     az extension update -n k8s-extension
+      #     az k8s-configuration flux create -g ${{ env.RESOURCE_GROUP_NAME }} -c ${{ steps.armDeployment.outputs.aksRgName }} -n flux-gitops --namespace flux -t connectedClusters --scope cluster -u https://github.com/fluxcd/flux2-kustomize-helm-example --branch main  --kustomization name=infra path=./infrastructure prune=true --kustomization name=apps path=./apps/staging prune=true dependsOn=["infra"]            
+      #   shell: pwsh        
 
       - uses: gliech/create-github-secret-action@v1
         name: Write ACR registry name in secrets

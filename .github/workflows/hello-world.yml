@@ -14,13 +14,14 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+      # - uses: azure/docker-login@v1
+      #   with:
+      #     login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      #     username: ${{ secrets.REGISTRY_USERNAME }}
+      #     password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - run: |
           pushd './${{ env.WEBAPP_PATH }}'
+          az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
           sudo docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
           sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
