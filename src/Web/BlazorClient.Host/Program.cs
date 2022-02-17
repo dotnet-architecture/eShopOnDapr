@@ -35,10 +35,13 @@ IConfiguration GetConfiguration()
     return builder.Build();
 }
 
-IWebHost BuildWebHost() =>
-    WebHost.CreateDefaultBuilder()
-        .UseStartup<Startup>()
-        .UseContentRoot(Directory.GetCurrentDirectory())
+IHost BuildWebHost() =>
+    Host.CreateDefaultBuilder()
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            webBuilder.UseStartup<Startup>();
+            webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+        })
         .UseSerilog()
         .Build();
 

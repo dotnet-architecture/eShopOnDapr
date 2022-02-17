@@ -16,7 +16,7 @@ public class DiagnosticsViewModel
             var bytes = Base64Url.Decode(encoded);
             var value = Encoding.UTF8.GetString(bytes);
 
-            Clients = JsonConvert.DeserializeObject<string[]>(value);
+            Clients = JsonSerializer.Deserialize<string[]>(value);
         }
     }
 
