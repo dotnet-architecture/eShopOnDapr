@@ -61,7 +61,12 @@ jobs:
           files: '["bicep/modules/compute/jumpbox-cloud-init.yaml"]'
         env:
           GITHUB_REPOSITORY: $env.GITHUB_REPOSITORY
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_PAT: 'mockguid'
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cloudinit
+          path: bicep/modules/compute/jumpbox-cloud-init.yaml         
       
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
@@ -115,12 +120,12 @@ jobs:
       #     az k8s-configuration flux create -g ${{ env.RESOURCE_GROUP_NAME }} -c ${{ steps.armDeployment.outputs.aksRgName }} -n flux-gitops --namespace flux -t connectedClusters --scope cluster -u https://github.com/fluxcd/flux2-kustomize-helm-example --branch main  --kustomization name=infra path=./infrastructure prune=true --kustomization name=apps path=./apps/staging prune=true dependsOn=["infra"]            
       #   shell: pwsh        
 
-      - uses: gliech/create-github-secret-action@v1
-        name: Write ACR registry name in secrets
-        with:
-          name: AZURE_CONTAINER_REGISTRY
-          value: ${{ steps.armDeployment.outputs.arcName }}
-          pa_token: ${{ secrets.PA_TOKEN }}          
+      # - uses: gliech/create-github-secret-action@v1
+      #   name: Write ACR registry name in secrets
+      #   with:
+      #     name: AZURE_CONTAINER_REGISTRY
+      #     value: ${{ steps.armDeployment.outputs.arcName }}
+      #     pa_token: ${{ secrets.PA_TOKEN }}          
       
       - name: logout
         run: |
