@@ -61,7 +61,7 @@ jobs:
           files: '["bicep/modules/compute/jumpbox-cloud-init.yaml"]'
         env:
           GITHUB_REPOSITORY: $env.GITHUB_REPOSITORY
-          GITHUB_PAT: 'mockguid'
+          GITHUB_PAT: ${{ secrets.RUNNER_TOKEN }}
 
       - uses: actions/upload-artifact@v2
         with:
