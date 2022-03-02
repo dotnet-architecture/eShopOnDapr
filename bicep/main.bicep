@@ -55,13 +55,13 @@ module vnet 'modules/network/vnet.bicep' = {
   }
 }
 
-// module acr 'modules/acr/registry.bicep' = {
-//   name: 'acr'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module acr 'modules/acr/registry.bicep' = {
+  name: 'acr'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
 
 module jumpbox 'modules/compute/linux.bicep' = {
   name: 'jumpbox'
@@ -75,91 +75,91 @@ module jumpbox 'modules/compute/linux.bicep' = {
   }
 }
 
-// module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
-//   name: 'privateZoneAcr'
-//   params: {
-//     location: location
-//     vnetName: vnet.outputs.virtualNetworkName
-//     privateLinkResourceId: acr.outputs.acrId
-//     subnetId: vnet.outputs.prvEndpointSubnetId
-//     vnetId: vnet.outputs.vnetId
-//     jumpboxname: jumpbox.outputs.jumpboxname
-//     jumpboxPrivateIP: jumpbox.outputs.privateIp
-//   }
-// }
+module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
+  name: 'privateZoneAcr'
+  params: {
+    location: location
+    vnetName: vnet.outputs.virtualNetworkName
+    privateLinkResourceId: acr.outputs.acrId
+    subnetId: vnet.outputs.prvEndpointSubnetId
+    vnetId: vnet.outputs.vnetId
+    jumpboxname: jumpbox.outputs.jumpboxname
+    jumpboxPrivateIP: jumpbox.outputs.privateIp
+  }
+}
 
-// module storage 'modules/storage/storage.bicep' = {
-//   name: 'storage'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module storage 'modules/storage/storage.bicep' = {
+  name: 'storage'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
 
-// module workspace 'modules/workspace/workspace.bicep' = {
-//   name: 'workspace'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module workspace 'modules/workspace/workspace.bicep' = {
+  name: 'workspace'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
 
-// module identityAks 'modules/identity/userassigned.identity.bicep' = {
-//   name: 'identityAks'
-//   params: {
-//     location: location
-//     name: 'aks-identity'
-//   }
-// }
+module identityAks 'modules/identity/userassigned.identity.bicep' = {
+  name: 'identityAks'
+  params: {
+    location: location
+    name: 'aks-identity'
+  }
+}
 
-// module aks 'modules/aks/aks.bicep' = {
-//   name: 'aks'
-//   params: {
-//     aadAdminGroupId: aadAdminGroupId
-//     aksAzureCniSettings: aksAzureCniSettings
-//     location: location
-//     subnetId: vnet.outputs.aksSubnetId
-//     identityAKS: {
-//       '${identityAks.outputs.identityId}': {}
-//     }
-//     workspaceId: workspace.outputs.workSpaceId
-//   }
-// }
+module aks 'modules/aks/aks.bicep' = {
+  name: 'aks'
+  params: {
+    aadAdminGroupId: aadAdminGroupId
+    aksAzureCniSettings: aksAzureCniSettings
+    location: location
+    subnetId: vnet.outputs.aksSubnetId
+    identityAKS: {
+      '${identityAks.outputs.identityId}': {}
+    }
+    workspaceId: workspace.outputs.workSpaceId
+  }
+}
 
-// module networkContributorRole 'modules/identity/role.bicep' = {
-//   name: 'networkContributorRole'
-//   params: {
-//     principalId: identityAks.outputs.principalId
-//     roleGuid: networkContributorRoleId
-//   }
-// }
+module networkContributorRole 'modules/identity/role.bicep' = {
+  name: 'networkContributorRole'
+  params: {
+    principalId: identityAks.outputs.principalId
+    roleGuid: networkContributorRoleId
+  }
+}
 
-// module redis 'modules/redis/redis.bicep' = {
-//   name: 'redis'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module redis 'modules/redis/redis.bicep' = {
+  name: 'redis'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
 
-// module servicebus 'modules/servicebus/servicebus.bicep' = {
-//   name: 'servicebus'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module servicebus 'modules/servicebus/servicebus.bicep' = {
+  name: 'servicebus'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
 
-// module sql 'modules/sql/sql.bicep' = {
-//   name: 'sql'
-//   params: {
-//     administratorLogin: adminSqlUsername
-//     administratorLoginPassword: adminSqlPassword
-//     location: location
-//   }
-// }
+module sql 'modules/sql/sql.bicep' = {
+  name: 'sql'
+  params: {
+    administratorLogin: adminSqlUsername
+    administratorLoginPassword: adminSqlPassword
+    location: location
+  }
+}
 
-// output arcName string = acr.outputs.acrName
-// output jumpboxPrivateIP string = jumpbox.outputs.privateIp
-// output aksRgName string = 'MC_${resourceGroup().name}_${aks.outputs.clusterName}_${location}'
-// output aksName string = aks.outputs.clusterName
+output arcName string = acr.outputs.acrName
+output jumpboxPrivateIP string = jumpbox.outputs.privateIp
+output aksRgName string = 'MC_${resourceGroup().name}_${aks.outputs.clusterName}_${location}'
+output aksName string = aks.outputs.clusterName

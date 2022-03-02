@@ -19,9 +19,15 @@ jobs:
       #     login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
       #     username: ${{ secrets.REGISTRY_USERNAME }}
       #     password: ${{ secrets.REGISTRY_PASSWORD }}
+      #           sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}    
 
       - run: |
           pushd './${{ env.WEBAPP_PATH }}'
           sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
           sudo docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
-          sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}                
+            
+
+      - uses: Azure/container-scan@v0
+        name: Scanning image for vulnerabilities
+        with:
+          image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}         
