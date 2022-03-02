@@ -28,14 +28,3 @@ runcmd:
 
   # Installing docker
   - sudo apt-get install docker.io --yes
-
-  # Install Github runner
-  - GITHUB_REPOSITORY='__GITHUB_REPOSITORY__'
-  - GITHUB_PAT='__GITHUB_PAT__'
-  - registration_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runners/registration-token"  
-  - payload=$(curl -X POST -H "Authorization: token ${GITHUB_PAT}" ${registration_url})
-  - export RUNNER_TOKEN=$(echo $payload | jq .token --raw-output)
-  - mkdir actions-runner && cd actions-runner
-  - curl -o actions-runner-linux-x64-2.287.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.287.1/actions-runner-linux-x64-2.287.1.tar.gz
-  - tar xzf ./actions-runner-linux-x64-2.287.1.tar.gz
-  - ./config.sh --url https://github.com/${GITHUB_REPOSITORY} --token ${RUNNER_TOKEN} --unattended --replace
