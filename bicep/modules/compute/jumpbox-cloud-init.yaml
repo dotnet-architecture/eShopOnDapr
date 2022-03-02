@@ -32,7 +32,7 @@ runcmd:
   # Install Github runner
   - GITHUB_REPOSITORY='__GITHUB_REPOSITORY__'
   - GITHUB_PAT='__GITHUB_PAT__'
-  - registration_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runners/registration-token"
+  - registration_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runners/registration-token"  
   - payload=$(curl -X POST -H "Authorization: token ${GITHUB_PAT}" ${registration_url})
   - export RUNNER_TOKEN=$(echo $payload | jq .token --raw-output)
   - mkdir actions-runner && cd actions-runner

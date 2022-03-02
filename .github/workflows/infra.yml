@@ -62,12 +62,7 @@ jobs:
         env:
           GITHUB_REPOSITORY: $env.GITHUB_REPOSITORY
           GITHUB_PAT: ${{ secrets.RUNNER_TOKEN }}
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: cloudinit
-          path: bicep/modules/compute/jumpbox-cloud-init.yaml         
-      
+       
       # See the change to be deployed, a good practice
       # will be to leverage environment and approvers
       - name: what-if
