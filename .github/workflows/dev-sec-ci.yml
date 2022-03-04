@@ -12,6 +12,13 @@ on:
       projectName:
         required: true
         type: string
+    secrets:
+      AZURE_CONTAINER_REGISTRY:
+        required: true
+      REGISTRY_USERNAME:
+        required: true
+      REGISTRY_PASSWORD:
+        required: true
 
 env:
   DOTNET_VERSION: 6.0.x
