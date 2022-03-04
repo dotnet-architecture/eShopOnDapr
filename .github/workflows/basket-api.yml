@@ -23,81 +23,60 @@ env:
   SERVICE: basket-api
   IMAGE: basket.api
   DOTNET_VERSION: 6.0.x
-  USE_DOTNET_PREVIEW: true
 
 jobs:
 
-  BuildContainersForPR_Linux:
+  BuildAndDeploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Build
+      run: |
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
+        cd src/Services/Basket/Basket.API
+        dotnet build --no-restore
+
+    # - name: Enable experimental features for the Docker daemon and CLI
+    #   run: |
+    #       echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
+    #       mkdir -p ~/.docker
+    #       echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
+    #       sudo service docker restart
+    #       docker version -f '{{.Client.Experimental}}'
+    #       docker version -f '{{.Server.Experimental}}'
     
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
-
-    - name: Build
-      run: |
-        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
-        cd src/Services/Basket/Basket.API
-        dotnet build --no-restore
-
-    - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
-      working-directory: ./src
-      shell: bash
-      env:
-        TAG: ${{ env.BRANCH }}
-        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-
-  BuildLinux:
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }}
-    steps:
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@master
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
-
-    - name: Build
-      run: |
-        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
-        cd src/Services/Basket/Basket.API
-        dotnet build --no-restore
-
-    - name: Enable experimental features for the Docker daemon and CLI
-      run: |
-          echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
-          mkdir -p ~/.docker
-          echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
-          sudo service docker restart
-          docker version -f '{{.Client.Experimental}}'
-          docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Container Registry
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+      run: |
+        sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+    
+    - name: Build Image
+      run: |
+        sudo docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
+      working-directory: ./src/Services/Basket
 
-    - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
-      working-directory: ./src
-      shell: bash
-      env:
-        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+    # - name: Login to Container Registry
+    #   uses: docker/login-action@v1
+    #   with:
+    #     username: ${{ secrets.USERNAME }}
+    #     password: ${{ secrets.PASSWORD }}
 
-    - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
-      working-directory: ./src
-      shell: bash
-      env:
-        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+    # - name: Compose build ${{ env.SERVICE }}
+    #   run: sudo -E docker-compose build ${{ env.SERVICE }}
+    #   working-directory: ./src
+    #   shell: bash
+    #   env:
+    #     REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+
+    # - name: Compose push ${{ env.SERVICE }}
+    #   run: sudo -E docker-compose push ${{ env.SERVICE }}
+    #   working-directory: ./src
+    #   shell: bash
+    #   env:
+    #     REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}

@@ -26,8 +26,10 @@ jobs:
           sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
           sudo docker build . -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}
             
-
+# https://docs.microsoft.com/en-us/azure/defender-for-cloud/defender-for-container-registries-cicd
       - uses: Azure/container-scan@v0
+        id: container-scan
+        continue-on-error: false
         name: Scanning image for vulnerabilities
         with:
           image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }}         
