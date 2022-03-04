@@ -27,7 +27,7 @@ env:
 jobs:
 
   BuildAndDeploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
