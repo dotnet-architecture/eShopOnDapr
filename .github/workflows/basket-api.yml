@@ -56,13 +56,20 @@ jobs:
       run: |
         sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
     
-    - name: Build Image
-      run: |
-        sudo docker build ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
+    - name: Compose build ${{ env.SERVICE }}
+      run: sudo -E docker-compose build ${{ env.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
 
-    - name: Push Image
-      run: |
-        sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }} 
+    # - name: Build Image
+    #   run: |
+    #     sudo docker build ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
+
+    # - name: Push Image
+    #   run: |
+    #     sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }} 
 
     # - name: Login to Container Registry
     #   uses: docker/login-action@v1
