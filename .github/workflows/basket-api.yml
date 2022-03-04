@@ -67,12 +67,12 @@ jobs:
       run: |
         sudo docker build -f ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
 
-    # - uses: Azure/container-scan@v0 
-    #   name: Scan image for vulnerabilities
-    #   id: container-scan
-    #   continue-on-error: false
-    #   with:
-    #     image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
+     - uses: Azure/container-scan@v0 
+       name: Scan image for vulnerabilities
+       id: container-scan
+       continue-on-error: false
+       with:
+         image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
 
     - name: Push Image
       run: |
