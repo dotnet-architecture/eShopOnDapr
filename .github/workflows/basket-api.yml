@@ -67,26 +67,6 @@ jobs:
       run: |
         sudo docker build -f ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
 
-    # - name: Push Image
-    #   run: |
-    #     sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }} 
-
-    # - name: Login to Container Registry
-    #   uses: docker/login-action@v1
-    #   with:
-    #     username: ${{ secrets.USERNAME }}
-    #     password: ${{ secrets.PASSWORD }}
-
-    # - name: Compose build ${{ env.SERVICE }}
-    #   run: sudo -E docker-compose build ${{ env.SERVICE }}
-    #   working-directory: ./src
-    #   shell: bash
-    #   env:
-    #     REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-
-    # - name: Compose push ${{ env.SERVICE }}
-    #   run: sudo -E docker-compose push ${{ env.SERVICE }}
-    #   working-directory: ./src
-    #   shell: bash
-    #   env:
-    #     REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+    - name: Push Image
+      run: |
+        sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/hello-world:${{ github.sha }} 
