@@ -3,47 +3,10 @@ name: basket-api
 on:
   workflow_dispatch:
 
-env:
-  SERVICE: basket-api
-  IMAGE: basket.api
-  DOTNET_VERSION: 6.0.x
-
 jobs:
-
-  BuildAndDeploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@master
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Build
-      run: |
-        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
-        cd src/Services/Basket/Basket.API
-        dotnet build --no-restore
-
-    - name: Build Image
-      run: |
-        docker build -f ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
-    
-    - uses: Azure/container-scan@v0 
-      name: Scan image for vulnerabilities
-      id: container-scan
-      continue-on-error: true  # In real life scenarion you will have this to false
-      with:
-        image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
-
-    - uses: Azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-
-    - name: Push Image
-      run: |
-        sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} 
+  Call-dev-sec-ci:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: basket-api
+      projectPath: src/Services/Basket/Basket.API
+      projectName: Basket.API.csproj

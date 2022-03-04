@@ -1,0 +1,56 @@
+name: DevSecOps CI
+
+on:
+  workflow_call:
+    inputs:
+      imageName:
+        required: true
+        type: string
+      projectPath:
+        required: true 
+        type: string
+      projectName:
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: 6.0.x
+
+jobs:
+  Build-and-scan-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@v2
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Build
+      run: |
+        dotnet restore ${{ inputs.projectPath }}/${{ inputs.projectName }}
+        cd ${{ inputs.projectPath }}
+        dotnet build --no-restore
+
+    - name: Build Image
+      run: |
+        docker build -f ${{ inputs.projectPath }}/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} .
+
+    - uses: Azure/container-scan@v0 
+      name: Scan image for vulnerabilities
+      id: container-scan
+      continue-on-error: false
+      with:
+        image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }}
+
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Push Image
+      run: |
+        sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} 
