@@ -65,7 +65,7 @@ jobs:
 
     - name: Build Image
       run: |
-        sudo docker build -f ./src/Services/Basket/Basket.API -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
+        sudo docker build -f ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
 
     # - name: Push Image
     #   run: |
