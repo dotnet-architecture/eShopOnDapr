@@ -1,0 +1,82 @@
+
+#
+# Notice: Any links, references, or attachments that contain sample scripts, code, or commands comes with the following notification.
+#
+# This Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment.
+# THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+#
+# We grant You a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute the object code form of the Sample Code,
+# provided that You agree:
+#
+# (i) to not use Our name, logo, or trademarks to market Your software product in which the Sample Code is embedded;
+# (ii) to include a valid copyright notice on Your software product in which the Sample Code is embedded; and
+# (iii) to indemnify, hold harmless, and defend Us and Our suppliers from and against any claims or lawsuits,
+# including attorneys’ fees, that arise or result from the use or distribution of the Sample Code.
+#
+# Please note: None of the conditions outlined in the disclaimer above will superseded the terms and conditions contained within the Premier Customer Services Description.
+#
+# DEMO POC - "AS IS"
+
+on:
+  workflow_call:
+    inputs:
+      imageName:
+        required: true
+        type: string
+      projectPath:
+        required: true
+        type: string
+      projectName:
+        required: true
+        type: string
+      dockerfilePath:
+        required: true
+        type: string
+
+jobs:
+
+  build-and-push-image:
+
+    runs-on: ubuntu-latest
+    
+    env:
+      DOTNET_VERSION: 6.0.x
+
+    steps:
+
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Build
+      run: |
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
+        cd src/Services/Basket/Basket.API
+        dotnet build --no-restore
+      working-directory: ${{ inputs.projectPath }}
+
+    - name: Build Image
+      run: |
+        docker build -f ./src/Services/Basket/Basket.API/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }} .
+    
+    - uses: Azure/container-scan@v0 
+      name: Scan image for vulnerabilities
+      id: container-scan
+      continue-on-error: true  # In real life scenarion you will have this to false
+      with:
+        image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}
+
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Push Image
+      run: |
+        sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ env.SERVICE }}:${{ github.sha }}       
