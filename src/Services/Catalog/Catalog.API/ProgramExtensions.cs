@@ -102,5 +102,7 @@ public static class ProgramExtensions
                     }
                 );
         }
+
+        return Policy.NoOp();
     }
 }
