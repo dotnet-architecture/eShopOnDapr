@@ -14,7 +14,7 @@ jobs:
         projectName: ['Basket.API.csproj']
     
     steps:      
-       - uses: ./.github/workflows/dev-sec-ci.yml
+       - uses: ./.github/workflows/dev-sec-ci
          with:
            imageName: ${{ matrix.imageName }}
            projectPath: ${{ matrix.projectPath }}
