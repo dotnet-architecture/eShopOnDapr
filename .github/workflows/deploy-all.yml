@@ -1,19 +1,19 @@
-name: catalog-api
+name: Deploy All Microservices
 
 on:
   workflow_dispatch:
-
+    
 jobs:
-  Call-dev-sec-ci:
+  BuildAndDeploy:
     uses: ./.github/workflows/dev-sec-ci.yml
     with:
-      imageName: catalog-api
-      projectPath: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator
-      projectName: Catalog.API.csproj
+      imageName: blazor-client
+      projectPath: src/Web/BlazorClient.Host
+      projectName: BlazorClient.Host.csproj
     secrets:
       AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
       REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
-      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}     
