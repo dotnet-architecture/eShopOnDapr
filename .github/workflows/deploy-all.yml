@@ -4,16 +4,24 @@ on:
   workflow_dispatch:
     
 jobs:
-  BuildAndDeploy:
-    uses: ./.github/workflows/dev-sec-ci.yml
-    with:
-      imageName: blazor-client
-      projectPath: src/Web/BlazorClient.Host
-      projectName: BlazorClient.Host.csproj
-    secrets:
-      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
-      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}     
+  build-all-services:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        imageName: ['basket-api']
+        projectPath: ['src/Services/Basket/Basket.API']
+        projectName: ['Basket.API.csproj']
+    
+    steps:      
+       - uses: ./.github/workflows/dev-sec-ci.yml
+         with:
+           imageName: ${{ matrix.imageName }}
+           projectPath: ${{ matrix.projectPath }}
+           projectName: ${{ matrix.projectName }}       
+           AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+           AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+           AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}     
