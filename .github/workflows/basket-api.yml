@@ -5,7 +5,7 @@ on:
 
 jobs:
   Call-dev-sec-ci:
-    uses: ./.github/workflows/dev-sec-ci.yml
+    uses: ./.github/workflows/templates/dev-sec-ci.yml
     with:
       imageName: basket-api
       projectPath: src/Services/Basket/Basket.API
