@@ -130,7 +130,7 @@ static_resources:
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: catalog-api
+        address: ${ENVOY_CATALOG_API_ADDRESS}
         port_value: 80
   - name: ordering-api
     connect_timeout: 0.25s
@@ -138,5 +138,5 @@ static_resources:
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: ordering-api
+        address: ${ENVOY_ORDERING_API_ADDRESS}
         port_value: 80
