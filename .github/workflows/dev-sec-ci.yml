@@ -60,6 +60,11 @@ jobs:
       with:
         sarif_file: snyk.sarif
 
+    - uses: actions/upload-artifact@v3
+      with:
+        name: snyk.sarif
+        path: snyk.sarif
+
     - name: Build Image
       run: |
         docker build -f ${{ inputs.projectPath }}/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} .
