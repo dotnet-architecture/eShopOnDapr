@@ -49,7 +49,7 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --sarif-file-output=snyk.sarif
+        args: --sarif-file-output=snyk.sarif --file=${{ inputs.projectPath }}/obj/project.assets.json
 
     - name: Upload result to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v1
