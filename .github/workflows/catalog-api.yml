@@ -8,7 +8,7 @@ jobs:
     uses: ./.github/workflows/dev-sec-ci.yml
     with:
       imageName: catalog-api
-      projectPath: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator
+      projectPath: src/Services/Catalog/Catalog.API
       projectName: Catalog.API.csproj
     secrets:
       AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
