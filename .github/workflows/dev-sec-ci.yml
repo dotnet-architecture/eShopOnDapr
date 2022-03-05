@@ -78,3 +78,10 @@ jobs:
       run: |
         sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
         sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} 
+
+    - name: Post logs to appinsights
+      uses: Azure/publish-security-assessments@v0
+      with: 
+        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
+        connection-string: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}
+        subscription-token: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}         
