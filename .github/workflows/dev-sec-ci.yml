@@ -21,6 +21,10 @@ on:
         required: true
       SNYK_TOKEN:
         required: true
+      AZ_APPINSIGHTS_CONNECTION_STRING:
+        required: true
+      AZ_SUBSCRIPTION_TOKEN:
+        required: true
 
 env:
   DOTNET_VERSION: 6.0.x
