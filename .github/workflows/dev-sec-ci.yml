@@ -41,19 +41,6 @@ jobs:
         cd ${{ inputs.projectPath }}
         dotnet build --no-restore
 
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/dotnet@master
-      continue-on-error: true # To make sure that SARIF upload gets called
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --sarif-file-output=snyk.sarif snyk test --file=${{ inputs.projectPath }}/${{ inputs.projectName }}
-
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: snyk.sarif
-
     - name: Build Image
       run: |
         docker build -f ${{ inputs.projectPath }}/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} .
