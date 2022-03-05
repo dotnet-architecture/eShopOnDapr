@@ -197,29 +197,3 @@ module webstatus 'modules/apps/webstatus.bicep' = {
     containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.containerAppsEnvironmentDomain
   }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Testing
-////////////////////////////////////////////////////////////////////////////////
-
-module echo 'modules/echo.bicep' = {
-  name: '${deployment().name}-echo'
-  dependsOn: [
-    containerAppsEnvironment
-  ]
-  params: {
-    location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
-  }
-}
-
-module echoHttps 'modules/echo-https.bicep' = {
-  name: '${deployment().name}-echo-https'
-  dependsOn: [
-    containerAppsEnvironment
-  ]
-  params: {
-    location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
-  }
-}
