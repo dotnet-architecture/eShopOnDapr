@@ -41,8 +41,8 @@ app.Use((context, next) =>
     // x-forwarded-proto header instead of `https` (even when connecting
     // using https).
     // See https://github.com/microsoft/azure-container-apps/issues/97
-    if (context.Request.Headers.TryGetValue("x-arr-ssl", out StringValues ssl) &&
-        ssl.First().ToLowerInvariant() == "true")
+    if (context.Request.Headers.TryGetValue("x-arr-ssl", out var ssl) &&
+        string.CompareOrdinal(ssl, "true") == 0)
     {
         context.Request.Scheme = "https";
     }
