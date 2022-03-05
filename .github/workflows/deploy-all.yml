@@ -3,25 +3,103 @@ name: Deploy All Microservices
 on:
   workflow_dispatch:
     
-jobs:
-  build-all-services:
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        imageName: ['basket-api']
-        projectPath: ['src/Services/Basket/Basket.API']
-        projectName: ['Basket.API.csproj']
-    
-    steps:      
-       - uses: ./.github/workflows/dev-sec-ci
-         with:
-           imageName: ${{ matrix.imageName }}
-           projectPath: ${{ matrix.projectPath }}
-           projectName: ${{ matrix.projectName }}       
-           AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-           AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
-           AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}     
+jobs:    
+  deploy-basket-api:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: basket-api
+      projectPath: src/Services/Basket/Basket.API
+      projectName: Basket.API.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
+
+  deploy-blazor-client:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: blazor-client
+      projectPath: src/Web/BlazorClient.Host
+      projectName: BlazorClient.Host.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
+
+  deploy-catalog-api:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: catalog-api
+      projectPath: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator
+      projectName: Catalog.API.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}    
+
+  deploy-identity-api:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: identity-api
+      projectPath: src/Services/Identity/Identity.API
+      projectName: Identity.API.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}   
+
+  deploy-ordering-api:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: ordering-api
+      projectPath: src/Services/Ordering/Ordering.API
+      projectName: Ordering.API.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
+
+  deploy-payment-api:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: payment-api
+      projectPath: src/Services/Payment/Payment.API
+      projectName: Payment.API.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
+
+  deploy-api-gw:
+    uses: ./.github/workflows/dev-sec-ci.yml
+    with:
+      imageName: webshoppingagg
+      projectPath: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator
+      projectName: Web.Shopping.HttpAggregator.csproj
+    secrets:
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      AZ_APPINSIGHTS_CONNECTION_STRING: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}  
+      AZ_SUBSCRIPTION_TOKEN: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}                  
+           
+
