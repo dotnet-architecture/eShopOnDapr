@@ -64,24 +64,19 @@ jobs:
       run: |
         docker build -f ${{ inputs.projectPath }}/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} .
 
-    # - name: Run Snyk to check Docker image for vulnerabilities
-    #   # Snyk can be used to break the build when it detects vulnerabilities.
-    #   # In this case we want to upload the issues to GitHub Code Scanning
-    #   continue-on-error: true
-    #   uses: snyk/actions/docker@14818c4695ecc4045f33c9cee9e795a788711ca4
-    #   env:
-    #     # In order to use the Snyk Action you will need to have a Snyk API token.
-    #     # More details in https://github.com/snyk/actions#getting-your-snyk-token
-    #     # or you can signup for free at https://snyk.io/login
-    #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    #   with:
-    #     image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }}
-    #     args: --file=${{ inputs.projectPath }}/Dockerfile       
+      # - name: Run Snyk to push the result to Github Security for medium threshold
+      continue-on-error: true
+      uses: snyk/actions/docker@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }}
+        args: --file=${{ inputs.projectPath }}/Dockerfile --severity-threshold=medium      
 
-    # - name: Upload result to GitHub Code Scanning
-    #   uses: github/codeql-action/upload-sarif@v1
-    #   with:
-    #     sarif_file: snyk.sarif        
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: snyk.sarif        
 
     - uses: Azure/container-scan@v0 
       name: Scan image for vulnerabilities
@@ -91,17 +86,12 @@ jobs:
         image-name: ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }}
         run-quality-checks: true
 
-    # - uses: Azure/docker-login@v1
-    #   with:
-    #     login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-    #     username: ${{ secrets.REGISTRY_USERNAME }}
-    #     password: ${{ secrets.REGISTRY_PASSWORD }}
-
     - name: Push Image
       run: |
         sudo az acr login -n ${{ secrets.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
         sudo docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/${{ inputs.imageName }}:${{ github.sha }} 
 
+    # Push it to app insights (scan results from Azure Container Scan)
     - name: Post logs to appinsights
       uses: Azure/publish-security-assessments@v0
       with: 
