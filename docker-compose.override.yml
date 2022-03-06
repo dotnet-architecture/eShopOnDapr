@@ -194,10 +194,15 @@ services:
       - "./dapr/configuration/:/configuration"
 
   webshoppingapigw:
+    environment:
+      - ENVOY_CATALOG_API_ADDRESS=catalog-api
+      - ENVOY_CATALOG_API_PORT=80
+      - ENVOY_ORDERING_API_ADDRESS=ordering-api
+      - ENVOY_ORDERING_API_PORT=80
     ports:
-    - "5202:80"
-    - "15202:8001"
-    - "50008:50001"
+      - "5202:80"
+      - "15202:8001"
+      - "50008:50001"
 
   webshoppingapigw-dapr:
     command: ["./daprd",
