@@ -1,13 +1,6 @@
 name: Create Azure Resources
 
 on:
-  # push:
-  #   branches:
-  #   - main
-
-  #   paths:
-  #   - bicep/**    
-  #   - .github/workflows/infra.yml
   workflow_dispatch:
         
 jobs:
@@ -15,7 +8,7 @@ jobs:
     
     env:
       LOCATION: 'eastus'
-      RESOURCE_GROUP_NAME: 'rg-aks-devsecops'
+      RESOURCE_GROUP_NAME: 'rg-aks-devsecops-test'
 
     runs-on: ubuntu-latest
 
@@ -37,6 +30,21 @@ jobs:
       - name: Convert to ARM template
         run: |
           bicep build ./bicep/main.bicep  
+
+      - name: Run Snyk to check bicep tmpl security
+        # Snyk can be used to break the build when it detects security issues.
+        # In this case we want to upload the issues to GitHub Code Scanning
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: ./bicep/main.bicep
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif    
 
       # Replace parameter in parameter file
       - name: Replace token parameters file

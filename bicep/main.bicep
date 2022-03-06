@@ -75,18 +75,18 @@ module jumpbox 'modules/compute/linux.bicep' = {
   }
 }
 
-module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
-  name: 'privateZoneAcr'
-  params: {
-    location: location
-    vnetName: vnet.outputs.virtualNetworkName
-    privateLinkResourceId: acr.outputs.acrId
-    subnetId: vnet.outputs.prvEndpointSubnetId
-    vnetId: vnet.outputs.vnetId
-    jumpboxname: jumpbox.outputs.jumpboxname
-    jumpboxPrivateIP: jumpbox.outputs.privateIp
-  }
-}
+// module privateZoneAcr 'modules/dns/privateACRDnzZone.bicep' = {
+//   name: 'privateZoneAcr'
+//   params: {
+//     location: location
+//     vnetName: vnet.outputs.virtualNetworkName
+//     privateLinkResourceId: acr.outputs.acrId
+//     subnetId: vnet.outputs.prvEndpointSubnetId
+//     vnetId: vnet.outputs.vnetId
+//     jumpboxname: jumpbox.outputs.jumpboxname
+//     jumpboxPrivateIP: jumpbox.outputs.privateIp
+//   }
+// }
 
 module storage 'modules/storage/storage.bicep' = {
   name: 'storage'
