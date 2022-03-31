@@ -4,28 +4,18 @@ metadata:
   name: pubsub
   namespace: eshop
 spec:
-# Temporarily use Redis for pub/sub while waiting for https://github.com/dapr/components-contrib/issues/1372 to get resolved.
-  type: pubsub.redis
-#  type: pubsub.rabbitmq
+  type: pubsub.rabbitmq
   version: v1
   metadata:
-  #- name: host
-  #  value: "amqp://rabbitmq:5672"
-  #- name: durable
-  #  value: "false"
-  #- name: deletedWhenUnused
-  #  value: "false"
-  #- name: autoAck
-  #  value: "false"
-  #- name: reconnectWait
-  #  value: "0"
-  #- name: concurrency
-  #  value: parallel
-  - name: redisHost
-    value: redis:6379
-  - name: redisPassword
-    secretKeyRef:
-      name: State.RedisPassword
-      key: State.RedisPassword
-auth:
-  secretStore: eshop-secretstore
+  - name: host
+    value: "amqp://rabbitmq:5672"
+  - name: durable
+    value: "false"
+  - name: deletedWhenUnused
+    value: "false"
+  - name: autoAck
+    value: "false"
+  - name: reconnectWait
+    value: "0"
+  - name: concurrency
+    value: parallel

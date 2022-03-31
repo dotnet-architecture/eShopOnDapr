@@ -19,6 +19,7 @@ namespace IdentityServerHost.Quickstart.UI
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly IAuthenticationHandlerProvider _handlerProvider;
         private readonly IEventService _events;
 
         public AccountController(
@@ -27,6 +28,7 @@ namespace IdentityServerHost.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
+            IAuthenticationHandlerProvider handlerProvider,
             IEventService events)
         {
             _userManager = userManager;
@@ -34,6 +36,7 @@ namespace IdentityServerHost.Quickstart.UI
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
+            _handlerProvider = handlerProvider;
             _events = events;
         }
 
@@ -316,8 +319,8 @@ namespace IdentityServerHost.Quickstart.UI
                 var idp = User.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
                 if (idp != null && idp != IdentityServerConstants.LocalIdentityProvider)
                 {
-                    var providerSupportsSignout = await HttpContext.GetSchemeSupportsSignOutAsync(idp);
-                    if (providerSupportsSignout)
+                    var handler = await _handlerProvider.GetHandlerAsync(HttpContext, idp);
+                    if (handler is IAuthenticationSignOutHandler)
                     {
                         if (vm.LogoutId == null)
                         {
