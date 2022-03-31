@@ -15,7 +15,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: 'payment-api'
-          image: 'eshopdapr/payment.api:latest'
+          image: 'eshopdapr/payment.api:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -50,6 +50,9 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
                 name: 'connectionString'
                 secretRef: 'service-bus-connection-string'
               }
+            ]
+            scopes: [
+              'payment-api'
             ]
           }
         ]
