@@ -48,7 +48,7 @@ public static class ProgramExtensions
     {
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
         {
-            options.IssuerUri = "null";
+            options.IssuerUri = builder.Configuration["IssuerUrl"];
             options.Authentication.CookieLifetime = TimeSpan.FromHours(2);
 
             options.Events.RaiseErrorEvents = true;

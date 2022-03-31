@@ -100,6 +100,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - SeqServerUrl=http://seq
       - RetryMigrations=true
+      - IssuerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - BlazorClientUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
       - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
       - OrderingApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
@@ -194,12 +195,15 @@ services:
       - "./dapr/configuration/:/configuration"
 
   webshoppingapigw:
-    volumes:
-      - ./src/ApiGateways/Envoy:/etc/envoy
+    environment:
+      - ENVOY_CATALOG_API_ADDRESS=catalog-api
+      - ENVOY_CATALOG_API_PORT=80
+      - ENVOY_ORDERING_API_ADDRESS=ordering-api
+      - ENVOY_ORDERING_API_PORT=80
     ports:
-    - "5202:80"
-    - "15202:8001"
-    - "50008:50001"
+      - "5202:80"
+      - "15202:8001"
+      - "50008:50001"
 
   webshoppingapigw-dapr:
     command: ["./daprd",

@@ -83,3 +83,13 @@ To remove eShopOnDapr from Kubernetes, uninstall the Helm chart:
 ```terminal
 helm uninstall myeshop
 ```
+
+## Run eShopOnDapr on Azure Container Apps
+
+eShopOnDapr includes Bicep files for easy deployment to Azure Container Apps. Run the following commands from the `deploy\containerapps` folder to start install using the Azure CLI:
+
+```terminal
+az group create --name eShopOnContainerApps --location eastus
+
+az deployment group create --resource-group eShopOnContainerApps --template-file main.bicep
+```
