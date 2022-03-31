@@ -100,6 +100,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - SeqServerUrl=http://seq
       - RetryMigrations=true
+      - IssuerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - BlazorClientUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
       - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
       - OrderingApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
