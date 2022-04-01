@@ -22,7 +22,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: 'basket-api'
-          image: 'eshopdapr/basket.api:latest'
+          image: 'eshopdapr/basket.api:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -82,6 +82,9 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
                 value: 'true'
               }
             ]
+            scopes: [
+              'basket-api'
+            ]
           }
           {
             name: 'pubsub'
@@ -92,6 +95,9 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
                 name: 'connectionString'
                 secretRef: 'service-bus-connection-string'
               }
+            ]
+            scopes: [
+              'basket-api'
             ]
           }
         ]

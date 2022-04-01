@@ -13,7 +13,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: 'blazor-client'
-          image: 'eshopdapr/blazor.client:latest'
+          image: 'eshopdapr/blazor.client:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
