@@ -13,7 +13,7 @@ data:
   HealthChecksUI__HealthChecks__1__Name: Catalog API
   HealthChecksUI__HealthChecks__1__Uri: http://catalog-api/hc
   HealthChecksUI__HealthChecks__2__Name: Identity API
-  HealthChecksUI__HealthChecks__2__Uri: http://identity-api/hc
+  HealthChecksUI__HealthChecks__2__Uri: http://identity-api/identity/hc
   HealthChecksUI__HealthChecks__3__Name: Ordering API
   HealthChecksUI__HealthChecks__3__Uri: http://ordering-api/hc
   HealthChecksUI__HealthChecks__4__Name: Payment API
@@ -22,6 +22,10 @@ data:
   HealthChecksUI__HealthChecks__5__Uri: http://webshoppingagg/hc
   HealthChecksUI__HealthChecks__6__Name: Blazor Client
   HealthChecksUI__HealthChecks__6__Uri: http://blazor-client/hc
+  ui_path: /healthchecks-ui
+  ui_api_path: /healthchecks-api
+  ui_webhooks_path: /healthchecks-webhooks
+  ui_resources_path: /healthchecks-resources
 
 ---
 
@@ -76,3 +80,32 @@ spec:
       name: http
   selector:
     service: webstatus
+
+{{- if .Values.enableIngress }}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webstatus-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webstatus
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths: 
+      - path: /healthchecks-(ui|api|resources|webhooks)(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: webstatus
+            port: 
+              number: 80
+{{- end }}

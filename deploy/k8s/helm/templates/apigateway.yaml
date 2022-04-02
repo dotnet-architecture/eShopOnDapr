@@ -234,3 +234,32 @@ spec:
       name: daprgrpc
   selector:
     service: apigateway
+
+{{- if .Values.enableIngress }}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apigateway-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: apigateway
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths: 
+      - path: /(b|c|o|api|hub)(/.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: apigateway
+            port: 
+              number: 80
+{{- end }}

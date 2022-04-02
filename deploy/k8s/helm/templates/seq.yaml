@@ -28,6 +28,10 @@ spec:
         env:
           - name: ACCEPT_EULA
             value: "Y"
+          - name: BASE_URI
+            value: /seq
+          - name: SEQ_API_CANONICALURI
+            value: /seq
 
 ---
 
@@ -49,3 +53,30 @@ spec:
       name: http
   selector:
     service: seq
+{{- if .Values.enableIngress }}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seq-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: seq
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths: 
+      - path: /seq
+        pathType: Prefix
+        backend:
+          service:
+            name: seq
+            port: 
+              number: 80
+{{- end }}

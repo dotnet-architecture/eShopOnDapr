@@ -9,8 +9,13 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30050
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
+{{- if .Values.enableIngress }}
+  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP }}
+  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP }}/identity
+{{- else }}
+  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP }}:30050
+  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP }}:30008/identity
+{{- end }}
 
 ---
 
@@ -71,3 +76,32 @@ spec:
       name: http
   selector:
     service: blazorclient
+
+{{- if .Values.enableIngress }}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blazorclient-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: blazorclient
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths: 
+      - path: /  #(authentication/.*)?
+        pathType: Prefix
+        backend:
+          service:
+            name: blazor-client
+            port: 
+              number: 80
+{{- end }}
