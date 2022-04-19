@@ -28,10 +28,8 @@ spec:
         env:
           - name: ACCEPT_EULA
             value: "Y"
-          - name: BASE_URI
-            value: /seq
           - name: SEQ_API_CANONICALURI
-            value: /seq
+            value: "http://{{ .Values.externalDnsNameOrIP }}/log/"
 
 ---
 
@@ -50,11 +48,11 @@ spec:
       targetPort: 80
       nodePort: 30011
       protocol: TCP
-      name: http
+      name: ui
   selector:
     service: seq
-{{- if .Values.enableIngress }}
 
+{{- if .Values.enableIngress }}
 ---
 
 apiVersion: networking.k8s.io/v1
@@ -66,17 +64,46 @@ metadata:
     app: eshop
     service: seq
   annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+  - host: {{ .Values.externalDnsNameOrIP }}
+    http:
       paths: 
-      - path: /seq
+      - path: /log/(.*)
         pathType: Prefix
         backend:
           service:
             name: seq
             port: 
-              number: 80
-{{- end }}
+              name: ui
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seq-ingress-redirect
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: seq
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: "http://{{ .Values.externalDnsNameOrIP }}/log/"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.externalDnsNameOrIP }}
+    http:
+      paths: 
+      - path: /log
+        pathType: Exact
+        backend:
+          service:
+            name: seq
+            port: 
+              name: ui
+{{- end -}}

@@ -99,7 +99,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+  - host: {{ .Values.externalDnsNameOrIP }}
+    http:
       paths: 
       - path: /healthchecks-(ui|api|resources|webhooks)(/|$)(.*)
         pathType: Prefix

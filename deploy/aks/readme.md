@@ -32,7 +32,22 @@ az aks get-credentials --resource-group <resource-group-name> --name <k8s-cluste
 az aks get-credentials --resource-group eShopOnDapr --name myAKSCluster
 ```
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
+https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/cloud/deploy.yaml
+
+
+helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 
 
 dapr init -k
+
+Docker for Desktop: 
+helm install myeshop . --set enableIngress=true,externalDnsNameOrIP=kubernetes.docker.internal
+
+http://kubernetes.docker.internal/healthchecks-ui
+
+Probeer dit: https://stackoverflow.com/questions/60839510/docker-desktop-k8s-plus-https-proxy-multiple-external-ports-to-pods-on-http-in
+
+
+

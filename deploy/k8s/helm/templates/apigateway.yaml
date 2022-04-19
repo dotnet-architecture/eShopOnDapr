@@ -253,7 +253,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+  - host: {{ .Values.externalDnsNameOrIP }}
+    http:
       paths: 
       - path: /(b|c|o|api|hub)(/.*)
         pathType: Prefix
