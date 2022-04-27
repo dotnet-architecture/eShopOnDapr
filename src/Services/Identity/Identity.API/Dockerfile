@@ -18,6 +18,7 @@ COPY ["src/Services/Ordering/Ordering.API/Ordering.API.csproj", "src/Services/Or
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
 COPY ["src/Web/BlazorClient.Host/BlazorClient.Host.csproj", "src/Web/BlazorClient.Host/"]
 COPY ["src/Web/BlazorClient/BlazorClient.csproj", "src/Web/BlazorClient/"]
+COPY ["src/Web/WebStatus/WebStatus.csproj", "src/Web/WebStatus/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
 COPY ["eShopOnDapr.sln", "./"]
