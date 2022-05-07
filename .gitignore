@@ -391,3 +391,5 @@ MigrationBackup/
 /src/Services/Identity/Identity.API/keys/is-signing-key-22B27C69702109C30DDF13C5E8E156D8.json
 /src/Services/Ordering/Ordering.API/.aspnet/DataProtection-Keys/key-b0c35976-b46c-41ab-8f3a-710334bfb345.xml
 /src/Web/BlazorClient.Host/.aspnet/DataProtection-Keys/key-5495f7e4-a7fb-4723-a26b-613c3969fb3f.xml
+/minio/data/.minio.sys/buckets/.minio.sys/buckets
+/minio/data

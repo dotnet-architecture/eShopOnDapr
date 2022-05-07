@@ -31,12 +31,19 @@ static_resources:
                 allow_headers: "authorization, content-type, x-requestid, x-requested-with, x-signalr-user-agent"
                 allow_credentials: true
               routes:
+              - name: "x-pics"
+                match:
+                  prefix: "x/c/pics/"
+                route:
+                  auto_host_rewrite: true
+                  prefix_rewrite: "x/pics/"
+                  cluster: catalog
               - name: "pics"
                 match:
                   prefix: "/c/pics/"
                 route:
                   auto_host_rewrite: true
-                  prefix_rewrite: "/pics/"
+                  prefix_rewrite: "/api/v1/catalog/img/" #http://192.168.1.5:5202/c/pics/10.jpeg
                   cluster: catalog
               - name: "c-short"
                 match:

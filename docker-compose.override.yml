@@ -6,6 +6,18 @@ version: '3.4'
 # but values present in the environment vars at runtime will always override those defined inside the .env file
 
 services:
+  minio:
+    restart: always
+    command: ["minio", "server", "--console-address", ":9001", "/data"]
+    volumes:
+      - ./minio/data:/data
+      - ./minio/config:/root/.minio
+    ports:
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
 
   maildev:
     ports:
@@ -76,6 +88,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - RetryMigrations=true
+      - Minio__Endpoint=minio:9000
+      - Minio__SecretKey=${MINIO_ROOT_PASSWORD}
+      - Minio__BucketName=eshop-catalog
+      - Minio__AccessKey=${MINIO_ROOT_USER}
       - SeqServerUrl=http://seq
       # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
       - ConnectionStrings__CatalogDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
