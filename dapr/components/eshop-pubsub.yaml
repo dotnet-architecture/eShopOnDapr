@@ -8,7 +8,7 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: "amqps://nyipabyg:FUcLCU1Ur-giK6WBtiAiwDJPBJGmB1Ru@gerbil.rmq.cloudamqp.com/nyipabyg"
+    value: "amqp://rabbitmq:4672"
   - name: durable
     value: "false"
   - name: deletedWhenUnused
