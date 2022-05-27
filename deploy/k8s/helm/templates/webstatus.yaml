@@ -8,6 +8,7 @@ metadata:
     service: webstatus
 data:
   ASPNETCORE_URLS: http://0.0.0.0:80
+  PATH_BASE: /status
   HealthChecksUI__HealthChecks__0__Name: Basket API
   HealthChecksUI__HealthChecks__0__Uri: http://basket-api/hc
   HealthChecksUI__HealthChecks__1__Name: Catalog API
@@ -22,10 +23,6 @@ data:
   HealthChecksUI__HealthChecks__5__Uri: http://webshoppingagg/hc
   HealthChecksUI__HealthChecks__6__Name: Blazor Client
   HealthChecksUI__HealthChecks__6__Uri: http://blazor-client/hc
-  ui_path: /healthchecks-ui
-  ui_api_path: /healthchecks-api
-  ui_webhooks_path: /healthchecks-webhooks
-  ui_resources_path: /healthchecks-resources
 
 ---
 
@@ -50,10 +47,10 @@ spec:
     spec:
       containers:
         - name: webstatus
-          image: xabarilcoding/healthchecksui:5.0.0
+          image: eshopdapr/webstatus:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: webstatus-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -71,17 +68,12 @@ metadata:
     app: eshop
     service: webstatus
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30007
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: webstatus-http
   selector:
     service: webstatus
-
-{{- if .Values.enableIngress }}
 
 ---
 
@@ -99,14 +91,40 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: {{ .Values.externalDnsNameOrIP }}
+  - host: {{ .Values.hostName }}
     http:
       paths: 
-      - path: /healthchecks-(ui|api|resources|webhooks)(/|$)(.*)
+      - path: /status(/.*)
         pathType: Prefix
         backend:
           service:
             name: webstatus
             port: 
               number: 80
-{{- end }}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webstatus-ingress-redirect
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: webstatus
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: "http://{{ .Values.hostName }}/status/"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.hostName }}
+    http:
+      paths: 
+      - path: /status
+        pathType: Exact
+        backend:
+          service:
+            name: webstatus
+            port: 
+              name: http

@@ -10,7 +10,7 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
+  IdentityUrlExternal: http://{{ .Values.hostName}}:30008
   SeqServerUrl: http://seq
   # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
   ConnectionStrings__OrderingDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
@@ -47,7 +47,7 @@ spec:
           image: eshopdapr/ordering.api:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: api-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -71,12 +71,9 @@ metadata:
     app: eshop
     service: ordering
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30002
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: api-http
   selector:
     service: ordering

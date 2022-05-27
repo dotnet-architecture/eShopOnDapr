@@ -1,8 +1,5 @@
 # K8s namespace to deploy eShopOnDapr in.
 namespace: eshopondapr
 
-# Host (DNS name or IP) where eShopOnDapr can be accessed.
-externalDnsNameOrIP: localhost
-
-# Whether or not to deploy K8s ingress resources.
-enableIngress: false
+# Name of host where eShopOnDapr can be accessed.
+hostName: localhost

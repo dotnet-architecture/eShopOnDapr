@@ -235,8 +235,6 @@ spec:
   selector:
     service: apigateway
 
-{{- if .Values.enableIngress }}
-
 ---
 
 apiVersion: networking.k8s.io/v1
@@ -253,7 +251,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: {{ .Values.externalDnsNameOrIP }}
+  - host: {{ .Values.hostName }}
     http:
       paths: 
       - path: /(b|c|o|api|hub)(/.*)
@@ -263,4 +261,3 @@ spec:
             name: apigateway
             port: 
               number: 80
-{{- end }}

@@ -9,13 +9,8 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-{{- if .Values.enableIngress }}
-  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP }}
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP }}/identity
-{{- else }}
-  ApiGatewayUrlExternal: http://{{ .Values.externalDnsNameOrIP }}:30050
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP }}:30008/identity
-{{- end }}
+  ApiGatewayUrlExternal: http://{{ .Values.hostName }}
+  IdentityUrlExternal: http://{{ .Values.hostName }}/identity
 
 ---
 
@@ -43,7 +38,7 @@ spec:
           image: eshopdapr/blazor.client:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: client-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -67,17 +62,12 @@ metadata:
     app: eshop
     service: blazorclient
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30000
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: client-http
   selector:
     service: blazorclient
-
-{{- if .Values.enableIngress }}
 
 ---
 
@@ -95,14 +85,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: {{ .Values.externalDnsNameOrIP }}
+  - host: {{ .Values.hostName }}
     http:
       paths: 
-      - path: /  #(authentication/.*)?
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: blazor-client
             port: 
               number: 80
-{{- end }}

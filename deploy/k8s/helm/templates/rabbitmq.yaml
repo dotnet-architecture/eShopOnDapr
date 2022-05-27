@@ -22,7 +22,7 @@ spec:
         image: rabbitmq:3-management-alpine
         imagePullPolicy: IfNotPresent
         ports:
-          - name: http
+          - name: rabbitmq-http
             containerPort: 5672
             protocol: TCP
 
@@ -37,12 +37,9 @@ metadata:
     app: eshop
     service: rabbitmq
 spec:
-  type: NodePort
   ports:
-    - port: 5672
-      targetPort: 5672
-      nodePort: 32672
-      protocol: TCP
-      name: rabbitmq
+    - name: rabbitmq
+      port: 5672
+      targetPort: rabbitmq-http
   selector:
     service: rabbitmq

@@ -11,16 +11,8 @@ data:
   ASPNETCORE_URLS: http://0.0.0.0:80
   PATH_BASE: /identity
   SeqServerUrl: http://seq
-{{- if .Values.enableIngress }}
-  IssuerUrl: http://{{ .Values.externalDnsNameOrIP}}
-  BlazorClientUrlExternal: http://{{ .Values.externalDnsNameOrIP}}
-{{- else }}
-  IssuerUrl: http://{{ .Values.externalDnsNameOrIP}}:30008
-  BlazorClientUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30000
-  BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
-  OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
-  ShoppingAggregatorApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30006
-{{- end }}
+  IssuerUrl: http://{{ .Values.hostName}}
+  BlazorClientUrlExternal: http://{{ .Values.hostName}}
   # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
   ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
@@ -50,7 +42,7 @@ spec:
           image: eshopdapr/identity.api:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: identity-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -74,17 +66,12 @@ metadata:
     app: eshop
     service: identity
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30008 # TODO Only when not using ingress
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: identity-http
   selector:
     service: identity
-
-{{- if .Values.enableIngress }}
 
 ---
 
@@ -102,7 +89,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: {{ .Values.externalDnsNameOrIP }}
+  - host: {{ .Values.hostName }}
     http:
       paths: 
       - path: /identity(/.*)
@@ -112,4 +99,3 @@ spec:
             name: identity-api
             port: 
               name: http
-{{- end }}
