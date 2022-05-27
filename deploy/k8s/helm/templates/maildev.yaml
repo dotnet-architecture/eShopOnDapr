@@ -41,16 +41,13 @@ metadata:
     app: eshop
     service: mailserver
 spec:
-  type: NodePort
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30012
       protocol: TCP
       name: http
     - port: 25
       targetPort: 25
-      nodePort: 30013
       protocol: TCP
       name: smtp
   selector:
