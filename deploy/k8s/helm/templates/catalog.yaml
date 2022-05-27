@@ -70,21 +70,17 @@ metadata:
     app: eshop
     service: catalog
 spec:
-  type: NodePort
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30003
       protocol: TCP
       name: http
     - port: 3500
       targetPort: 3500
-      nodePort: 30040
       protocol: TCP
       name: dapr-http
     - port: 50001
       targetPort: 50001
-      nodePort: 30041
       protocol: TCP
       name: dapr-grpc
   selector:

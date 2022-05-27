@@ -9,7 +9,7 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
+  IdentityUrlExternal: http://{{ .Values.hostName}}:30008
   SeqServerUrl: http://seq
   BasketUrlHC: http://basket-api/hc
   CatalogUrlHC: http://catalog-api/hc
@@ -46,7 +46,7 @@ spec:
           image: eshopdapr/webshoppingagg:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: api-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -70,12 +70,9 @@ metadata:
     app: eshop
     service: webshoppingagg
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30006
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: api-http
   selector:
     service: webshoppingagg

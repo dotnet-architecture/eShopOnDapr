@@ -22,16 +22,16 @@ COPY ["src/Web/WebStatus/WebStatus.csproj", "src/Web/WebStatus/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
 COPY ["eShopOnDapr.sln", "./"]
-RUN dotnet restore "src/Web/BlazorClient.Host/BlazorClient.Host.csproj"
+RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
-WORKDIR "/src/src/Web/BlazorClient.Host"
-# RUN dotnet build "BlazorClient.Host.csproj" -c Release -o /app/build
+WORKDIR "/src/src/Web/WebStatus"
+# RUN dotnet build "WebStatus.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish --no-restore "BlazorClient.Host.csproj" -c Release -o /app/publish
+RUN dotnet publish --no-restore "WebStatus.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish/ .
-ENTRYPOINT ["dotnet", "Microsoft.eShopOnDapr.BlazorClient.Host.dll"]
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "WebStatus.dll"]

@@ -37,11 +37,9 @@ metadata:
     app: eshop
     service: zipkin
 spec:
-  type: NodePort
   ports:
     - port: 9411
       targetPort: 9411
-      nodePort: 32411
       protocol: TCP
       name: zipkin
   selector:

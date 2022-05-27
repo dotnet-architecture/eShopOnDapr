@@ -7,11 +7,11 @@ param containerAppsEnvironmentDomain string
 @secure()
 param identityDbConnectionString string
 
-resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
+resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'identity-api'
   location: location
   properties: {
-    kubeEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironmentId
     template: {
       containers: [
         {
@@ -59,7 +59,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       }
     }
     configuration: {
-      activeResivionsMode: 'single'
+      activeRevisionsMode: 'single'
       ingress: {
         external: true
         targetPort: 80

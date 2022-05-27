@@ -9,11 +9,10 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
+  PATH_BASE: /identity
   SeqServerUrl: http://seq
-  BlazorClientUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30000
-  BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
-  OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
-  ShoppingAggregatorApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30006
+  IssuerUrl: http://{{ .Values.hostName}}
+  BlazorClientUrlExternal: http://{{ .Values.hostName}}
   # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
   ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
@@ -37,19 +36,13 @@ spec:
       labels:
         app: eshop
         service: identity
-      annotations:
-        dapr.io/enabled: "true"
-        dapr.io/app-id: "identity-api"
-        dapr.io/app-port: "80"
-        dapr.io/config: "dapr-config"
-        dapr.io/log-as-json: "true"
     spec:
       containers:
         - name: identity-api
           image: eshopdapr/identity.api:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: identity-http
               containerPort: 80
               protocol: TCP
           envFrom:
@@ -73,12 +66,36 @@ metadata:
     app: eshop
     service: identity
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30008
-      protocol: TCP
-      name: http
+    - name: http
+      port: 80
+      targetPort: identity-http
   selector:
     service: identity
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: identity-api-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: identity
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.hostName }}
+    http:
+      paths: 
+      - path: /identity(/.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: identity-api
+            port: 
+              name: http
