@@ -64,13 +64,13 @@ You can run eShopOnDapr on a local Kubernetes cluster by leveraging the [support
 
 1. Install the NGINX ingress controller:
 
-   ```bash
+   ```terminal
    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/cloud/deploy.yaml
    ```
 
 2. Deploy Dapr to the cluster (see the [*Install Dapr into a Kubernetes cluster how-to*](https://docs.dapr.io/getting-started/install-dapr-kubernetes/) for details.):
 
-   ```bash
+   ```terminal
    dapr init -k
    ```
 
@@ -96,37 +96,37 @@ You can run eShopOnDapr on any external Kubernetes cluster, such as Azure Kubern
 
 1. Create a new resource group:
 
-   ```bash
+   ```terminal
    az group create --name eShopOnDaprAKS --location westeurope
    ```
 
 2. Create the AKS cluster:
 
-   ```bash
+   ```terminal
    az aks create --resource-group eShopOnDaprAKS --name eshopAKSCluster
    ```
 
 3. Configure `kubectl` to connect to the new cluster:
 
-   ```bash
+   ```terminal
    az aks get-credentials --resource-group eShopOnDaprAKS --name eshopAKSCluster
    ```
 
 4. Install the NGINX ingress controller:
 
-   ```bash
+   ```terminal
    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/cloud/deploy.yaml
    ```
 
 5. Deploy Dapr to the cluster (see the [*Install Dapr into a Kubernetes cluster how-to*](https://docs.dapr.io/getting-started/install-dapr-kubernetes/) for details.):
 
-   ```bash
+   ```terminal
    dapr init -k
    ```
 
 6. Get the IP address of the cluster load balancer's public endpoint:
 
-   ```bash
+   ```terminal
    kubectl get services ingress-nginx-controller -n ingress-nginx -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
    ```
 
@@ -178,4 +178,12 @@ eShopOnDapr includes Bicep files for easy deployment to Azure Container Apps. Ru
 az group create --name eShopOnContainerApps --location eastus
 
 az deployment group create --resource-group eShopOnContainerApps --template-file main.bicep
+```
+
+Use the following commands to get the URLs to the eShopOnDapr health UI and start pages respectively (requires CLI 2.37.0 or higher):
+
+```terminal
+az containerapp show --name webstatus --resource-group eShopOnContainerApps --query "properties.configuration.ingress.fqdn" --output tsv
+
+az containerapp show --name blazor-client --resource-group eShopOnContainerApps --query "properties.configuration.ingress.fqdn" --output tsv
 ```
