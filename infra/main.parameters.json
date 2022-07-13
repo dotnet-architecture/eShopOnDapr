@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "principalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
+    },
+    "basketApiImageName": {
+      "value": "${SERVICE_BASKET_API_IMAGE_NAME}"
+    },
+    "catalogApiImageName": {
+      "value": "${SERVICE_CATALOG_API_IMAGE_NAME}"
+    },
+    "identityApiImageName": {
+      "value": "${SERVICE_IDENTITY_API_IMAGE_NAME}"
+    },
+    "orderingApiImageName": {
+      "value": "${SERVICE_ORDERING_API_IMAGE_NAME}"
+    },
+    "paymentApiImageName": {
+      "value": "${SERVICE_PAYMENT_API_IMAGE_NAME}"
+    },
+    "blazorClientImageName": {
+      "value": "${SERVICE_BLAZOR_CLIENT_IMAGE_NAME}"
+    },
+    "webshoppingAggImageName": {
+      "value": "${SERVICE_WEBSHOP_AGG_IMAGE_NAME}"
+    },
+    "webshoppingGwImageName": {
+      "value": "${SERVICE_WEBsHOP_gw_IMAGE_NAME}"
+    },
+    "webStatusImageName": {
+      "value": "${SERVICE_WEBSTATUS_IMAGE_NAME}"
+    }
+  }
+}
