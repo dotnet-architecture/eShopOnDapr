@@ -1,0 +1,44 @@
+name: eShopOnDapr
+metadata:
+  template: eShopOnDapr@0.0.1-beta
+services:
+  webshoppingagg:
+    project: \src\ApiGateways\Aggregators\Web.Shopping.HttpAggregator
+    language: csharp
+    host: containerapp
+  webshoppinggw:
+    project: \src\ApiGateways\Envoy
+    language: csharp
+    host: containerapp
+  basketapi:
+    project: \src\Services\Basket\Basket.API
+    language: csharp
+    host: containerapp
+  blazorclient:
+    project: \src\Web\BlazorClient
+    language: csharp
+    host: containerapp
+  blazorclient.host:
+    project: \src\Web\BlazorClient.Host
+    language: csharp
+    host: containerapp
+  catalogapi:
+    project: \src\Services\Catalog\Catalog.API
+    language: csharp
+    host: containerapp
+  identityapi:
+    project: \src\Services\Identity\Identity.API
+    language: csharp
+    host: containerapp
+  orderingapi:
+    project: \src\Services\Ordering\Ordering.API
+    language: csharp
+    host: containerapp
+  paymentapi:
+    project: \src\Services\Payment\Payment.API
+    language: csharp
+    host: containerapp
+  webstatus:
+    project: \src\Web\WebStatus
+    language: csharp
+    host: containerapp
