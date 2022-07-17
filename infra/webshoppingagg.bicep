@@ -1,6 +1,5 @@
 param location string
 param seqFqdn string
-
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unqiue hash used in all resources.')
@@ -28,28 +27,22 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
-
-@secure()
-param identityDbConnectionString string
-
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'identity-api-${resourceToken}'
+resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ca-webshoppingagg-${resourceToken}'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'webshoppingagg'
     })
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'identity-api'
-          image: imageName//'eshopdapr/identity.api:20220331'
+          name: 'main'
+          image: imageName//'eshopdapr/webshoppingagg:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -61,27 +54,27 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
             }
             {
               name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
-            }
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
+            }  
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
             }
             {
-              name: 'BlazorClientUrlExternal'
-              value: 'https://blazor-client.${containerAppsEnvironmentDomain}'
+              name: 'BasketUrlHC'
+              value: 'http://basket-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
-              name: 'IssuerUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              name: 'CatalogUrlHC'
+              value: 'http://catalog-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
-              name: 'ConnectionStrings__IdentityDB'
-              secretRef: 'identitydb-connection-string'
+              name: 'IdentityUrlHC'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -101,15 +94,17 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
     }
     configuration: {
       activeRevisionsMode: 'single'
+      dapr: {
+        enabled: true
+        appId: 'webshoppingagg'
+        appPort: 80
+      }
       ingress: {
-        external: true
+        external: false
         targetPort: 80
+        allowInsecure: true
       }
       secrets: [
-        {
-          name: 'identitydb-connection-string'
-          value: identityDbConnectionString
-        }
         {
           name: 'registry-password'
           value: containerRegistry.listCredentials().passwords[0].value
@@ -126,12 +121,13 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
+
 resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
   name: '${keyVault.name}/add'
   properties: {
     accessPolicies: [
       {
-        objectId: api.identity.principalId
+        objectId: webshoppingagg.identity.principalId
         permissions: {
           secrets: [
             'get'
@@ -144,4 +140,4 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   }
 }
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output API_URI string = 'https://${webshoppingagg.properties.configuration.ingress.fqdn}'

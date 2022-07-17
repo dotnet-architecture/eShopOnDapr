@@ -25,24 +25,22 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
 
-resource web 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'webstatus-${resourceToken}'
+resource webstatus 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ca-webstatus-${resourceToken}'
   location: location
   tags: union(tags, {
-      'azd-service-name': 'web'
+      'azd-service-name': 'webstatus'
     })
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'webstatus'
+          name: 'main'
           image: imageName//'eshopdapr/webstatus:latest'
           env: [
             {
@@ -55,7 +53,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__0__Uri'
-              value: 'http://basket-api.internal.${containerAppsEnvironmentDomain}/hc'
+              value: 'http://basket-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__1__Name'
@@ -63,7 +61,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__1__Uri'
-              value: 'http://catalog-api.internal.${containerAppsEnvironmentDomain}/hc'
+              value: 'http://catalog-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__2__Name'
@@ -71,7 +69,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__2__Uri'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}/hc'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__3__Name'
@@ -79,7 +77,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__3__Uri'
-              value: 'http://ordering-api.internal.${containerAppsEnvironmentDomain}/hc'
+              value: 'http://ordering-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__4__Name'
@@ -87,7 +85,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__4__Uri'
-              value: 'http://payment-api.internal.${containerAppsEnvironmentDomain}/hc'
+              value: 'http://payment-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__5__Name'
@@ -95,7 +93,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__5__Uri'
-              value: 'http://webshopping-agg.internal.${containerAppsEnvironmentDomain}/hc'
+              value: 'http://webshopping-agg.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'HealthChecksUI__HealthChecks__6__Name'
@@ -103,7 +101,7 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
             }  
             {
               name: 'HealthChecksUI__HealthChecks__6__Uri'
-              value: 'https://blazor-client.${containerAppsEnvironmentDomain}/hc'
+              value: 'https://blazor-client.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'WebStatus_APP_APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -144,4 +142,23 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-output WEB_URI string = 'https://${web.properties.configuration.ingress.fqdn}'
+
+resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
+  name: '${keyVault.name}/add'
+  properties: {
+    accessPolicies: [
+      {
+        objectId: webstatus.identity.principalId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+        tenantId: subscription().tenantId
+      }
+    ]
+  }
+}
+
+output WEB_URI string = 'https://${webstatus.properties.configuration.ingress.fqdn}'

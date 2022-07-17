@@ -1,5 +1,5 @@
 param location string
-param seqFqdn string
+
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unqiue hash used in all resources.')
@@ -26,36 +26,39 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'payment-api-${resourceToken}'
+resource webshoppinggw 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ca-webshoppinggw-${resourceToken}'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'webshoppinggw'
     })
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'payment-api'
-          image: imageName//'eshopdapr/payment.api:20220331'
+          name: 'main'
+          image: imageName//'eshopdapr/webshoppingapigw:20220331'
           env: [
             {
-              name: 'ASPNETCORE_ENVIRONMENT'
-              value: 'Development'
+              name: 'ENVOY_CATALOG_API_ADDRESS'
+              value: 'catalog-api.internal.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
-              name: 'ASPNETCORE_URLS'
-              value: 'http://0.0.0.0:80'
+              name: 'ENVOY_CATALOG_API_PORT'
+              value: '80'
             }
             {
-              name: 'SeqServerUrl'
-              value: 'https://${seqFqdn}'
+              name: 'ENVOY_ORDERING_API_ADDRESS'
+              value: 'ordering-api.internal.${containerAppsEnvironment.properties.defaultDomain}'
+            }
+            {
+              name: 'ENVOY_ORDERING_API_PORT'
+              value: '80'
             }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -77,11 +80,11 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'payment-api'
+        appId: 'webshoppingapigw'
         appPort: 80
       }
       ingress: {
-        external: false
+        external: true
         targetPort: 80
         allowInsecure: true
       }
@@ -107,7 +110,7 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   properties: {
     accessPolicies: [
       {
-        objectId: api.identity.principalId
+        objectId: webshoppinggw.identity.principalId
         permissions: {
           secrets: [
             'get'
@@ -120,4 +123,4 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   }
 }
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output API_URI string = 'https://${webshoppinggw.properties.configuration.ingress.fqdn}'

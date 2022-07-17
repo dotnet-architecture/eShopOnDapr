@@ -19,11 +19,11 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 
 param containerAppsEnvironmentId string
 
-resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
+resource seq 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'seq'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'seq'
     })
   identity: {
     type: 'SystemAssigned'
@@ -58,4 +58,4 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-output fqdn string = containerApp.properties.configuration.ingress.fqdn
+output fqdn string = seq.properties.configuration.ingress.fqdn
