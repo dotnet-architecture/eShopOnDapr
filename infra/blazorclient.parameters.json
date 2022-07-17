@@ -9,7 +9,10 @@
       "value": "${AZURE_LOCATION}"
     },
     "imageName": {
-      "value": "${SERVICE_API_IMAGE_NAME}"
+      "value": "${SERVICE_BLAZORCLIENT_IMAGE_NAME}"
+    },
+    "seqFqdn":{
+      "value":""
     }
   }
 }

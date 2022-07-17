@@ -13,8 +13,22 @@ param webshoppingaggImageName string = ''
 param webshoppinggwImageName string = ''
 param webstatusImageName string = ''
 
-param uniqueSeed string = name
+param uniqueSeed string = '${resourceGroup().id}-${deployment().name}'
 
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: 'log-${resourceToken}'
+  location: location
+  tags: tags
+  properties: any({
+    retentionInDays: 30
+    features: {
+      searchVersion: 1
+    }
+    sku: {
+      name: 'PerGB2018'
+    }
+  })
+}
 
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' = {
@@ -89,11 +103,19 @@ module appInsightsResources './appinsights.bicep' = {
 // Infrastructure
 ////////////////////////////////////////////////////////////////////////////////
 
-module containerAppsEnvironment 'modules/infra/container-apps-env.bicep' = {
+
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-03-01' = {
   name: 'cae-${resourceToken}'
-  params: {
-    location: location
-    uniqueSeed: uniqueSeed
+  location: location
+  tags: tags
+  properties: {
+    appLogsConfiguration: {
+      destination: 'log-analytics'
+      logAnalyticsConfiguration: {
+        customerId: logAnalyticsWorkspace.properties.customerId
+        sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+      }
+    }
   }
 }
 
@@ -128,7 +150,7 @@ module sqlServer 'modules/infra/sql-server.bicep' = {
 module daprPubSub 'modules/dapr/pubsub.bicep' = {
   name: '${deployment().name}-dapr-pubsub'
   params: {
-    containerAppsEnvironmentName: containerAppsEnvironment.outputs.name
+    containerAppsEnvironmentName: 'cae-${resourceToken}'
     serviceBusConnectionString: serviceBus.outputs.connectionString
   }
 }
@@ -136,7 +158,7 @@ module daprPubSub 'modules/dapr/pubsub.bicep' = {
 module daprStateStore 'modules/dapr/statestore.bicep' = {
   name: '${deployment().name}-dapr-statestore'
   params: {
-    containerAppsEnvironmentName: containerAppsEnvironment.outputs.name
+    containerAppsEnvironmentName: 'cae-${resourceToken}'
     cosmosDbName: cosmos.outputs.cosmosDbName
     cosmosCollectionName: cosmos.outputs.cosmosCollectionName
     cosmosUrl: cosmos.outputs.cosmosUrl
@@ -149,17 +171,10 @@ module daprStateStore 'modules/dapr/statestore.bicep' = {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-module seq 'modules/apps/seq.bicep' = {
-  name: '${deployment().name}-app-seq'
-  params: {
-    name:name
-    location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-  }
-}
 
-module basketApi 'modules/apps/basketapi.bicep' = {
-  name: '${deployment().name}-app-basket-api'
+
+module basketapi './basketapi.bicep' = {
+  name: '${deployment().name}-app-basketapi'
   dependsOn: [
     containerAppsEnvironment
     containerRegistry
@@ -173,13 +188,11 @@ module basketApi 'modules/apps/basketapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     imageName: basketapiImageName != '' ? basketapiImageName : 'nginx:latest'
   }
 }
-module blazorClient 'modules/apps/blazorclient.bicep' = {
-  name: '${deployment().name}-app-blazor-client'
+module blazorClient './blazorclient.bicep' = {
+  name: '${deployment().name}-app-blazorclient'
   dependsOn: [
     containerAppsEnvironment
     containerRegistry
@@ -191,12 +204,10 @@ module blazorClient 'modules/apps/blazorclient.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     imageName: blazorclientImageName != '' ? blazorclientImageName : 'nginx:latest'
   }
 }
-module catalogApi 'modules/apps/catalogapi.bicep' = {
+module catalogapi './catalogapi.bicep' = {
   name: '${deployment().name}-app-catalog-api'
   dependsOn: [
     containerAppsEnvironment
@@ -210,14 +221,13 @@ module catalogApi 'modules/apps/catalogapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
     catalogDbConnectionString: sqlServer.outputs.catalogDbConnectionString
     imageName: catalogapiImageName != '' ? catalogapiImageName : 'nginx:latest'
   }
 }
 
 
-module identityApi 'modules/apps/identityapi.bicep' = {
+module identityapi './identityapi.bicep' = {
   name: '${deployment().name}-app-identity-api'
   dependsOn: [
     containerAppsEnvironment
@@ -230,14 +240,12 @@ module identityApi 'modules/apps/identityapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     identityDbConnectionString: sqlServer.outputs.identityDbConnectionString
     imageName: identityapiImageName != '' ? identityapiImageName : 'nginx:latest'
   }
 }
 
-module orderingApi 'modules/apps/orderingapi.bicep' = {
+module orderingapi './orderingapi.bicep' = {
   name: '${deployment().name}-app-ordering-api'
   dependsOn: [
     containerAppsEnvironment
@@ -252,14 +260,12 @@ module orderingApi 'modules/apps/orderingapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     orderingDbConnectionString: sqlServer.outputs.identityDbConnectionString
     imageName: orderingapiImageName != '' ? orderingapiImageName : 'nginx:latest'
   }
 }
 
-module paymentApi 'modules/apps/paymentapi.bicep' = {
+module paymentapi './paymentapi.bicep' = {
   name: '${deployment().name}-app-payment-api'
   dependsOn: [
     containerAppsEnvironment
@@ -273,12 +279,20 @@ module paymentApi 'modules/apps/paymentapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
     imageName: paymentapiImageName != '' ? paymentapiImageName : 'nginx:latest'
   }
 }
 
-module webshoppingAgg 'modules/apps/webshoppingagg.bicep' = {
+module seq './seq.bicep' = {
+  name: '${deployment().name}-app-seq'
+  params: {
+    name:name
+    location: location
+    containerAppsEnvironmentId: containerAppsEnvironment.id
+  }
+}
+
+module webshoppingAgg './webshoppingagg.bicep' = {
   name: '${deployment().name}-app-webshopping-agg'
   dependsOn: [
     containerAppsEnvironment
@@ -290,14 +304,12 @@ module webshoppingAgg 'modules/apps/webshoppingagg.bicep' = {
   params: {
     name:name
     location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     seqFqdn: seq.outputs.fqdn
     imageName: webshoppingaggImageName != '' ? webshoppingaggImageName : 'nginx:latest'
   }
 }
 
-module webshoppingGW 'modules/apps/webshoppinggw.bicep' = {
+module webshoppinggw './webshoppinggw.bicep' = {
   name: '${deployment().name}-app-webshopping-gw'
   dependsOn: [
     containerAppsEnvironment
@@ -309,13 +321,11 @@ module webshoppingGW 'modules/apps/webshoppinggw.bicep' = {
   params: {
     name:name
     location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     imageName: webshoppinggwImageName != '' ? webshoppinggwImageName : 'nginx:latest'
   }
 }
 
-module webstatus 'modules/apps/webstatus.bicep' = {
+module webstatus './webstatus.bicep' = {
   name: '${deployment().name}-app-webstatus'
   dependsOn: [
     containerAppsEnvironment
@@ -327,8 +337,6 @@ module webstatus 'modules/apps/webstatus.bicep' = {
   params: {
     name:name
     location: location
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
-    containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
     imageName: webstatusImageName != '' ? webstatusImageName : 'nginx:latest'
   }
 }
@@ -341,5 +349,5 @@ output AZURE_KEY_VAULT_ENDPOINT string = keyVault.properties.vaultUri
 output APPINSIGHTS_INSTRUMENTATIONKEY string = appInsightsResources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.properties.loginServer
 output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.name
-output WEB_URI string = webstatus.outputs.WEB_URI
-output API_URI string = basketApi.outputs.API_URI
+//output WEB_URI string = webstatus.outputs.WEB_URI
+output BASKETAPI_URI string = basketapi.outputs.API_URI

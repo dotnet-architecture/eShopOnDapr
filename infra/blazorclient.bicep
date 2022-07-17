@@ -1,6 +1,5 @@
 param location string
 param seqFqdn string
-
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unqiue hash used in all resources.')
@@ -28,27 +27,23 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-param containerAppsEnvironmentId string
 
-@secure()
-param catalogDbConnectionString string
-
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'catalog-api-${resourceToken}'
+resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ca-blazorclient-${resourceToken}'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+      'azd-service-name': 'blazorclient'
     })
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'catalog-api'
-          image: imageName//'eshopdapr/catalog.api:20220331'
+          name: 'main'
+          image: imageName//'eshopdapr/blazor.client:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -59,19 +54,19 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'ConnectionStrings__CatalogDB'
-              secretRef: 'catalogdb-connection-string'
+              name: 'ApiGatewayUrlExternal'
+              value: 'https://webshopping-gw.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
-              name: 'RetryMigrations'
-              value: 'true'
+              name: 'IdentityUrlExternal'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
             }
             {
-              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+              name: 'Web_APP_APPINSIGHTS_INSTRUMENTATIONKEY'
               value: appInsights.properties.InstrumentationKey
             }
             {
@@ -88,21 +83,11 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
     }
     configuration: {
       activeRevisionsMode: 'single'
-      dapr: {
-        enabled: true
-        appId: 'catalog-api'
-        appPort: 80
-      }
       ingress: {
-        external: false
+        external: true
         targetPort: 80
-        allowInsecure: true
       }
       secrets: [
-        {
-          name: 'catalogdb-connection-string'
-          value: catalogDbConnectionString
-        }
         {
           name: 'registry-password'
           value: containerRegistry.listCredentials().passwords[0].value
@@ -119,23 +104,4 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: api.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
-
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
-
+output WEB_URI string = 'https://${blazorclient.properties.configuration.ingress.fqdn}'

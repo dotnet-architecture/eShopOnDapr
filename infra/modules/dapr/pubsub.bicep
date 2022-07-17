@@ -24,10 +24,10 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-03-01'
         }
       ]
       scopes: [
-        'basket-api'
-        'catalog-api'
-        'ordering-api'
-        'payment-api'
+        'basketapi'
+        'catalogapi'
+        'orderingapi'
+        'paymentapi'
       ]
     }
   }

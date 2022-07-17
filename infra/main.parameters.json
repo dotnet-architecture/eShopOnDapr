@@ -11,31 +11,31 @@
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
-    "basketApiImageName": {
-      "value": "${SERVICE_BASKET_API_IMAGE_NAME}"
+    "basketapiImageName": {
+      "value": "${SERVICE_BASKETAPI_IMAGE_NAME}"
     },
-    "catalogApiImageName": {
-      "value": "${SERVICE_CATALOG_API_IMAGE_NAME}"
+    "catalogapiImageName": {
+      "value": "${SERVICE_CATALOGAPI_IMAGE_NAME}"
     },
-    "identityApiImageName": {
-      "value": "${SERVICE_IDENTITY_API_IMAGE_NAME}"
+    "identityapiImageName": {
+      "value": "${SERVICE_IDENTITYAPI_IMAGE_NAME}"
     },
-    "orderingApiImageName": {
-      "value": "${SERVICE_ORDERING_API_IMAGE_NAME}"
+    "orderingapiImageName": {
+      "value": "${SERVICE_ORDERINGAPI_IMAGE_NAME}"
     },
-    "paymentApiImageName": {
-      "value": "${SERVICE_PAYMENT_API_IMAGE_NAME}"
+    "paymentapiImageName": {
+      "value": "${SERVICE_PAYMENTAPI_IMAGE_NAME}"
     },
-    "blazorClientImageName": {
-      "value": "${SERVICE_BLAZOR_CLIENT_IMAGE_NAME}"
+    "blazorclientImageName": {
+      "value": "${SERVICE_BLAZORCLIENT_IMAGE_NAME}"
     },
-    "webshoppingAggImageName": {
-      "value": "${SERVICE_WEBSHOP_AGG_IMAGE_NAME}"
+    "webshoppingaggImageName": {
+      "value": "${SERVICE_WEBSHOPPINGAGG_IMAGE_NAME}"
     },
-    "webshoppingGwImageName": {
-      "value": "${SERVICE_WEBsHOP_gw_IMAGE_NAME}"
+    "webshoppinggwImageName": {
+      "value": "${SERVICE_WEBSHOPPINGGW_IMAGE_NAME}"
     },
-    "webStatusImageName": {
+    "webstatusImageName": {
       "value": "${SERVICE_WEBSTATUS_IMAGE_NAME}"
     }
   }

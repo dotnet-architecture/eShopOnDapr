@@ -1,4 +1,5 @@
 param location string
+param seqFqdn string
 
 @minLength(1)
 @maxLength(64)
@@ -26,41 +27,47 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'webshopping-gw'
+
+@secure()
+param catalogDbConnectionString string
+
+resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ca-catalogapi-${resourceToken}'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'catalogapi'
     })
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'webshopping-gw'
-          image: imageName//'eshopdapr/webshoppingapigw:20220331'
+          name: 'main'
+          image: imageName//'eshopdapr/catalog.api:20220331'
           env: [
             {
-              name: 'ENVOY_CATALOG_API_ADDRESS'
-              value: 'catalog-api.internal.${containerAppsEnvironmentDomain}'
+              name: 'ASPNETCORE_ENVIRONMENT'
+              value: 'Development'
             }
             {
-              name: 'ENVOY_CATALOG_API_PORT'
-              value: '80'
+              name: 'ASPNETCORE_URLS'
+              value: 'http://0.0.0.0:80'
             }
             {
-              name: 'ENVOY_ORDERING_API_ADDRESS'
-              value: 'ordering-api.internal.${containerAppsEnvironmentDomain}'
+              name: 'ConnectionStrings__CatalogDB'
+              secretRef: 'catalogdb-connection-string'
             }
             {
-              name: 'ENVOY_ORDERING_API_PORT'
-              value: '80'
+              name: 'RetryMigrations'
+              value: 'true'
+            }
+            {
+              name: 'SeqServerUrl'
+              value: 'https://${seqFqdn}'
             }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -82,15 +89,19 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'webshoppingapigw'
+        appId: 'catalog-api'
         appPort: 80
       }
       ingress: {
-        external: true
+        external: false
         targetPort: 80
         allowInsecure: true
       }
       secrets: [
+        {
+          name: 'catalogdb-connection-string'
+          value: catalogDbConnectionString
+        }
         {
           name: 'registry-password'
           value: containerRegistry.listCredentials().passwords[0].value
@@ -112,7 +123,7 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   properties: {
     accessPolicies: [
       {
-        objectId: api.identity.principalId
+        objectId: catalogapi.identity.principalId
         permissions: {
           secrets: [
             'get'
@@ -125,4 +136,5 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   }
 }
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output API_URI string = 'https://${catalogapi.properties.configuration.ingress.fqdn}'
+

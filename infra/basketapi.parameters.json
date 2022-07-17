@@ -9,7 +9,11 @@
       "value": "${AZURE_LOCATION}"
     },
     "imageName": {
-      "value": "${SERVICE_API_IMAGE_NAME}"
-    }
+      "value": "${SERVICE_BASKETAPI_IMAGE_NAME}"
+    },
+      "seqFqdn":{
+        "value":""
+      }
+    
   }
 }

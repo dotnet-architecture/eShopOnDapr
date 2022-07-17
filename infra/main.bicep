@@ -13,28 +13,28 @@ param location string
 param principalId string = ''
 
 @description('The image name for the basket api service')
-param basketApiImageName string = ''
+param basketapiImageName string = ''
 
 @description('The image name for the catalog api service')
-param catalogApiImageName string = ''
+param catalogapiImageName string = ''
 
 @description('The image name for the blazor client service')
-param blazorClientImageName string = ''
+param blazorclientImageName string = ''
 
 @description('The image name for the identity api service')
-param identityApiImageName string = ''
+param identityapiImageName string = ''
 
 @description('The image name for the ordering api service')
-param orderingApiImageName string = ''
+param orderingapiImageName string = ''
 
 @description('The image name for the payment api service')
-param paymentApiImageName string = ''
+param paymentapiImageName string = ''
 
 @description('The image name for the webshopping aggregator service')
-param webshoppingAggImageName string = ''
+param webshoppingaggImageName string = ''
 
 @description('The image name for the webshopping gateway service')
-param webshoppingGwImageName string = ''
+param webshoppinggwImageName string = ''
 
 @description('The image name for the web status health check service')
 param webstatusImageName string = ''
@@ -57,14 +57,14 @@ module resources './resources.bicep' = {
     location: location
     principalId: principalId
     resourceToken: resourceToken
-    basketapiImageName: basketApiImageName
-    blazorclientImageName: blazorClientImageName
-    catalogapiImageName: catalogApiImageName
-    identityapiImageName: identityApiImageName
-    orderingapiImageName: orderingApiImageName
-    paymentapiImageName: paymentApiImageName
-    webshoppingaggImageName: webshoppingAggImageName
-    webshoppinggwImageName: webshoppingGwImageName
+    basketapiImageName: basketapiImageName
+    catalogapiImageName: catalogapiImageName
+    orderingapiImageName: orderingapiImageName
+    paymentapiImageName: paymentapiImageName
+    identityapiImageName: identityapiImageName
+    blazorclientImageName: blazorclientImageName
+    webshoppingaggImageName: webshoppingaggImageName
+    webshoppinggwImageName: webshoppinggwImageName
     webstatusImageName: webstatusImageName
     tags: tags
   }
@@ -76,6 +76,6 @@ output AZURE_KEY_VAULT_ENDPOINT string = resources.outputs.AZURE_KEY_VAULT_ENDPO
 output APPINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_REGISTRY_NAME
-output REACT_APP_WEB_BASE_URL string = resources.outputs.WEB_URI
-output REACT_APP_API_BASE_URL string = resources.outputs.API_URI
+//output REACT_APP_WEB_BASE_URL string = resources.outputs.WEB_URI
+output REACT_APP_API_BASE_URL string = resources.outputs.BASKETAPI_URI
 output REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
