@@ -79,3 +79,6 @@ output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_
 //output REACT_APP_WEB_BASE_URL string = resources.outputs.WEB_URI
 output REACT_APP_API_BASE_URL string = resources.outputs.BASKETAPI_URI
 output REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
+output AZURE_CATALOG_DB_CONN_STRING string = resources.outputs.CATALOG_DB_CONN_STRING
+output AZURE_IDENTITY_DB_CONN_STRING string = resources.outputs.IDENTITY_DB_CONN_STRING
+output AZURE_ORDERING_DB_CONN_STRING string = resources.outputs.ORDERING_DB_CONN_STRING

@@ -13,6 +13,9 @@
     },
     "seqFqdn":{
       "value":""
+    },
+    "identityDbConnectionString":{
+      "value": "${AZURE_IDENTITY_DB_CONN_STRING}"
     }
   }
 }

@@ -13,6 +13,9 @@
     },
     "seqFqdn":{
       "value":""
+    },
+    "orderingDbConnectionString":{
+      "value": "${AZURE_ORDERING_DB_CONN_STRING}"
     }
   }
 }
