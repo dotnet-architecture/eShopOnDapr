@@ -13,6 +13,9 @@
     },
     "seqFqdn":{
       "value":""
+    },
+    "catalogDbConnectionString":{
+      "value": "${AZURE_CATALOG_DB_CONN_STRING}"
     }
   }
 }

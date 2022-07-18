@@ -10,9 +10,6 @@
     },
     "imageName": {
       "value": "${SERVICE_WEBSHOPPINGGW_IMAGE_NAME}"
-    },
-    "seqFqdn":{
-      "value":""
     }
   }
 }

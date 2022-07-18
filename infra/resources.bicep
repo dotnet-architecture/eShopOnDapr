@@ -15,6 +15,14 @@ param webstatusImageName string = ''
 
 param uniqueSeed string = '${resourceGroup().id}-${deployment().name}'
 
+
+param sqlServerName string = 'sql-${uniqueString(uniqueSeed)}'
+param sqlAdministratorLogin string = 'server_admin'
+param sqlAdministratorLoginPassword string = 'Pass@word'
+param catalogDbName string = 'Microsoft.eShopOnDapr.Services.CatalogDb'
+param identityDbName string = 'Microsoft.eShopOnDapr.Services.IdentityDb'
+param orderingDbName string = 'Microsoft.eShopOnDapr.Services.OrderingDb'
+
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: 'log-${resourceToken}'
   location: location
@@ -127,19 +135,54 @@ module cosmos 'modules/infra/cosmos-db.bicep' = {
   }
 }
 
-module serviceBus 'modules/infra/service-bus.bicep' = {
-  name: '${deployment().name}-infra-service-bus'
-  params: {
-    location: location
-    uniqueSeed: uniqueSeed
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
+  name: 'sb-${resourceToken}'
+  location: location
+  sku: {
+    name: 'Standard'
+    tier: 'Standard'
   }
 }
 
-module sqlServer 'modules/infra/sql-server.bicep' = {
-  name: '${deployment().name}-infra-sql-server'
-  params: {
+resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
+  name: sqlServerName
+  location: location
+  properties: {
+    administratorLogin: sqlAdministratorLogin
+    administratorLoginPassword: sqlAdministratorLoginPassword
+  }
+
+  resource sqlServerFirewall 'firewallRules@2021-05-01-preview' = {
+    name: 'AllowAllWindowsAzureIps'
+    properties: {
+      // Allow Azure services and resources to access this server
+      startIpAddress: '0.0.0.0'
+      endIpAddress: '0.0.0.0'
+    }
+  }
+
+  resource catalogDB 'databases@2021-05-01-preview' = {
+    name: 'Microsoft.eShopOnDapr.Services.CatalogDb'
     location: location
-    uniqueSeed: uniqueSeed
+    properties: {
+      collation: 'SQL_Latin1_General_CP1_CI_AS'
+    }
+  }
+
+  resource identityDb 'databases@2021-05-01-preview' = {
+    name: 'Microsoft.eShopOnDapr.Services.IdentityDb'
+    location: location
+    properties: {
+      collation: 'SQL_Latin1_General_CP1_CI_AS'
+    }
+  }
+
+  resource orderingDb 'databases@2021-05-01-preview' = {
+    name: 'Microsoft.eShopOnDapr.Services.OrderingDb'
+    location: location
+    properties: {
+      collation: 'SQL_Latin1_General_CP1_CI_AS'
+    }
   }
 }
 
@@ -149,9 +192,12 @@ module sqlServer 'modules/infra/sql-server.bicep' = {
 
 module daprPubSub 'modules/dapr/pubsub.bicep' = {
   name: '${deployment().name}-dapr-pubsub'
+  dependsOn:[
+    containerAppsEnvironment
+  ]
   params: {
     containerAppsEnvironmentName: 'cae-${resourceToken}'
-    serviceBusConnectionString: serviceBus.outputs.connectionString
+    serviceBusConnectionString: 'Endpoint=sb://${serviceBus.name}.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=${listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryKey}'
   }
 }
 
@@ -191,7 +237,7 @@ module basketapi './basketapi.bicep' = {
     imageName: basketapiImageName != '' ? basketapiImageName : 'nginx:latest'
   }
 }
-module blazorClient './blazorclient.bicep' = {
+module blazorclient './blazorclient.bicep' = {
   name: '${deployment().name}-app-blazorclient'
   dependsOn: [
     containerAppsEnvironment
@@ -221,7 +267,7 @@ module catalogapi './catalogapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    catalogDbConnectionString: sqlServer.outputs.catalogDbConnectionString
+    catalogDbConnectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${catalogDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     imageName: catalogapiImageName != '' ? catalogapiImageName : 'nginx:latest'
   }
 }
@@ -240,7 +286,7 @@ module identityapi './identityapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    identityDbConnectionString: sqlServer.outputs.identityDbConnectionString
+    identityDbConnectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${identityDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     imageName: identityapiImageName != '' ? identityapiImageName : 'nginx:latest'
   }
 }
@@ -260,7 +306,7 @@ module orderingapi './orderingapi.bicep' = {
     name:name
     location: location
     seqFqdn: seq.outputs.fqdn
-    orderingDbConnectionString: sqlServer.outputs.identityDbConnectionString
+    orderingDbConnectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${orderingDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     imageName: orderingapiImageName != '' ? orderingapiImageName : 'nginx:latest'
   }
 }
@@ -351,3 +397,6 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.properties.l
 output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.name
 //output WEB_URI string = webstatus.outputs.WEB_URI
 output BASKETAPI_URI string = basketapi.outputs.API_URI
+output CATALOG_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${catalogDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+output IDENTITY_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${identityDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+output ORDERING_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${orderingDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'

@@ -10,9 +10,6 @@
     },
     "imageName": {
       "value": "${SERVICE_WEBSTATUS_IMAGE_NAME}"
-    },
-    "seqFqdn":{
-      "value":""
     }
   }
 }
