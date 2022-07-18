@@ -12,7 +12,7 @@
       "value": "${SERVICE_CATALOGAPI_IMAGE_NAME}"
     },
     "seqFqdn":{
-      "value":""
+      "value":"${APP_SEQ_FQDN}"
     },
     "catalogDbConnectionString":{
       "value": "${AZURE_CATALOG_DB_CONN_STRING}"

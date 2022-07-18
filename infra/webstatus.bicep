@@ -161,4 +161,4 @@ resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-1
   }
 }
 
-output WEB_URI string = 'https://${webstatus.properties.configuration.ingress.fqdn}'
+output WEBSTATUS_URI string = 'https://${webstatus.properties.configuration.ingress.fqdn}'
