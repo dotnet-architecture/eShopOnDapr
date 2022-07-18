@@ -12,7 +12,7 @@
       "value": "${SERVICE_ORDERINGAPI_IMAGE_NAME}"
     },
     "seqFqdn":{
-      "value":""
+      "value":"${APP_SEQ_FQDN}"
     },
     "orderingDbConnectionString":{
       "value": "${AZURE_ORDERING_DB_CONN_STRING}"

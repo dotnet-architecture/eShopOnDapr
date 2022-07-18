@@ -395,8 +395,10 @@ output AZURE_KEY_VAULT_ENDPOINT string = keyVault.properties.vaultUri
 output APPINSIGHTS_INSTRUMENTATIONKEY string = appInsightsResources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.properties.loginServer
 output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.name
-//output WEB_URI string = webstatus.outputs.WEB_URI
+output WEBSTATUS_URI string = webstatus.outputs.WEBSTATUS_URI
+output WEB_BLAZORCLIENT string = blazorclient.outputs.BLAZORCLIENT_URI
 output BASKETAPI_URI string = basketapi.outputs.API_URI
+output SEQ_FQDN string = seq.outputs.fqdn
 output CATALOG_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${catalogDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
 output IDENTITY_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${identityDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
 output ORDERING_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${orderingDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'

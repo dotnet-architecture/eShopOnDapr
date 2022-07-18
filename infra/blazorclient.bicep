@@ -104,4 +104,4 @@ resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-output WEB_URI string = 'https://${blazorclient.properties.configuration.ingress.fqdn}'
+output BLAZORCLIENT_URI string = 'https://${blazorclient.properties.configuration.ingress.fqdn}'

@@ -12,7 +12,7 @@
       "value": "${SERVICE_PAYMENTAPI_IMAGE_NAME}"
     },
     "seqFqdn":{
-      "value":""
+      "value":"${APP_SEQ_FQDN}"
     }
   }
 }
