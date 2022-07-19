@@ -119,4 +119,4 @@ resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
 }
 
 
-output API_URI string = 'https://${webshoppingagg.properties.configuration.ingress.fqdn}'
+output WEBSHOPPINGAGG_URI string = 'https://${webshoppingagg.properties.configuration.ingress.fqdn}'

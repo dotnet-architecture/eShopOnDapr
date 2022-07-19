@@ -103,4 +103,4 @@ resource webshoppinggw 'Microsoft.App/containerApps@2022-03-01' = {
 }
 
 
-output API_URI string = 'https://${webshoppinggw.properties.configuration.ingress.fqdn}'
+output WEBSHOPPINGGW_URI string = 'https://${webshoppinggw.properties.configuration.ingress.fqdn}'

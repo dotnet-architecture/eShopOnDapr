@@ -3,14 +3,14 @@ metadata:
   template: eShopOnDapr@0.0.1-beta
 services:
   webshoppingagg:
-    project: \src\ApiGateways\Aggregators\Web.Shopping.HttpAggregator
+    project: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator
     language: csharp
     host: containerapp
     docker:
         path: ./Dockerfile
         context: ../../../../      
   webshoppinggw:
-    project: \src\ApiGateways\Envoy
+    project: src/ApiGateways/Envoy
     language: csharp
     host: containerapp
     docker:
@@ -24,7 +24,7 @@ services:
         path: ./Dockerfile
         context: ../../../../
   blazorclient:
-    project: \src\Web\BlazorClient.Host
+    project: /src/Web/BlazorClient.Host
     language: csharp
     host: containerapp
     docker:
@@ -59,7 +59,7 @@ services:
         path: ./Dockerfile
         context: ../../../../
   webstatus:
-    project: \src\Web\WebStatus
+    project: src/Web/WebStatus
     language: csharp
     host: containerapp
     docker:
