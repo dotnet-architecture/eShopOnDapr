@@ -25,9 +25,6 @@ resource seq 'Microsoft.App/containerApps@2022-03-01' = {
   tags: union(tags, {
     'azd-service-name': 'seq'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironmentId
     template: {

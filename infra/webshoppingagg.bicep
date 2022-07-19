@@ -28,20 +28,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 }
 
 resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-webshoppingagg-${resourceToken}'
+  name: 'webshoppingagg'
   location: location
   tags: union(tags, {
     'azd-service-name': 'webshoppingagg'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'webshoppingagg'
           image: imageName//'eshopdapr/webshoppingagg:20220331'
           env: [
             {
@@ -121,23 +118,5 @@ resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: webshoppingagg.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
 output API_URI string = 'https://${webshoppingagg.properties.configuration.ingress.fqdn}'

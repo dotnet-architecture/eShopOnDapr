@@ -31,20 +31,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 param orderingDbConnectionString string
 
 resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-orderingapi-${resourceToken}'
+  name: 'orderingapi'
   location: location
   tags: union(tags, {
     'azd-service-name': 'orderingapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'orderingapi'
           image: imageName//'eshopdapr/ordering.api:20220331'
           env: [
             {
@@ -96,7 +93,7 @@ resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'ordering-api'
+        appId: 'orderingapi'
         appPort: 80
       }
       ingress: {
@@ -122,24 +119,6 @@ resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
         }
       ]
     }
-  }
-}
-
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: orderingapi.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
   }
 }
 
