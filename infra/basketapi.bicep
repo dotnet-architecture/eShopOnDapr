@@ -40,7 +40,7 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'basket-api'
-          image: imageName//'eshopdapr/basket.api:20220331'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -109,4 +109,4 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
 
 
 
-output API_URI string = 'https://${basketapi.properties.configuration.ingress.fqdn}'
+output BASKET_API_URI string = 'https://${basketapi.properties.configuration.ingress.fqdn}'

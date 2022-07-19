@@ -44,7 +44,7 @@ resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'identity-api'
-          image: imageName//'eshopdapr/identity.api:20220331'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -123,4 +123,4 @@ resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
 
 
 
-output API_URI string = 'https://${identityapi.properties.configuration.ingress.fqdn}'
+output IDENTITY_API_URI string = 'https://${identityapi.properties.configuration.ingress.fqdn}'

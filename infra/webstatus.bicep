@@ -38,7 +38,7 @@ resource webstatus 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'webstatus'
-          image: imageName//'eshopdapr/webstatus:latest'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_URLS'

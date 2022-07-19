@@ -44,7 +44,7 @@ resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'catalog-api'
-          image: imageName//'eshopdapr/catalog.api:20220331'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -116,5 +116,5 @@ resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
 }
 
 
-output API_URI string = 'https://${catalogapi.properties.configuration.ingress.fqdn}'
+output CATALOG_API_URI string = 'https://${catalogapi.properties.configuration.ingress.fqdn}'
 

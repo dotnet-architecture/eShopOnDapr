@@ -39,7 +39,7 @@ resource paymentapi 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'payment-api'
-          image: imageName//'eshopdapr/payment.api:20220331'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'

@@ -23,6 +23,10 @@ param catalogDbName string = 'Microsoft.eShopOnDapr.Services.CatalogDb'
 param identityDbName string = 'Microsoft.eShopOnDapr.Services.IdentityDb'
 param orderingDbName string = 'Microsoft.eShopOnDapr.Services.OrderingDb'
 
+////////////////////////////////////////////////////////////////////////////////
+// Infrastructure
+////////////////////////////////////////////////////////////////////////////////
+
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: 'log-${resourceToken}'
   location: location
@@ -37,7 +41,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06
     }
   })
 }
-
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' = {
   name: 'contreg${resourceToken}'
@@ -106,11 +109,6 @@ module appInsightsResources './appinsights.bicep' = {
     tags: tags
   }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Infrastructure
-////////////////////////////////////////////////////////////////////////////////
-
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-03-01' = {
   name: 'cae-${resourceToken}'
@@ -216,9 +214,6 @@ module daprStateStore 'modules/dapr/statestore.bicep' = {
 // Container apps
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 module basketapi './basketapi.bicep' = {
   name: '${deployment().name}-app-basketapi'
   dependsOn: [
@@ -237,6 +232,7 @@ module basketapi './basketapi.bicep' = {
     imageName: basketapiImageName != '' ? basketapiImageName : 'nginx:latest'
   }
 }
+
 module blazorclient './blazorclient.bicep' = {
   name: '${deployment().name}-app-blazorclient'
   dependsOn: [
@@ -253,6 +249,7 @@ module blazorclient './blazorclient.bicep' = {
     imageName: blazorclientImageName != '' ? blazorclientImageName : 'nginx:latest'
   }
 }
+
 module catalogapi './catalogapi.bicep' = {
   name: '${deployment().name}-app-catalog-api'
   dependsOn: [
@@ -271,7 +268,6 @@ module catalogapi './catalogapi.bicep' = {
     imageName: catalogapiImageName != '' ? catalogapiImageName : 'nginx:latest'
   }
 }
-
 
 module identityapi './identityapi.bicep' = {
   name: '${deployment().name}-app-identity-api'
@@ -397,7 +393,6 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.properties.l
 output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.name
 output WEBSTATUS_URI string = webstatus.outputs.WEBSTATUS_URI
 output WEB_BLAZORCLIENT string = blazorclient.outputs.BLAZORCLIENT_URI
-output BASKETAPI_URI string = basketapi.outputs.API_URI
 output SEQ_FQDN string = seq.outputs.fqdn
 output CATALOG_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${catalogDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
 output IDENTITY_DB_CONN_STRING string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${identityDbName};Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
