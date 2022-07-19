@@ -28,7 +28,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 }
 
 resource paymentapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'paymentapi'
+  name: 'payment-api'
   location: location
   tags: union(tags, {
     'azd-service-name': 'paymentapi'
@@ -38,7 +38,7 @@ resource paymentapi 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'paymentapi'
+          name: 'payment-api'
           image: imageName//'eshopdapr/payment.api:20220331'
           env: [
             {
@@ -73,7 +73,7 @@ resource paymentapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'paymentapi'
+        appId: 'payment-api'
         appPort: 80
       }
       ingress: {

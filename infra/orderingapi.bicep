@@ -31,7 +31,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 param orderingDbConnectionString string
 
 resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'orderingapi'
+  name: 'ordering-api'
   location: location
   tags: union(tags, {
     'azd-service-name': 'orderingapi'
@@ -41,7 +41,7 @@ resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'orderingapi'
+          name: 'ordering-api'
           image: imageName//'eshopdapr/ordering.api:20220331'
           env: [
             {
@@ -93,7 +93,7 @@ resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'orderingapi'
+        appId: 'ordering-api'
         appPort: 80
       }
       ingress: {
