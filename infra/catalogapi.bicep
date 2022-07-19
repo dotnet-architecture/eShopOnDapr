@@ -33,7 +33,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 param catalogDbConnectionString string
 
 resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'catalogapi'
+  name: 'catalog-api'
   location: location
   tags: union(tags, {
     'azd-service-name': 'catalogapi'
@@ -43,7 +43,7 @@ resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'catalogapi'
+          name: 'catalog-api'
           image: imageName//'eshopdapr/catalog.api:20220331'
           env: [
             {
@@ -86,7 +86,7 @@ resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'catalogapi'
+        appId: 'catalog-api'
         appPort: 80
       }
       ingress: {

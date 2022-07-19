@@ -28,7 +28,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 }
 
 resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'webshoppingagg'
+  name: 'webshopping-agg'
   location: location
   tags: union(tags, {
     'azd-service-name': 'webshoppingagg'
@@ -38,7 +38,7 @@ resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'webshoppingagg'
+          name: 'webshopping-agg'
           image: imageName//'eshopdapr/webshoppingagg:20220331'
           env: [
             {

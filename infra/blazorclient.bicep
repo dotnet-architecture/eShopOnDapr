@@ -29,7 +29,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 
 
 resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'blazorclient'
+  name: 'blazor-client'
   location: location
   tags: union(tags, {
       'azd-service-name': 'blazorclient'
@@ -39,7 +39,7 @@ resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'blazorclient'
+          name: 'blazor-client'
           image: imageName//'eshopdapr/blazor.client:20220331'
           env: [
             {

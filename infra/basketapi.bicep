@@ -29,7 +29,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 
 
 resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'basketapi'
+  name: 'basket-api'
   location: location
   tags: union(tags, {
     'azd-service-name': 'basketapi'
@@ -39,7 +39,7 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'basketapi'
+          name: 'basket-api'
           image: imageName//'eshopdapr/basket.api:20220331'
           env: [
             {
@@ -82,7 +82,7 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'basketapi'
+        appId: 'basket-api'
         appPort: 80
       }
       ingress: {

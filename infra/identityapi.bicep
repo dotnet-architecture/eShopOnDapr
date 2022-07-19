@@ -33,7 +33,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 param identityDbConnectionString string
 
 resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'identityapi'
+  name: 'identity-api'
   location: location
   tags: union(tags, {
     'azd-service-name': 'identityapi'
@@ -43,7 +43,7 @@ resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
     template: {
       containers: [
         {
-          name: 'identityapi'
+          name: 'identity-api'
           image: imageName//'eshopdapr/identity.api:20220331'
           env: [
             {
