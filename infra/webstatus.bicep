@@ -27,20 +27,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 }
 
 resource webstatus 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-webstatus-${resourceToken}'
+  name: 'webstatus'
   location: location
   tags: union(tags, {
       'azd-service-name': 'webstatus'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'webstatus'
           image: imageName//'eshopdapr/webstatus:latest'
           env: [
             {
@@ -142,23 +139,5 @@ resource webstatus 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: webstatus.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
 output WEBSTATUS_URI string = 'https://${webstatus.properties.configuration.ingress.fqdn}'

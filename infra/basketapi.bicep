@@ -29,20 +29,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 
 
 resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-basketapi-${resourceToken}'
+  name: 'basketapi'
   location: location
   tags: union(tags, {
     'azd-service-name': 'basketapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'basketapi'
           image: imageName//'eshopdapr/basket.api:20220331'
           env: [
             {
@@ -110,22 +107,6 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: basketapi.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
+
 
 output API_URI string = 'https://${basketapi.properties.configuration.ingress.fqdn}'

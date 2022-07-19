@@ -33,20 +33,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 param identityDbConnectionString string
 
 resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-identityapi-${resourceToken}'
+  name: 'identityapi'
   location: location
   tags: union(tags, {
     'azd-service-name': 'identityapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'identityapi'
           image: imageName//'eshopdapr/identity.api:20220331'
           env: [
             {
@@ -124,22 +121,6 @@ resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: identityapi.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
+
 
 output API_URI string = 'https://${identityapi.properties.configuration.ingress.fqdn}'

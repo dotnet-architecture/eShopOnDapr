@@ -29,20 +29,17 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 
 
 resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ca-blazorclient-${resourceToken}'
+  name: 'blazorclient'
   location: location
   tags: union(tags, {
       'azd-service-name': 'blazorclient'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'main'
+          name: 'blazorclient'
           image: imageName//'eshopdapr/blazor.client:20220331'
           env: [
             {
