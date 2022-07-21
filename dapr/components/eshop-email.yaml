@@ -22,6 +22,6 @@ spec:
   - name: skipTLSVerify
     value: true
 auth:
-  secretStore: eshop-secretstore
+  secretStore: secretstore
 scopes:
 - ordering-api
