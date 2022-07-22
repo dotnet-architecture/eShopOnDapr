@@ -1,7 +1,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: pubsub
+  name: eshopondapr-pubsub
   namespace: eshop
 spec:
   type: pubsub.rabbitmq
