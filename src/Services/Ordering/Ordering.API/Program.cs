@@ -18,8 +18,6 @@ builder.Services.AddActors(options =>
 });
 builder.Services.AddSignalR();
 
-builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

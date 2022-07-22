@@ -9,9 +9,6 @@ builder.AddCustomAuthorization();
 builder.AddCustomHealthChecks();
 builder.AddCustomApplicationServices();
 
-builder.Services.Configure<BasketSettings>(builder.Configuration);
-builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
