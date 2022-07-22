@@ -1,7 +1,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: eshop-statestore
+  name: statestore
   namespace: eshop
 spec:
   type: state.redis
@@ -16,7 +16,7 @@ spec:
   - name: actorStateStore
     value: "true"
 auth:
-  secretStore: eshop-secretstore
+  secretStore: secretstore
 scopes:
 - basket-api
 - ordering-api

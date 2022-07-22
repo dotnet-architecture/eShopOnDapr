@@ -9,6 +9,8 @@ builder.AddCustomApplicationServices();
 builder.Services.AddDaprClient();
 builder.Services.AddControllers();
 
+builder.Services.Configure<DaprEventBusSettings>(builder.Configuration);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
