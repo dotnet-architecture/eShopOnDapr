@@ -172,18 +172,32 @@ helm uninstall myeshop
 
 ## Run eShopOnDapr on Azure Container Apps
 
-eShopOnDapr includes Bicep files for easy deployment to Azure Container Apps. Run the following commands from the `deploy\containerapps` folder to start install using the Azure CLI:
+eShopOnDapr includes Bicep files for easy deployment to Azure Container Apps. Run the following commands from the `infra` folder to start install using the Azure CLI:
 
 ```terminal
-az group create --name eShopOnContainerApps --location eastus
+az deployment sub create --location eastus --template-file main.bicep --parameters '{ \"useDockerHubImages\": { \"value\": \"true\" } }'
 
-az deployment group create --resource-group eShopOnContainerApps --template-file main.bicep
 ```
+
+Please enter deployment name(it will be used to create resource group: <name>-rg), when below string appears:
+
+```terminal
+Please provide string value for 'name' (? for help):
+```
+
+then, enter the location, when below string appears(enter 'eastus'):
+
+```terminal
+Please provide string value for 'location' (? for help):
+```
+
+After completion of successful deployment, you will get the list of deployed resources in json as an output format.
+Resource group will be created with name: '<name>-rg', You can verify it from the json output in the dependencies section of properties node, use it to run below commands.
 
 Use the following commands to get the URLs to the eShopOnDapr health UI and start pages respectively (requires CLI 2.37.0 or higher):
 
 ```terminal
-az containerapp show --name webstatus --resource-group eShopOnContainerApps --query "properties.configuration.ingress.fqdn" --output tsv
+az containerapp show --name webstatus --resource-group <resourceGroupName> --query "properties.configuration.ingress.fqdn" --output tsv
 
-az containerapp show --name blazor-client --resource-group eShopOnContainerApps --query "properties.configuration.ingress.fqdn" --output tsv
+az containerapp show --name blazor-client --resource-group <resourceGroupName> --query "properties.configuration.ingress.fqdn" --output tsv
 ```

@@ -39,6 +39,11 @@ param webshoppinggwImageName string = ''
 @description('The image name for the web status health check service')
 param webstatusImageName string = ''
 
+@description('If UseDockerHubImages value is true then deployment will use docker hub images(recommended for use without azd)')
+param useDockerHubImages string = 'false'
+
+var isUsingDockerHubImages = bool(useDockerHubImages) == true
+
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   name: '${name}-rg'
   location: location
@@ -57,15 +62,15 @@ module resources './resources.bicep' = {
     location: location
     principalId: principalId
     resourceToken: resourceToken
-    basketapiImageName: basketapiImageName
-    catalogapiImageName: catalogapiImageName
-    orderingapiImageName: orderingapiImageName
-    paymentapiImageName: paymentapiImageName
-    identityapiImageName: identityapiImageName
-    blazorclientImageName: blazorclientImageName
-    webshoppingaggImageName: webshoppingaggImageName
-    webshoppinggwImageName: webshoppinggwImageName
-    webstatusImageName: webstatusImageName
+    basketapiImageName: isUsingDockerHubImages ? 'eshopdapr/basket.api:20220331': basketapiImageName
+    catalogapiImageName: isUsingDockerHubImages ? 'eshopdapr/catalog.api:20220331' : catalogapiImageName 
+    orderingapiImageName: isUsingDockerHubImages ? 'eshopdapr/ordering.api:20220331': orderingapiImageName
+    paymentapiImageName: isUsingDockerHubImages ? 'eshopdapr/payment.api:20220331' : paymentapiImageName
+    identityapiImageName: isUsingDockerHubImages ? 'eshopdapr/identity.api:20220331' : identityapiImageName
+    blazorclientImageName: isUsingDockerHubImages ? 'eshopdapr/blazor.client:20220331' : blazorclientImageName
+    webshoppingaggImageName: isUsingDockerHubImages ? 'eshopdapr/webshoppingagg:20220331' : webshoppingaggImageName
+    webshoppinggwImageName: isUsingDockerHubImages ? 'eshopdapr/webshoppingapigw:20220331' : webshoppinggwImageName
+    webstatusImageName: isUsingDockerHubImages ? 'eshopdapr/webstatus:latest' : webstatusImageName
     tags: tags
   }
 }
