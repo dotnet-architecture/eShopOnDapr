@@ -26,20 +26,15 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
+resource webshoppinggw 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'webshopping-gw'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'webshoppinggw'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
@@ -48,7 +43,7 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
           env: [
             {
               name: 'ENVOY_CATALOG_API_ADDRESS'
-              value: 'catalog-api.internal.${containerAppsEnvironmentDomain}'
+              value: 'catalog-api.internal.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'ENVOY_CATALOG_API_PORT'
@@ -56,7 +51,7 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
             }
             {
               name: 'ENVOY_ORDERING_API_ADDRESS'
-              value: 'ordering-api.internal.${containerAppsEnvironmentDomain}'
+              value: 'ordering-api.internal.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'ENVOY_ORDERING_API_PORT'
@@ -107,22 +102,5 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: api.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output WEBSHOPPINGGW_URI string = 'https://${webshoppinggw.properties.configuration.ingress.fqdn}'

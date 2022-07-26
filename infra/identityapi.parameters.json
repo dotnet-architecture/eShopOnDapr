@@ -9,7 +9,13 @@
       "value": "${AZURE_LOCATION}"
     },
     "imageName": {
-      "value": "${SERVICE_API_IMAGE_NAME}"
+      "value": "${SERVICE_IDENTITYAPI_IMAGE_NAME}"
+    },
+    "seqFqdn":{
+      "value":"${APP_SEQ_FQDN}"
+    },
+    "identityDbConnectionString":{
+      "value": "${AZURE_IDENTITY_DB_CONN_STRING}"
     }
   }
 }

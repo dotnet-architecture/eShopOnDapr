@@ -9,7 +9,10 @@
       "value": "${AZURE_LOCATION}"
     },
     "imageName": {
-      "value": "${SERVICE_API_IMAGE_NAME}"
+      "value": "${SERVICE_PAYMENTAPI_IMAGE_NAME}"
+    },
+    "seqFqdn":{
+      "value":"${APP_SEQ_FQDN}"
     }
   }
 }

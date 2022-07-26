@@ -9,7 +9,7 @@
       "value": "${AZURE_LOCATION}"
     },
     "imageName": {
-      "value": "${SERVICE_API_IMAGE_NAME}"
+      "value": "${SERVICE_WEBSHOPPINGGW_IMAGE_NAME}"
     }
   }
 }

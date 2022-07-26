@@ -13,31 +13,36 @@ param location string
 param principalId string = ''
 
 @description('The image name for the basket api service')
-param basketApiImageName string = ''
+param basketapiImageName string = ''
 
 @description('The image name for the catalog api service')
-param catalogApiImageName string = ''
+param catalogapiImageName string = ''
 
 @description('The image name for the blazor client service')
-param blazorClientImageName string = ''
+param blazorclientImageName string = ''
 
 @description('The image name for the identity api service')
-param identityApiImageName string = ''
+param identityapiImageName string = ''
 
 @description('The image name for the ordering api service')
-param orderingApiImageName string = ''
+param orderingapiImageName string = ''
 
 @description('The image name for the payment api service')
-param paymentApiImageName string = ''
+param paymentapiImageName string = ''
 
 @description('The image name for the webshopping aggregator service')
-param webshoppingAggImageName string = ''
+param webshoppingaggImageName string = ''
 
 @description('The image name for the webshopping gateway service')
-param webshoppingGwImageName string = ''
+param webshoppinggwImageName string = ''
 
 @description('The image name for the web status health check service')
 param webstatusImageName string = ''
+
+@description('If UseDockerHubImages value is true then deployment will use docker hub images(recommended for use without azd)')
+param useDockerHubImages string = 'false'
+
+var isUsingDockerHubImages = bool(useDockerHubImages) == true
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   name: '${name}-rg'
@@ -57,15 +62,15 @@ module resources './resources.bicep' = {
     location: location
     principalId: principalId
     resourceToken: resourceToken
-    basketapiImageName: basketApiImageName
-    blazorclientImageName: blazorClientImageName
-    catalogapiImageName: catalogApiImageName
-    identityapiImageName: identityApiImageName
-    orderingapiImageName: orderingApiImageName
-    paymentapiImageName: paymentApiImageName
-    webshoppingaggImageName: webshoppingAggImageName
-    webshoppinggwImageName: webshoppingGwImageName
-    webstatusImageName: webstatusImageName
+    basketapiImageName: isUsingDockerHubImages ? 'eshopdapr/basket.api:20220331': basketapiImageName
+    catalogapiImageName: isUsingDockerHubImages ? 'eshopdapr/catalog.api:20220331' : catalogapiImageName 
+    orderingapiImageName: isUsingDockerHubImages ? 'eshopdapr/ordering.api:20220331': orderingapiImageName
+    paymentapiImageName: isUsingDockerHubImages ? 'eshopdapr/payment.api:20220331' : paymentapiImageName
+    identityapiImageName: isUsingDockerHubImages ? 'eshopdapr/identity.api:20220331' : identityapiImageName
+    blazorclientImageName: isUsingDockerHubImages ? 'eshopdapr/blazor.client:20220331' : blazorclientImageName
+    webshoppingaggImageName: isUsingDockerHubImages ? 'eshopdapr/webshoppingagg:20220331' : webshoppingaggImageName
+    webshoppinggwImageName: isUsingDockerHubImages ? 'eshopdapr/webshoppingapigw:20220331' : webshoppinggwImageName
+    webstatusImageName: isUsingDockerHubImages ? 'eshopdapr/webstatus:latest' : webstatusImageName
     tags: tags
   }
 }
@@ -76,6 +81,10 @@ output AZURE_KEY_VAULT_ENDPOINT string = resources.outputs.AZURE_KEY_VAULT_ENDPO
 output APPINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
 output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_REGISTRY_NAME
-output REACT_APP_WEB_BASE_URL string = resources.outputs.WEB_URI
-output REACT_APP_API_BASE_URL string = resources.outputs.API_URI
 output REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPINSIGHTS_INSTRUMENTATIONKEY
+output AZURE_CATALOG_DB_CONN_STRING string = resources.outputs.CATALOG_DB_CONN_STRING
+output AZURE_IDENTITY_DB_CONN_STRING string = resources.outputs.IDENTITY_DB_CONN_STRING
+output AZURE_ORDERING_DB_CONN_STRING string = resources.outputs.ORDERING_DB_CONN_STRING
+output APP_SEQ_FQDN string = resources.outputs.SEQ_FQDN
+output WEB_BLAZORCLIENT string = resources.outputs.WEB_BLAZORCLIENT
+output WEBSTATUS_BASE_URL string = resources.outputs.WEBSTATUS_URI

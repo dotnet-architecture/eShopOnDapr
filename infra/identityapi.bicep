@@ -28,27 +28,23 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-param containerAppsEnvironmentId string
 
 @secure()
-param catalogDbConnectionString string
+param identityDbConnectionString string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'catalog-api-${resourceToken}'
+resource identityapi 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'identity-api'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'identityapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'catalog-api'
-          image: imageName//'eshopdapr/catalog.api:20220331'
+          name: 'identity-api'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -59,16 +55,28 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'ConnectionStrings__CatalogDB'
-              secretRef: 'catalogdb-connection-string'
+              name: 'IdentityUrl'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
-              name: 'RetryMigrations'
-              value: 'true'
+              name: 'IdentityUrlExternal'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
+            }
+            {
+              name: 'BlazorClientUrlExternal'
+              value: 'https://blazor-client.${containerAppsEnvironment.properties.defaultDomain}'
+            }
+            {
+              name: 'IssuerUrl'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
+            }
+            {
+              name: 'ConnectionStrings__IdentityDB'
+              secretRef: 'identitydb-connection-string'
             }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -88,20 +96,14 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
     }
     configuration: {
       activeRevisionsMode: 'single'
-      dapr: {
-        enabled: true
-        appId: 'catalog-api'
-        appPort: 80
-      }
       ingress: {
-        external: false
+        external: true
         targetPort: 80
-        allowInsecure: true
       }
       secrets: [
         {
-          name: 'catalogdb-connection-string'
-          value: catalogDbConnectionString
+          name: 'identitydb-connection-string'
+          value: identityDbConnectionString
         }
         {
           name: 'registry-password'
@@ -119,23 +121,6 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: api.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
 
+output IDENTITY_API_URI string = 'https://${identityapi.properties.configuration.ingress.fqdn}'

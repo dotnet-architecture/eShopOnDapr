@@ -27,25 +27,19 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
-
-resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'basket-api-${resourceToken}'
+resource webshoppingagg 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'webshopping-agg'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'basketapi'
+    'azd-service-name': 'webshoppingagg'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'basket-api'
-          image: imageName//'eshopdapr/basket.api:20220331'
+          name: 'webshopping-agg'
+          image: imageName//'eshopdapr/webshoppingagg:20220331'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -57,15 +51,27 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
             }
             {
               name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }  
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
+            }
+            {
+              name: 'BasketUrlHC'
+              value: 'http://basket-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
+            }
+            {
+              name: 'CatalogUrlHC'
+              value: 'http://catalog-api.internal.${containerAppsEnvironment.properties.defaultDomain}/hc'
+            }
+            {
+              name: 'IdentityUrlHC'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}/hc'
             }
             {
               name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -87,7 +93,7 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'basket-api'
+        appId: 'webshoppingagg'
         appPort: 80
       }
       ingress: {
@@ -112,22 +118,5 @@ resource basketapi 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: basketapi.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
-output API_URI string = 'https://${basketapi.properties.configuration.ingress.fqdn}'
+output WEBSHOPPINGAGG_URI string = 'https://${webshoppingagg.properties.configuration.ingress.fqdn}'

@@ -27,26 +27,19 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
-
-resource web 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'blazor-client-${resourceToken}'
+resource paymentapi 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'payment-api'
   location: location
   tags: union(tags, {
-      'azd-service-name': 'web'
+    'azd-service-name': 'paymentapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'blazor-client'
-          image: imageName//'eshopdapr/blazor.client:20220331'
+          name: 'payment-api'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -57,19 +50,11 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'ApiGatewayUrlExternal'
-              value: 'https://webshopping-gw.${containerAppsEnvironmentDomain}'
-            }
-            {
-              name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
-            }
-            {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
             }
             {
-              name: 'Web_APP_APPINSIGHTS_INSTRUMENTATIONKEY'
+              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
               value: appInsights.properties.InstrumentationKey
             }
             {
@@ -86,9 +71,15 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
     }
     configuration: {
       activeRevisionsMode: 'single'
+      dapr: {
+        enabled: true
+        appId: 'payment-api'
+        appPort: 80
+      }
       ingress: {
-        external: true
+        external: false
         targetPort: 80
+        allowInsecure: true
       }
       secrets: [
         {
@@ -107,4 +98,5 @@ resource web 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-output WEB_URI string = 'https://${web.properties.configuration.ingress.fqdn}'
+
+output API_URI string = 'https://${paymentapi.properties.configuration.ingress.fqdn}'

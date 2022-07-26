@@ -1,6 +1,5 @@
 param location string
 param seqFqdn string
-
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unqiue hash used in all resources.')
@@ -28,28 +27,20 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
 
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
 
-@secure()
-param identityDbConnectionString string
-
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'identity-api-${resourceToken}'
+resource blazorclient 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'blazor-client'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+      'azd-service-name': 'blazorclient'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'identity-api'
-          image: imageName//'eshopdapr/identity.api:20220331'
+          name: 'blazor-client'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -60,31 +51,19 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
               value: 'http://0.0.0.0:80'
             }
             {
-              name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              name: 'ApiGatewayUrlExternal'
+              value: 'https://webshopping-gw.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'SeqServerUrl'
               value: 'https://${seqFqdn}'
             }
             {
-              name: 'BlazorClientUrlExternal'
-              value: 'https://blazor-client.${containerAppsEnvironmentDomain}'
-            }
-            {
-              name: 'IssuerUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
-            }
-            {
-              name: 'ConnectionStrings__IdentityDB'
-              secretRef: 'identitydb-connection-string'
-            }
-            {
-              name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+              name: 'Web_APP_APPINSIGHTS_INSTRUMENTATIONKEY'
               value: appInsights.properties.InstrumentationKey
             }
             {
@@ -107,10 +86,6 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
       }
       secrets: [
         {
-          name: 'identitydb-connection-string'
-          value: identityDbConnectionString
-        }
-        {
           name: 'registry-password'
           value: containerRegistry.listCredentials().passwords[0].value
         }
@@ -126,22 +101,4 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: api.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
-
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output BLAZORCLIENT_URI string = 'https://${blazorclient.properties.configuration.ingress.fqdn}'

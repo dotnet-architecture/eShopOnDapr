@@ -1,5 +1,6 @@
 param location string
 param seqFqdn string
+
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unqiue hash used in all resources.')
@@ -26,24 +27,24 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'payment-api-${resourceToken}'
+
+@secure()
+param catalogDbConnectionString string
+
+resource catalogapi 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'catalog-api'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'catalogapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
-          name: 'payment-api'
-          image: imageName//'eshopdapr/payment.api:20220331'
+          name: 'catalog-api'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -52,6 +53,14 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
             {
               name: 'ASPNETCORE_URLS'
               value: 'http://0.0.0.0:80'
+            }
+            {
+              name: 'ConnectionStrings__CatalogDB'
+              secretRef: 'catalogdb-connection-string'
+            }
+            {
+              name: 'RetryMigrations'
+              value: 'true'
             }
             {
               name: 'SeqServerUrl'
@@ -77,7 +86,7 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
       activeRevisionsMode: 'single'
       dapr: {
         enabled: true
-        appId: 'payment-api'
+        appId: 'catalog-api'
         appPort: 80
       }
       ingress: {
@@ -86,6 +95,10 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
         allowInsecure: true
       }
       secrets: [
+        {
+          name: 'catalogdb-connection-string'
+          value: catalogDbConnectionString
+        }
         {
           name: 'registry-password'
           value: containerRegistry.listCredentials().passwords[0].value
@@ -102,22 +115,6 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2021-11-01-preview' = {
-  name: '${keyVault.name}/add'
-  properties: {
-    accessPolicies: [
-      {
-        objectId: api.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-        tenantId: subscription().tenantId
-      }
-    ]
-  }
-}
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output CATALOG_API_URI string = 'https://${catalogapi.properties.configuration.ingress.fqdn}'
+

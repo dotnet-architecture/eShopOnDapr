@@ -26,28 +26,23 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   name: 'keyvault${resourceToken}'
 }
-param containerAppsEnvironmentId string
-param containerAppsEnvironmentDomain string
 
 @secure()
 param orderingDbConnectionString string
 
-resource api 'Microsoft.App/containerApps@2022-03-01' = {
-  name: 'ordering-api-${resourceToken}'
+resource orderingapi 'Microsoft.App/containerApps@2022-03-01' = {
+  name: 'ordering-api'
   location: location
   tags: union(tags, {
-    'azd-service-name': 'api'
+    'azd-service-name': 'orderingapi'
     })
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    managedEnvironmentId: containerAppsEnvironmentId
+    managedEnvironmentId: containerAppsEnvironment.id
     template: {
       containers: [
         {
           name: 'ordering-api'
-          image: imageName//'eshopdapr/ordering.api:20220331'
+          image: imageName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -59,11 +54,11 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
             }
             {
               name: 'IdentityUrl'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }  
             {
               name: 'IdentityUrlExternal'
-              value: 'https://identity-api.${containerAppsEnvironmentDomain}'
+              value: 'https://identity-api.${containerAppsEnvironment.properties.defaultDomain}'
             }
             {
               name: 'ConnectionStrings__OrderingDB'
@@ -127,4 +122,4 @@ resource api 'Microsoft.App/containerApps@2022-03-01' = {
   }
 }
 
-output API_URI string = 'https://${api.properties.configuration.ingress.fqdn}'
+output ORDERING_API_URI string = 'https://${orderingapi.properties.configuration.ingress.fqdn}'
