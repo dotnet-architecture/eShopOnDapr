@@ -10,7 +10,7 @@ public static class ProgramExtensions
     {
         // Disabled temporarily until https://github.com/dapr/dotnet-sdk/issues/779 is resolved.
         //builder.Configuration.AddDaprSecretStore(
-        //    "eshop-secretstore",
+        //    "secretstore",
         //    new DaprClientBuilder().Build());
     }
 

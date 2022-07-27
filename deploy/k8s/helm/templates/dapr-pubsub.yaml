@@ -1,7 +1,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: pubsub
+  name: eshopondapr-pubsub
   namespace: {{ .Values.namespace }}
 spec:
 # Temporarily use Redis for pub/sub while waiting for https://github.com/dapr/components-contrib/issues/1372 to be released in 1.6.
@@ -25,6 +25,6 @@ spec:
     value: redis:6379
   - name: redisPassword
     secretKeyRef:
-      name: eshop-secrets
+      name: eshopondapr-secrets
       key: RedisPassword
 

@@ -4,7 +4,7 @@
 [ApiController]
 public class IntegrationEventController : ControllerBase
 {
-    private const string DAPR_PUBSUB_NAME = "pubsub";
+    private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 
     [HttpPost("OrderStatusChangedToSubmitted")]
     [Topic(DAPR_PUBSUB_NAME, nameof(OrderStatusChangedToSubmittedIntegrationEvent))]

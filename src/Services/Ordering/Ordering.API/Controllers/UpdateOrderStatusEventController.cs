@@ -4,7 +4,7 @@
 [ApiController]
 public class UpdateOrderStatusEventController : ControllerBase
 {
-    private const string DAPR_PUBSUB_NAME = "pubsub";
+    private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 
     private readonly IOrderRepository _orderRepository;
     private readonly IHubContext<NotificationsHub> _hubContext;

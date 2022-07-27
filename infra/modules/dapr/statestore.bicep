@@ -10,7 +10,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-03-01'
   name: containerAppsEnvironmentName
 
   resource daprComponent 'daprComponents@2022-03-01' = {
-    name: 'eshop-statestore'
+    name: 'eshopondapr-statestore'
     properties: {
       componentType: 'state.azure.cosmosdb'
       version: 'v1'
