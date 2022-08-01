@@ -16,7 +16,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'identity-api'
-          image: 'eshopdapr/identity.api:20220331'
+          image: 'eshopdapr/identity.api:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'

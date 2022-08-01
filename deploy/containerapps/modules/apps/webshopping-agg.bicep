@@ -13,7 +13,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'webshopping-agg'
-          image: 'eshopdapr/webshoppingagg:20220331'
+          image: 'eshopdapr/webshoppingagg:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'

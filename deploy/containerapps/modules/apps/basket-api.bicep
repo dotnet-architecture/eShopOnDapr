@@ -13,7 +13,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'basket-api'
-          image: 'eshopdapr/basket.api:20220331'
+          image: 'eshopdapr/basket.api:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'

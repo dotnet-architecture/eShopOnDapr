@@ -12,7 +12,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'webshopping-gw'
-          image: 'eshopdapr/webshoppingapigw:20220331'
+          image: 'eshopdapr/webshoppingapigw:latest'
           env: [
             {
               name: 'ENVOY_CATALOG_API_ADDRESS'

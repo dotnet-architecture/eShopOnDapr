@@ -15,7 +15,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
       containers: [
         {
           name: 'catalog-api'
-          image: 'eshopdapr/catalog.api:20220331'
+          image: 'eshopdapr/catalog.api:latest'
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
