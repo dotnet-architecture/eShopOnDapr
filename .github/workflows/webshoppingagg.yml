@@ -26,6 +26,8 @@ jobs:
   BuildContainersForPR_Linux:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' }}
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
@@ -41,6 +43,8 @@ jobs:
   BuildLinux:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' }}
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
