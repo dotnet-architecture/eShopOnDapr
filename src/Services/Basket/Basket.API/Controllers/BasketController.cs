@@ -83,7 +83,7 @@ public class BasketController : ControllerBase
         return Accepted();
     }
 
-    // DELETE api/values/5
+    // DELETE api/values/5//
     [HttpDelete]
     [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
     public async Task DeleteBasketAsync()
