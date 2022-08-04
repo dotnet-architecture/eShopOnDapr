@@ -75,7 +75,7 @@ jobs:
         cd src/Services/Basket/Basket.API
         dotnet build --no-restore
    
-    - name: Log in with Azure
+    - name: Log  in with Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
