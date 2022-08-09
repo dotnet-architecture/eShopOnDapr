@@ -15,3 +15,5 @@ spec:
       key: RedisPassword
   - name: actorStateStore
     value: "true"
+auth:
+  secretStore: eshopondapr-secretstore
