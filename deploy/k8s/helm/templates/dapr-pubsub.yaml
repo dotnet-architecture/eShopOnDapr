@@ -27,4 +27,6 @@ spec:
     secretKeyRef:
       name: eshopondapr-secrets
       key: RedisPassword
+auth:
+  secretStore: eshopondapr-secretstore
 
