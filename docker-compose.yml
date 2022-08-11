@@ -2,6 +2,9 @@ version: '3.4'
 
 services:
 
+  minio:
+    image: minio/minio
+
   maildev:
     image: maildev/maildev
 

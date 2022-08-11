@@ -20,6 +20,7 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.2" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.6.0" />
     <PackageReference Include="Dapr.Extensions.Configuration" Version="1.6.0" />
+	<PackageReference Include="Minio" Version="4.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
