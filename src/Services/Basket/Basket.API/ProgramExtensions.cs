@@ -56,8 +56,8 @@ public static class ProgramExtensions
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
-            c.OAuthClientId("orderingswaggerui");
-            c.OAuthAppName("Ordering Swagger UI");
+            c.OAuthClientId("basketswaggerui");
+            c.OAuthAppName("Basket Swagger UI");
         });
     }
 
