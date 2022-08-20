@@ -77,8 +77,6 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__CatalogDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5101:80"
       - "50002:50001"
@@ -105,8 +103,6 @@ services:
       - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
       - OrderingApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
       - ShoppingAggregatorApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__IdentityDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5105:80"
       - "50009:50001"
@@ -131,8 +127,6 @@ services:
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__OrderingDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5102:80"
       - "50003:50001"
