@@ -16,10 +16,14 @@ if (!string.IsNullOrEmpty(pathBase))
 
 app.UseHealthChecksUI(config =>
 {
-    config.ResourcesPath = string.IsNullOrEmpty(pathBase) ? "/ui/resources" : $"{pathBase}/ui/resources";
+    config.ResourcesPath = string.IsNullOrEmpty(pathBase)
+        ? "/ui/resources"
+        : $"{pathBase}/ui/resources";
 });
 
-app.MapGet(string.IsNullOrEmpty(pathBase) ? "/" : pathBase, () => Results.LocalRedirect("~/healthchecks-ui"));
+app.MapGet(string.IsNullOrEmpty(pathBase)
+    ? "/"
+    : pathBase, () => Results.LocalRedirect("~/healthchecks-ui"));
 app.MapHealthChecksUI();
 
 app.Run();
