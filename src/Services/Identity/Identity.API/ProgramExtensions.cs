@@ -8,10 +8,9 @@ public static class ProgramExtensions
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
-        // Disabled temporarily until https://github.com/dapr/dotnet-sdk/issues/779 is resolved.
-        //builder.Configuration.AddDaprSecretStore(
-        //    "secretstore",
-        //    new DaprClientBuilder().Build());
+        builder.Configuration.AddDaprSecretStore(
+           "eshopondapr-secretstore",
+           new DaprClientBuilder().Build());
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)

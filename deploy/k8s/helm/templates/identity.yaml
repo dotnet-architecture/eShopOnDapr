@@ -13,8 +13,6 @@ data:
   SeqServerUrl: http://seq
   IssuerUrl: http://{{ .Values.hostName}}
   BlazorClientUrlExternal: http://{{ .Values.hostName}}
-  # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-  ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
 ---
 
@@ -36,6 +34,12 @@ spec:
       labels:
         app: eshop
         service: identity
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "identity-api"
+        dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
     spec:
       containers:
         - name: identity-api
