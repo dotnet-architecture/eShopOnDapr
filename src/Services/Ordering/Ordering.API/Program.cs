@@ -41,15 +41,7 @@ app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
 app.MapControllers();
 app.MapActorsHandlers();
 app.MapSubscribeHandler();
-app.MapHealthChecks("/hc", new HealthCheckOptions()
-{
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-app.MapHealthChecks("/liveness", new HealthCheckOptions
-{
-    Predicate = r => r.Name.Contains("self")
-});
+app.MapCustomHealthChecks("/hc", "/liveness", UIResponseWriter.WriteHealthCheckUIResponse);
 app.MapHub<NotificationsHub>("/hub/notificationhub",
     options => options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling);
 

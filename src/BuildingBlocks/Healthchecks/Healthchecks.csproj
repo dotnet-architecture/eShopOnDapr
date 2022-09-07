@@ -5,7 +5,9 @@
     <RootNamespace>Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks</RootNamespace>
     <AssemblyName>Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks</AssemblyName>
   </PropertyGroup>
-
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapr.Client" Version="1.8.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.8" />
