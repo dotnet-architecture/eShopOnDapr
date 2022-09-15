@@ -13,7 +13,7 @@ services:
 
   rabbitmq:
     ports:
-      - "5672:5672"
+      - "4672:5672"
 
   redis:
     image: redis:alpine
@@ -31,7 +31,7 @@ services:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
     ports:
-      - "5433:1433"
+      - "2433:1433"
     volumes:
       - eshop-sqldata:/var/opt/mssql
 

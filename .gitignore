@@ -375,3 +375,19 @@ MigrationBackup/
 
 # macOS files
 .DS_Store
+/src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/.aspnet/DataProtection-Keys/key-26c59856-9ff6-469a-8a7c-d954f1b1669b.xml
+/src/Services/Basket/Basket.API/.aspnet/DataProtection-Keys/key-c48680ef-d1e0-4988-9486-e0f1bfb2f268.xml
+/src/Services/Identity/Identity.API/.aspnet/DataProtection-Keys/key-986ee17b-ff21-4a99-8917-f348faa16819.xml
+/src/Services/Identity/Identity.API/keys/is-signing-key-EAA68BA13C0497676FE6C8154E4CB60D.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-C773B66C065AB0FF099B1FA96A8DA508.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-C13A9A73D69887B49EE224B7610EE44B.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-A146395E40C2B5665F0A76377B3E49BC.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-9C9A36C9FFCF89F1ED6BA432240C2E8C.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-6DDC6082EC29A1BB9CE5AD77483AF126.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-511F2270F9ECDA692F2CD351C2E3FD8A.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-3E93D8BFF96E2B87F1278BF88CC89461.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-245BE88025479B3CBC04D33D8F04B6DB.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-23AFA9F9104D9AA570D6C4771A65ABFA.json
+/src/Services/Identity/Identity.API/keys/is-signing-key-22B27C69702109C30DDF13C5E8E156D8.json
+/src/Services/Ordering/Ordering.API/.aspnet/DataProtection-Keys/key-b0c35976-b46c-41ab-8f3a-710334bfb345.xml
+/src/Web/BlazorClient.Host/.aspnet/DataProtection-Keys/key-5495f7e4-a7fb-4723-a26b-613c3969fb3f.xml
