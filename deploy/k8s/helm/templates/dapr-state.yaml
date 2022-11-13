@@ -1,7 +1,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: eshop-statestore
+  name: eshopondapr-statestore
   namespace: {{ .Values.namespace }}
 spec:
   type: state.redis
@@ -11,7 +11,9 @@ spec:
     value: redis:6379
   - name: redisPassword
     secretKeyRef:
-      name: eshop-secrets
+      name: eshopondapr-secrets
       key: RedisPassword
   - name: actorStateStore
     value: "true"
+auth:
+  secretStore: eshopondapr-secretstore

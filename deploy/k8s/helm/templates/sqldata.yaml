@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: sqldata
-          image: mcr.microsoft.com/mssql/server:2017-latest
+          image: mcr.microsoft.com/azure-sql-edge
           imagePullPolicy: IfNotPresent
           ports:
             - name: sqlserver
@@ -42,11 +42,9 @@ metadata:
     app: eshop
     service: sqldata
 spec:
-  type: NodePort
   ports:
     - port: 1433
       targetPort: 1433
-      nodePort: 31433
       protocol: TCP
       name: tds
   selector:

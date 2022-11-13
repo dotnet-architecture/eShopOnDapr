@@ -1,152 +1,18 @@
-apiVersion: v1
 kind: ConfigMap
+apiVersion: v1
 metadata:
-  name: envoy-cm
+  name: apigateway-cm
   namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: apigateway
 data:
-  envoy.yaml: >
-    admin:
-      access_log_path: "/dev/null"
-      address:
-        socket_address:
-          address: 0.0.0.0
-          port_value: 8001
-    static_resources:
-      listeners:
-      - address:
-          socket_address:
-            address: 0.0.0.0
-            port_value: 80
-        filter_chains:
-        - filters:
-          - name: envoy.http_connection_manager
-            config:
-              codec_type: auto
-              stat_prefix: ingress_http
-              route_config:
-                name: eshop_backend_route
-                virtual_hosts:
-                - name: eshop_backend
-                  domains:
-                  - "*"
-                  cors:
-                    allow_origin_string_match:
-                    - safe_regex:
-                        google_re2: {}
-                        regex: \*
-                    allow_methods: "GET, POST, PUT"
-                    allow_headers: "authorization, content-type, x-requestid, x-requested-with, x-signalr-user-agent"
-                    allow_credentials: true
-                  routes:
-                  - name: "pics"
-                    match:
-                      prefix: "/c/pics/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/pics/"
-                      cluster: catalog
-                  - name: "c-short"
-                    match:
-                      prefix: "/c/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/catalog-api/method/"
-                      cluster: dapr
-                  - name: "c-long"
-                    match:
-                      prefix: "/catalog-api/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/catalog-api/method/"
-                      cluster: dapr
-                  - name: "o-short"
-                    match:
-                      prefix: "/o/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/ordering-api/method/"
-                      cluster: dapr
-                  - name: "o-long"
-                    match:
-                      prefix: "/ordering-api/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/ordering-api/method/"
-                      cluster: dapr
-                  - name: "h-long"
-                    match:
-                      prefix: "/hub/notificationhub"
-                    route:
-                      auto_host_rewrite: true
-                      cluster: ordering-api
-                      timeout: 300s
-                  - name: "b-short"
-                    match:
-                      prefix: "/b/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/basket-api/method/"
-                      cluster: dapr
-                  - name: "b-long"
-                    match:
-                      prefix: "/basket-api/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/basket-api/method/"
-                      cluster: dapr
-                  - name: "agg"
-                    match:
-                      prefix: "/"
-                    route:
-                      auto_host_rewrite: true
-                      prefix_rewrite: "/v1.0/invoke/webshoppingagg/method/"
-                      cluster: dapr
-              http_filters:
-              - name: envoy.cors
-              - name: envoy.router
-              access_log:
-              - name: envoy.file_access_log
-                filter:
-                  not_health_check_filter: {}
-                config:
-                  json_format:
-                    time: "%START_TIME%"
-                    protocol: "%PROTOCOL%"
-                    duration: "%DURATION%"
-                    request_method: "%REQ(:METHOD)%"
-                    request_host: "%REQ(HOST)%"
-                    path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
-                    response_flags: "%RESPONSE_FLAGS%"
-                    route_name: "%ROUTE_NAME%"
-                    upstream_host: "%UPSTREAM_HOST%"
-                    upstream_cluster: "%UPSTREAM_CLUSTER%"
-                    upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
-                  path: "/tmp/access.log"
-      clusters:
-      - name: dapr
-        connect_timeout: 0.25s
-        type: strict_dns
-        lb_policy: round_robin
-        hosts:
-        - socket_address:
-            address: 127.0.0.1
-            port_value: 3500
-      - name: catalog
-        connect_timeout: 0.25s
-        type: strict_dns
-        lb_policy: round_robin
-        hosts:
-        - socket_address:
-            address: catalog-api
-            port_value: 80
-      - name: ordering-api
-        connect_timeout: 0.25s
-        type: strict_dns
-        lb_policy: round_robin
-        hosts:
-        - socket_address:
-            address: ordering-api
-            port_value: 80
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  ENVOY_CATALOG_API_ADDRESS: catalog-api
+  ENVOY_CATALOG_API_PORT: "80"
+  ENVOY_ORDERING_API_ADDRESS: ordering-api
+  ENVOY_ORDERING_API_PORT: "80"
 
 ---
 
@@ -176,7 +42,7 @@ spec:
     spec:
       containers:
       - name: apigateway
-        image: envoyproxy/envoy:v1.14.2
+        image: eshopdapr/webshoppingapigw:latest
         imagePullPolicy: IfNotPresent
         ports:
           - name: http
@@ -191,14 +57,10 @@ spec:
           - name: daprgrpc
             containerPort: 50001
             protocol: TCP
-        volumeMounts:
-        - name: envoy-config
-          mountPath: /etc/envoy/envoy.yaml
-          subPath: envoy.yaml
-      volumes:
-      - name: envoy-config
-        configMap:
-          name: envoy-cm
+        envFrom:
+          - configMapRef:
+              name: apigateway-cm
+
 ---
 
 kind: Service
@@ -210,27 +72,50 @@ metadata:
     app: eshop
     service: apigateway
 spec:
-  type: NodePort
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30050
       protocol: TCP
       name: http
     - port: 8001
       targetPort: 8001
-      nodePort: 30051
       protocol: TCP
       name: admin
     - port: 3500
       targetPort: 3500
-      nodePort: 30052
       protocol: TCP
       name: daprhttp
     - port: 50001
       targetPort: 50001
-      nodePort: 30053
       protocol: TCP
       name: daprgrpc
   selector:
     service: apigateway
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apigateway-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: apigateway
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.hostName }}
+    http:
+      paths: 
+      - path: /gateway(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: apigateway
+            port: 
+              number: 80

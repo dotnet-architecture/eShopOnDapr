@@ -77,8 +77,6 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__CatalogDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5101:80"
       - "50002:50001"
@@ -100,12 +98,11 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - SeqServerUrl=http://seq
       - RetryMigrations=true
+      - IssuerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - BlazorClientUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
       - BasketApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
       - OrderingApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
       - ShoppingAggregatorApiUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__IdentityDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5105:80"
       - "50009:50001"
@@ -130,8 +127,6 @@ services:
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - RetryMigrations=true
       - SeqServerUrl=http://seq
-      # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-      - ConnectionStrings__OrderingDB=Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
     ports:
       - "5102:80"
       - "50003:50001"
@@ -194,12 +189,15 @@ services:
       - "./dapr/configuration/:/configuration"
 
   webshoppingapigw:
-    volumes:
-      - ./src/ApiGateways/Envoy:/etc/envoy
+    environment:
+      - ENVOY_CATALOG_API_ADDRESS=catalog-api
+      - ENVOY_CATALOG_API_PORT=80
+      - ENVOY_ORDERING_API_ADDRESS=ordering-api
+      - ENVOY_ORDERING_API_PORT=80
     ports:
-    - "5202:80"
-    - "15202:8001"
-    - "50008:50001"
+      - "5202:80"
+      - "15202:8001"
+      - "50008:50001"
 
   webshoppingapigw-dapr:
     command: ["./daprd",

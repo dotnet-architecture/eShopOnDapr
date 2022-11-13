@@ -1,2 +1,5 @@
+# K8s namespace to deploy eShopOnDapr in.
 namespace: eshopondapr
-externalDnsNameOrIP: localhost
+
+# Name of host where eShopOnDapr can be accessed.
+hostName: localhost

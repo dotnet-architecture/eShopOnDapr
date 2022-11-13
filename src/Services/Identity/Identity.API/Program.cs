@@ -18,13 +18,41 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+var pathBase = builder.Configuration["PATH_BASE"];
+if (!string.IsNullOrEmpty(pathBase))
+{
+    app.UsePathBase(pathBase);
+}
+
 app.UseStaticFiles();
 
 // This cookie policy fixes login issues with Chrome 80+ using HHTP
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 
 app.UseRouting();
+
+app.Use((context, next) =>
+{
+    // If the Application Request Routing (ARR) SSL header is set,
+    // set the request type to HTTPS. This ensures that Identity Server
+    // uses HTTPS URLs in the configuration exposed by the Discovery Endpoint.
+    // Ideally, we'd use the Forwarded Headers middleware for this,
+    // but Azure Containers Apps currently sends `http` in the
+    // x-forwarded-proto header instead of `https` (even when connecting
+    // using https).
+    // See https://github.com/microsoft/azure-container-apps/issues/97
+    if (context.Request.Headers.TryGetValue("x-arr-ssl", out var ssl) &&
+        string.CompareOrdinal(ssl, "true") == 0)
+    {
+        context.Request.Scheme = "https";
+    }
+
+    return next();
+});
+
 app.UseIdentityServer();
+
+
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();

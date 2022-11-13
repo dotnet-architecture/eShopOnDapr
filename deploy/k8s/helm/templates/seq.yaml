@@ -22,12 +22,14 @@ spec:
         image: datalust/seq:latest
         imagePullPolicy: IfNotPresent
         ports:
-          - name: http
+          - name: seq-http
             containerPort: 80
             protocol: TCP
         env:
           - name: ACCEPT_EULA
             value: "Y"
+          - name: SEQ_API_CANONICALURI
+            value: "http://{{ .Values.hostName }}/log/"
 
 ---
 
@@ -40,12 +42,63 @@ metadata:
     app: eshop
     service: seq
 spec:
-  type: NodePort
   ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30011
-      protocol: TCP
-      name: http
+    - name: ui
+      port: 80
+      targetPort: seq-http
   selector:
     service: seq
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seq-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: seq
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.hostName }}
+    http:
+      paths: 
+      - path: /log/(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: seq
+            port: 
+              name: ui
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seq-ingress-redirect
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: eshop
+    service: seq
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: "http://{{ .Values.hostName }}/log/"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.hostName }}
+    http:
+      paths: 
+      - path: /log
+        pathType: Exact
+        backend:
+          service:
+            name: seq
+            port: 
+              name: ui

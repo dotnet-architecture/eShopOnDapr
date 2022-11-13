@@ -72,6 +72,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Healthchecks", "Healthcheck
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Healthchecks", "src\BuildingBlocks\Healthchecks\Healthchecks.csproj", "{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebStatus", "src\Web\WebStatus\WebStatus.csproj", "{1489AC81-8724-4077-9241-D0384BA0CB6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +158,7 @@ Global
 		{E03A530B-3E53-4BFC-978C-105D86D04B67} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
 		{60441B2A-69B7-4BD1-B4FE-CCA68DFF4311} = {6E3302E8-41FD-490C-920B-D5929B5DE0D9}
 		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7} = {60441B2A-69B7-4BD1-B4FE-CCA68DFF4311}
+		{1489AC81-8724-4077-9241-D0384BA0CB6C} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBED0B95-87F8-439B-BC1E-382C8ABD4F2E}

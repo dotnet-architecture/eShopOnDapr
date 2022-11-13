@@ -4,7 +4,7 @@
 [ApiController]
 public class OrderingProcessEventController : ControllerBase
 {
-    private const string DAPR_PUBSUB_NAME = "pubsub";
+    private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 
     private readonly IActorProxyFactory _actorProxyFactory;
     private readonly ILogger<OrderingProcessEventController> _logger;
