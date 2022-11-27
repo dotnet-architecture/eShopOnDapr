@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks</RootNamespace>
     <AssemblyName>Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks</AssemblyName>
   </PropertyGroup>
@@ -9,9 +9,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Dapr.Client" Version="1.8.0" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.8" />
+    <PackageReference Include="Dapr.Client" Version="1.9.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

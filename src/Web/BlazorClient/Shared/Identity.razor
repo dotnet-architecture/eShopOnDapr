@@ -1,12 +1,11 @@
 @inject NavigationManager _navigationManager
-@inject SignOutSessionStateManager _signOutManager
 
 <div class="esh-identity">
     <AuthorizeView>
         <NotAuthorized>
             <section class="esh-identity-section">
                 <div class="u-cursor-pointer pt-2 pb-2" @onclick=@Login>
-                    <div class="esh-identity-name d-flex align-items-center">LOGIN 
+                    <div class="esh-identity-name d-flex align-items-center">LOGIN
                         <img class="esh-identity-image ml-2" src="/images/user.svg">
                     </div>
                 </div>
@@ -43,9 +42,8 @@
         _navigationManager.NavigateTo("orders");
     }
 
-    private async Task BeginSignOutAsync(MouseEventArgs args)
+    private void BeginSignOutAsync(MouseEventArgs args)
     {
-        await _signOutManager.SetSignOutState();
-        _navigationManager.NavigateTo("authentication/logout");
+        _navigationManager.NavigateToLogout("authentication/logout");
     }
 }

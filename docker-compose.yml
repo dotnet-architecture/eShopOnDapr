@@ -3,7 +3,7 @@ version: '3.4'
 services:
 
   maildev:
-    image: maildev/maildev
+    image: maildev/maildev:latest
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -19,7 +19,7 @@ services:
     image: mcr.microsoft.com/azure-sql-edge
 
   zipkin:
-    image: openzipkin/zipkin-slim
+    image: openzipkin/zipkin-slim:latest
 
   basket-api:
     image: ${REGISTRY:-eshopdapr}/basket.api:${TAG:-latest}
@@ -31,7 +31,7 @@ services:
       - redis
 
   basket-api-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:basket-api"
     depends_on:
       - basket-api
@@ -51,7 +51,7 @@ services:
       - sqldata
 
   catalog-api-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:catalog-api"
     depends_on:
       - catalog-api
@@ -65,7 +65,7 @@ services:
       - sqldata
 
   identity-api-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:identity-api"
     depends_on:
       - identity-api
@@ -79,7 +79,7 @@ services:
       - sqldata
 
   ordering-api-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:ordering-api"
     depends_on:
       - ordering-api
@@ -91,7 +91,7 @@ services:
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
 
   payment-api-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:payment-api"
     depends_on:
       - payment-api
@@ -109,7 +109,7 @@ services:
       - sqldata
 
   webshoppingagg-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:webshoppingagg"
     depends_on:
       - webshoppingagg
@@ -121,7 +121,7 @@ services:
       dockerfile: src/ApiGateways/Envoy/Dockerfile
 
   webshoppingapigw-dapr:
-    image: "daprio/daprd:1.8.4"
+    image: "daprio/daprd:1.9.4"
     network_mode: "service:webshoppingapigw"
     depends_on:
       - webshoppingapigw
@@ -133,4 +133,4 @@ services:
       dockerfile: src/Web/WebStatus/Dockerfile
 
   dapr-placement:
-    image: "daprio/dapr:1.8.4"
+    image: "daprio/dapr:1.9.4"
