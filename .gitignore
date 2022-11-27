@@ -375,3 +375,4 @@ MigrationBackup/
 
 # macOS files
 .DS_Store
+/src/Services/Identity/Identity.API/keys
