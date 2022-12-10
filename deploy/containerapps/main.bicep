@@ -5,6 +5,14 @@ param uniqueSeed string = '${resourceGroup().id}-${deployment().name}'
 // Infrastructure
 ////////////////////////////////////////////////////////////////////////////////
 
+module managedIdentity 'modules/infra/identity.bicep' = {
+  name: '${deployment().name}-infra-managed-identity'
+  params: {
+    location: location
+    uniqueSeed: uniqueSeed
+  }
+}
+
 module containerAppsEnvironment 'modules/infra/container-apps-env.bicep' = {
   name: '${deployment().name}-infra-container-app-env'
   params: {
@@ -37,6 +45,18 @@ module sqlServer 'modules/infra/sql-server.bicep' = {
   }
 }
 
+module keyVault 'modules/infra/keyvault.bicep' = {
+  name: '${deployment().name}-infra-keyvault'
+  params: {
+    location: location
+    uniqueSeed: uniqueSeed
+    managedIdentityObjectId: managedIdentity.outputs.identityObjectId
+    catalogDbConnectionString: sqlServer.outputs.catalogDbConnectionString
+    identityDbConnectionString: sqlServer.outputs.identityDbConnectionString
+    orderingDbConnectionString: sqlServer.outputs.orderingDbConnectionString
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Dapr components
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +77,15 @@ module daprStateStore 'modules/dapr/statestore.bicep' = {
     cosmosCollectionName: cosmos.outputs.cosmosCollectionName
     cosmosUrl: cosmos.outputs.cosmosUrl
     cosmosKey: cosmos.outputs.cosmosKey
+  }
+}
+
+module daprSecretStore 'modules/dapr/secretstore.bicep' = {
+  name: '${deployment().name}-dapr-secretstore'
+  params: {
+    containerAppsEnvironmentName: containerAppsEnvironment.outputs.name
+    vaultName: keyVault.outputs.vaultName
+    managedIdentityClientId: managedIdentity.outputs.identityClientId
   }
 }
 
@@ -96,12 +125,14 @@ module catalogApi 'modules/apps/catalog-api.bicep' = {
   name: '${deployment().name}-app-catalog-api'
   dependsOn: [
     daprPubSub
+    daprSecretStore
     seq
   ]
   params: {
     location: location
     seqFqdn: seq.outputs.fqdn
     containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
+    managedIdentityId: managedIdentity.outputs.identityId
     catalogDbConnectionString: sqlServer.outputs.catalogDbConnectionString
   }
 }
@@ -109,6 +140,7 @@ module catalogApi 'modules/apps/catalog-api.bicep' = {
 module identityApi 'modules/apps/identity-api.bicep' = {
   name: '${deployment().name}-app-identity-api'
   dependsOn: [
+    daprSecretStore
     seq
   ]
   params: {
@@ -116,6 +148,7 @@ module identityApi 'modules/apps/identity-api.bicep' = {
     seqFqdn: seq.outputs.fqdn
     containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
     containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
+    managedIdentityId: managedIdentity.outputs.identityId
     identityDbConnectionString: sqlServer.outputs.identityDbConnectionString
   }
 }
@@ -125,6 +158,7 @@ module orderingApi 'modules/apps/ordering-api.bicep' = {
   dependsOn: [
     daprPubSub
     daprStateStore
+    daprSecretStore
     seq
   ]
   params: {
@@ -132,6 +166,7 @@ module orderingApi 'modules/apps/ordering-api.bicep' = {
     seqFqdn: seq.outputs.fqdn
     containerAppsEnvironmentId: containerAppsEnvironment.outputs.id
     containerAppsEnvironmentDomain: containerAppsEnvironment.outputs.domain
+    managedIdentityId: managedIdentity.outputs.identityId
     orderingDbConnectionString: sqlServer.outputs.identityDbConnectionString
   }
 }

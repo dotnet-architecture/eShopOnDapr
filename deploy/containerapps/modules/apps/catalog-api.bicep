@@ -3,12 +3,20 @@ param seqFqdn string
 
 param containerAppsEnvironmentId string
 
+param managedIdentityId string
+
 @secure()
 param catalogDbConnectionString string
 
 resource containerApp 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'catalog-api'
   location: location
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${managedIdentityId}': {}
+    }
+  }
   properties: {
     managedEnvironmentId: containerAppsEnvironmentId
     template: {
