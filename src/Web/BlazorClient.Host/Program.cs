@@ -52,7 +52,7 @@ Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
     return new LoggerConfiguration()
         .ReadFrom.Configuration(configuration)
         .WriteTo.Console()
-        .WriteTo.Seq(seqServerUrl)
+        .WriteTo.Seq(seqServerUrl!)
         .Enrich.WithProperty("ApplicationName", appName)
         .CreateLogger();
 }

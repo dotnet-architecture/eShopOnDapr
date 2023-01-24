@@ -10,15 +10,15 @@ spec:
   - name: host
     value: maildev
   - name: port
-    value: 25
+    value: 1025
   - name: user
     secretKeyRef:
       name: Smtp.User
       key: Smtp.User
-  - name: password
-    secretKeyRef:
-      name: Smtp.Password
-      key: Smtp.Password
+  #- name: password
+  #  secretKeyRef:
+  #    name: Smtp.Password
+  #    key: Smtp.Password
   - name: skipTLSVerify
     value: true
 auth:

@@ -90,7 +90,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
                 null,
                 TimeSpan.FromSeconds(10),
                 TimeSpan.FromMilliseconds(-1));
-        }            
+        }
     }
 
     public async Task NotifyStockRejectedAsync(List<int> rejectedProductIds)
@@ -190,7 +190,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
 
     public Task<OrderState> GetOrderDetails()
     {
-        return StateManager.GetStateAsync<OrderState>(OrderDetailsStateName); 
+        return StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
     }
 
     public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
@@ -207,7 +207,7 @@ public class OrderingProcessActor : Actor, IOrderingProcessActor, IRemindable
                 JsonSerializer.Deserialize<List<int>>(Encoding.UTF8.GetString(state))!),
             PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDoneAsync(),
             PaymentFailedReminder => OnPaymentFailedSimulatedWorkDoneAsync(),
-            _ => Task.CompletedTask 
+            _ => Task.CompletedTask
         };
     }
 

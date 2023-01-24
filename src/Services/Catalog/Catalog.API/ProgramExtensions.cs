@@ -21,7 +21,7 @@ public static class ProgramExtensions
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
-            .WriteTo.Seq(seqServerUrl)
+            .WriteTo.Seq(seqServerUrl!)
             .Enrich.WithProperty("ApplicationName", AppName)
             .CreateLogger();
 
@@ -48,9 +48,9 @@ public static class ProgramExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
             .AddSqlServer(
-                builder.Configuration["ConnectionStrings:CatalogDB"],
+                builder.Configuration["ConnectionStrings:CatalogDB"]!,
                 name: "CatalogDB-check",
-                tags: new string[] { "catalogdb" });
+                tags: new [] { "catalogdb" });
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
@@ -64,7 +64,7 @@ public static class ProgramExtensions
 
 
         builder.Services.AddDbContext<CatalogDbContext>(
-            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]));
+            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]!));
     }
 
     public static void ApplyDatabaseMigration(this WebApplication app)
@@ -73,7 +73,7 @@ public static class ProgramExtensions
         // recommended for production scenarios. Consider generating SQL scripts from
         // migrations instead.
         using var scope = app.Services.CreateScope();
-        
+
         var retryPolicy = CreateRetryPolicy(app.Configuration, Log.Logger);
         var context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
 
@@ -84,12 +84,12 @@ public static class ProgramExtensions
     {
         // Only use a retry policy if configured to do so.
         // When running in an orchestrator/K8s, it will take care of restarting failed services.
-        if (bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations))
+        if (bool.TryParse(configuration["RetryMigrations"], out bool _))
         {
             return Policy.Handle<Exception>().
                 WaitAndRetryForever(
-                    sleepDurationProvider: retry => TimeSpan.FromSeconds(5),
-                    onRetry: (exception, retry, timeSpan) =>
+                    sleepDurationProvider: _ => TimeSpan.FromSeconds(5),
+                    onRetry: (exception, retry, _) =>
                     {
                         logger.Warning(
                             exception,

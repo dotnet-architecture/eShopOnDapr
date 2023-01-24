@@ -9,7 +9,8 @@ services:
 
   maildev:
     ports:
-      - "5500:80"
+      - "5500:1080"
+      - "1025:1025"
 
   rabbitmq:
     ports:
