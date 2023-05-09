@@ -40,7 +40,7 @@ public static class ProgramExtensions
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
                             {
-                                { "shoppingaggr-api", AppName }
+                                { "shoppingaggr", AppName }
                             }
                     }
                 }
