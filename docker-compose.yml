@@ -22,7 +22,11 @@ services:
     image: openzipkin/zipkin-slim:latest
 
   basket-api:
-    image: ${REGISTRY:-eshopdapr}/basket.api:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/basket.api:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/basket.api
     build:
       context: .
       dockerfile: src/Services/Basket/Basket.API/Dockerfile
@@ -37,13 +41,21 @@ services:
       - basket-api
 
   blazor-client:
-    image: ${REGISTRY:-eshopdapr}/blazor.client:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/blazor.client:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/blazor.client
     build:
       context: .
       dockerfile: src/Web/BlazorClient.Host/Dockerfile
 
   catalog-api:
-    image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/catalog.api
     build:
       context: .
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
@@ -57,7 +69,11 @@ services:
       - catalog-api
 
   identity-api:
-    image: ${REGISTRY:-eshopdapr}/identity.api:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/identity.api:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/identity.api
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
@@ -71,7 +87,11 @@ services:
       - identity-api
 
   ordering-api:
-    image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/ordering.api
     build:
       context: .
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
@@ -85,7 +105,11 @@ services:
       - ordering-api
 
   payment-api:
-    image: ${REGISTRY:-eshopdapr}/payment.api:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/payment.api:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/payment.api
     build:
       context: .
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
@@ -97,7 +121,11 @@ services:
       - payment-api
 
   webshoppingagg:
-    image: ${REGISTRY:-eshopdapr}/webshoppingagg:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/webshoppingagg:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow
+    image: ${REGISTRY:-}/webshoppingagg
     build:
       context: .
       dockerfile: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Dockerfile
@@ -115,7 +143,11 @@ services:
       - webshoppingagg
 
   webshoppingapigw:
-    image: ${REGISTRY:-eshopdapr}/webshoppingapigw:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/webshoppingapigw:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow.
+    image: ${REGISTRY:-}/webshoppingapigw
     build:
       context: .
       dockerfile: src/ApiGateways/Envoy/Dockerfile
@@ -127,7 +159,11 @@ services:
       - webshoppingapigw
 
   webstatus:
-    image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
+    # #Pulling the image from dockerhub of eshopdapr can speed up the generation, but the local modification will not take effect
+    # image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
+    # # or
+    # # Using local code to build a docker image is slow.
+    image: ${REGISTRY:-}/webstatus
     build:
       context: .
       dockerfile: src/Web/WebStatus/Dockerfile
