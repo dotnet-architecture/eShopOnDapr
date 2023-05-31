@@ -11,8 +11,8 @@ spec:
     value: redis:6379
   - name: redisPassword
     secretKeyRef:
-      name: State.RedisPassword
-      key: State.RedisPassword
+      name: State:RedisPassword
+      key: State:RedisPassword
   - name: actorStateStore
     value: "true"
 auth:
