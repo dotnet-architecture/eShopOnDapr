@@ -1,0 +1,14 @@
+global using System.Security.Claims;
+global using System.Text;
+global using System.Text.Json;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.AspNetCore.Routing;
+global using Microsoft.AspNetCore.TestHost;
+global using Microsoft.eShopOnDapr.Services.Basket.API.Middlewares;
+global using Microsoft.eShopOnDapr.Services.Basket.API.Model;
+global using Microsoft.Extensions.DependencyInjection;
+global using Xunit;
+global using static Basket.FunctionalTests.BasketWebApplicationFactory;

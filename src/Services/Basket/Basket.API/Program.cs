@@ -1,5 +1,5 @@
 ﻿var appName = "Basket API";
-var builder = WebApplication.CreateBuilder();
+var builder = WebApplication.CreateBuilder(args);
 
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
@@ -25,7 +25,10 @@ if (!string.IsNullOrEmpty(pathBase))
 
 app.UseCloudEvents();
 
-app.UseAuthentication();
+using var scope = app.Services.CreateScope();
+{
+    scope.ServiceProvider.GetRequiredService<IAuthMiddleware>().UseAuth(app);
+}
 app.UseAuthorization();
 
 app.UseCors("CorsPolicy");
@@ -46,4 +49,8 @@ catch (Exception ex)
 finally
 {
     Serilog.Log.CloseAndFlush();
+}
+
+public partial class Program
+{
 }

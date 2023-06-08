@@ -1,0 +1,9 @@
+global using Dapr.Actors;
+global using Dapr.Actors.Client;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.eShopOnDapr.Services.Ordering.API.Actors;
+global using Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+global using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+global using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
+global using Moq;
+global using Xunit;

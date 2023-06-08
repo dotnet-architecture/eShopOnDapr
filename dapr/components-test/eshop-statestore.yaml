@@ -1,0 +1,22 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: eshopondapr-statestore
+  namespace: eshop
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: redis-test:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: State:RedisPassword
+      key: State:RedisPassword
+  - name: actorStateStore
+    value: "true"
+auth:
+  secretStore: eshopondapr-secretstore
+scopes:
+- basket-api-test
+- ordering-api-test
