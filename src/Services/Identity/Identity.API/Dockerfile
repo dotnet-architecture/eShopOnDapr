@@ -12,17 +12,24 @@ COPY ["src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Web.Shopping.Http
 COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
 COPY ["src/BuildingBlocks/Healthchecks/Healthchecks.csproj", "src/BuildingBlocks/Healthchecks/"]
 COPY ["src/Services/Basket/Basket.API/Basket.API.csproj", "src/Services/Basket/Basket.API/"]
+COPY ["src/Services/Basket/Basket.FunctionalTests/Basket.FunctionalTests.csproj", "src/Services/Basket/Basket.FunctionalTests/"]
+COPY ["src/Services/Basket/Basket.UnitTests/Basket.UnitTests.csproj", "src/Services/Basket/Basket.UnitTests/"]
 COPY ["src/Services/Catalog/Catalog.API/Catalog.API.csproj", "src/Services/Catalog/Catalog.API/"]
+COPY ["src/Services/Catalog/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj", "src/Services/Catalog/Catalog.FunctionalTests/"]
+COPY ["src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj", "src/Services/Catalog/Catalog.UnitTests/"]
 COPY ["src/Services/Identity/Identity.API/Identity.API.csproj", "src/Services/Identity/Identity.API/"]
 COPY ["src/Services/Ordering/Ordering.API/Ordering.API.csproj", "src/Services/Ordering/Ordering.API/"]
+COPY ["src/Services/Ordering/Ordering.FunctionalTests/Ordering.FunctionalTests.csproj", "src/Services/Ordering/Ordering.FunctionalTests/"]
+COPY ["src/Services/Ordering/Ordering.UnitTests/Ordering.UnitTests.csproj", "src/Services/Ordering/Ordering.UnitTests/"]
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
+COPY ["src/Tests/Services/Application.FunctionalTests/Application.FunctionalTests.csproj", "src/Tests/Services/Application.FunctionalTests/"]
 COPY ["src/Web/BlazorClient.Host/BlazorClient.Host.csproj", "src/Web/BlazorClient.Host/"]
 COPY ["src/Web/BlazorClient/BlazorClient.csproj", "src/Web/BlazorClient/"]
 COPY ["src/Web/WebStatus/WebStatus.csproj", "src/Web/WebStatus/"]
 COPY ["docker-compose.dcproj", "./"]
 COPY ["NuGet.config", "./"]
 COPY ["eShopOnDapr.sln", "./"]
-RUN dotnet restore "src/Services/Identity/Identity.API/Identity.API.csproj"
+RUN dotnet restore "eShopOnDapr.sln"
 
 COPY . .
 WORKDIR "/src/src/Services/Identity/Identity.API"

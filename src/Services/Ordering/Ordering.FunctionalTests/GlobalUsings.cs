@@ -1,0 +1,12 @@
+global using System.Net;
+global using System.Security.Claims;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.AspNetCore.Routing;
+global using Microsoft.AspNetCore.TestHost;
+global using Microsoft.eShopOnDapr.Services.Ordering.API.Middlewares;
+global using Microsoft.Extensions.DependencyInjection;
+global using Xunit;
+global using static Ordering.FunctionalTests.OrderingWebApplicationFactory;

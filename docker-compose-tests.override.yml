@@ -1,0 +1,117 @@
+version: '3.4'
+
+services:
+  rabbitmq-test:
+    ports:
+      - "5672:5672"
+
+  redis-test:
+    ports:
+      - "5379:6379"
+
+  sqldata-test:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+
+  basket-api-functional-test:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://identity-api-test
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - SeqServerUrl=http://seq-test
+      - SuppressCheckForUnhandledSecurityMetadata=true
+      - IsTest=true
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/basket-api-functional-test-results.xml
+
+  basket-api-dapr-test:
+    command: ["./daprd",
+      "-app-id", "basket-api-test",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/eshop-config.yaml"
+      ]
+    volumes:
+      - "./dapr/components-test/:/components"
+      - "./dapr/configuration/:/configuration"
+
+  basket-api-unit-test:
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/basket-api-unit-test-results.xml
+
+  catalog-api-functional-test:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq-test
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/catalog-api-functional-test-results.xml
+
+  catalog-api-dapr-test:
+    command: ["./daprd",
+      "-app-id", "catalog-api-test",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/eshop-config.yaml"
+      ]
+    volumes:
+      - "./dapr/components-test/:/components"
+      - "./dapr/configuration/:/configuration"
+
+  catalog-api-unit-test:
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/catalog-api-unit-test-results.xml
+
+  ordering-api-functional-test:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://identity-api-test
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - RetryMigrations=true
+      - SeqServerUrl=http://seq-test
+      - SuppressCheckForUnhandledSecurityMetadata=true
+      - IsTest=true
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/ordering-api-functional-test-results.xml
+
+  ordering-api-dapr-test:
+    command: ["./daprd",
+      "-app-id", "ordering-api-test",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/eshop-config.yaml"
+      ]
+    volumes:
+      - "./dapr/components-test/:/components"
+      - "./dapr/configuration/:/configuration"
+
+  ordering-api-unit-test:
+    entrypoint:
+        - dotnet
+        - test
+        - --logger
+        - trx;LogFileName=/tests/ordering-api-unit-test-results.xml

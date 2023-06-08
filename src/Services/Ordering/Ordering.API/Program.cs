@@ -5,15 +5,16 @@ builder.AddCustomConfiguration();
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
 builder.AddCustomAuthentication();
-builder.AddCustomAuthorization(); 
+builder.AddCustomAuthorization();
 builder.AddCustomHealthChecks();
 builder.AddCustomApplicationServices();
 builder.AddCustomDatabase();
 
-builder.Services.AddDaprClient();
+builder.Services.AddDaprClient(b => b.UseEndpoints(builder.Configuration));
 builder.Services.AddControllers();
 builder.Services.AddActors(options =>
 {
+    options.UseEndpoint(builder.Configuration);
     options.Actors.RegisterActor<OrderingProcessActor>();
 });
 builder.Services.AddSignalR();
@@ -34,7 +35,10 @@ if (!string.IsNullOrEmpty(pathBase))
 
 app.UseCloudEvents();
 
-app.UseAuthentication();
+using var scope = app.Services.CreateScope();
+{
+    scope.ServiceProvider.GetRequiredService<IAuthMiddleware>().UseAuth(app);
+}
 app.UseAuthorization();
 
 app.MapGet("/", () => Results.LocalRedirect("~/swagger"));
@@ -62,5 +66,6 @@ finally
     Serilog.Log.CloseAndFlush();
 }
 
-
-
+public partial class Program
+{
+}

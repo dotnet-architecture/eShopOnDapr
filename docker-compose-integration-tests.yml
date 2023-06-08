@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+  maildev-test:
+    image: maildev/maildev:latest
+
+  rabbitmq-test:
+    image: rabbitmq:3-management-alpine
+
+  redis-test:
+    image: redis:alpine
+
+  sqldata-test:
+    image: mcr.microsoft.com/azure-sql-edge
+
+  integration-test:
+    image: ${REGISTRY:-eshopdapr}/integration-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Tests/Services/Application.FunctionalTests/Dockerfile
+    depends_on:
+      - sqldata-test
+      - redis-test
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  basket-api-dapr-integration-test:
+    image: "daprio/daprd:1.9.4"
+    network_mode: "service:integration-test"
+    depends_on:
+      - integration-test
+
+  ordering-api-dapr-integration-test:
+    image: "daprio/daprd:1.9.4"
+    network_mode: "service:integration-test"
+    depends_on:
+      - integration-test
+
+  dapr-placement-test:
+    image: "daprio/dapr:1.9.4"

@@ -1,0 +1,90 @@
+version: '3.4'
+
+services:
+  rabbitmq-test:
+    image: rabbitmq:3-management-alpine
+
+  redis-test:
+    image: redis:alpine
+
+  sqldata-test:
+    image: mcr.microsoft.com/azure-sql-edge
+
+  basket-api-functional-test:
+    image: ${REGISTRY:-eshopdapr}/basket-api-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+      target: functionaltest
+    depends_on:
+      - sqldata-test
+      - redis-test
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  basket-api-dapr-test:
+    image: "daprio/daprd:1.9.4"
+    network_mode: "service:basket-api-functional-test"
+    depends_on:
+      - basket-api-functional-test
+
+  basket-api-unit-test:
+    image: ${REGISTRY:-eshopdapr}/basket-api-unit-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+      target: unittest
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  catalog-api-functional-test:
+    image: ${REGISTRY:-eshopdapr}/catalog-api-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+      target: functionaltest
+    depends_on:
+      - sqldata-test
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  catalog-api-dapr-test:
+    image: "daprio/daprd:1.9.4"
+    network_mode: "service:catalog-api-functional-test"
+    depends_on:
+      - catalog-api-functional-test
+
+  catalog-api-unit-test:
+    image: ${REGISTRY:-eshopdapr}/catalog-unit-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+      target: unittest
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  ordering-api-functional-test:
+    image: ${REGISTRY:-eshopdapr}/ordering-api-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+      target: functionaltest
+    depends_on:
+      - sqldata-test
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests
+
+  ordering-api-dapr-test:
+    image: "daprio/daprd:1.9.4"
+    network_mode: "service:ordering-api-functional-test"
+    depends_on:
+      - ordering-api-functional-test
+
+  ordering-api-unit-test:
+    image: ${REGISTRY:-eshopdapr}/ordering-unit-test:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+      target: unittest
+    volumes:
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests-results/}:/tests

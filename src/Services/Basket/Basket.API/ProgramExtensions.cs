@@ -64,7 +64,27 @@ public static class ProgramExtensions
     public static void AddCustomMvc(this WebApplicationBuilder builder)
     {
         // TODO DaprClient good enough?
-        builder.Services.AddControllers().AddDapr();
+        builder.Services.AddControllers()
+            .AddDapr(b => b.UseEndpoints(builder.Configuration));
+    }
+
+    public static DaprClientBuilder UseEndpoints(this DaprClientBuilder builder, ConfigurationManager configuration)
+    {
+        var daprHttpEndpoint = configuration["DAPR_HTTP_ENDPOINT"];
+
+        if (!string.IsNullOrEmpty(daprHttpEndpoint))
+        {
+            builder.UseHttpEndpoint(daprHttpEndpoint);
+        }
+
+        var daprGrpcEndpoint = configuration["DAPR_GRPC_ENDPOINT"];
+
+        if (!string.IsNullOrEmpty(daprGrpcEndpoint))
+        {
+            builder.UseGrpcEndpoint(daprGrpcEndpoint);
+        }
+
+        return builder;
     }
 
     public static void AddCustomAuthentication(this WebApplicationBuilder builder)
@@ -109,5 +129,7 @@ public static class ProgramExtensions
         builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         builder.Services.AddScoped<IBasketRepository, DaprBasketRepository>();
         builder.Services.AddScoped<IIdentityService, IdentityService>();
+
+        builder.Services.AddTransient<IAuthMiddleware, AuthMiddleware>();
     }
 }

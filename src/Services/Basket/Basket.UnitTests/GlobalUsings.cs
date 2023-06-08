@@ -1,0 +1,11 @@
+global using System.Security.Claims;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
+global using Microsoft.eShopOnDapr.Services.Basket.API.Controllers;
+global using Microsoft.eShopOnDapr.Services.Basket.API.IntegrationEvents.Events;
+global using Microsoft.eShopOnDapr.Services.Basket.API.Model;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using Xunit;
+global using IBasketIdentityService = Microsoft.eShopOnDapr.Services.Basket.API.Services.IIdentityService;

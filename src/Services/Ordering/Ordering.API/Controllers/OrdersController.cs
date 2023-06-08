@@ -7,13 +7,16 @@ public class OrdersController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IIdentityService _identityService;
+    private readonly IActorProxyFactory _actorProxyFactory;
 
     public OrdersController(
-        IOrderRepository orderRepository, 
-        IIdentityService identityService)
+        IOrderRepository orderRepository,
+        IIdentityService identityService,
+        IActorProxyFactory actorProxyFactory)
     {
         _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
         _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+        _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
     }
 
     [Route("{orderNumber:int}/cancel")]
@@ -57,7 +60,7 @@ public class OrdersController : ControllerBase
 
     [Route("{orderNumber:int}")]
     [HttpGet]
-    [ProducesResponseType(typeof(Model.Order),(int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Order), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<ActionResult> GetOrderAsync(int orderNumber)
     {
@@ -92,6 +95,6 @@ public class OrdersController : ControllerBase
         }
 
         var actorId = new ActorId(order.Id.ToString());
-        return ActorProxy.Create<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
+        return _actorProxyFactory.CreateActorProxy<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
     }
 }
