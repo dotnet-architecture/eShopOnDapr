@@ -122,6 +122,13 @@ services:
 
   webshoppingapigw-dapr:
     image: "daprio/daprd:1.12.3"
+    command: [
+      "./daprd",
+     "--app-id", "webshoppingapigw",
+     "--app-port", "3000",
+     "--placement-host-address", "placement:50006", # Dapr's placement service can be reach via the docker DNS entry
+     "--resources-path", "./dapr/components"
+    ]
     network_mode: "service:webshoppingapigw"
     depends_on:
       - webshoppingapigw
@@ -134,3 +141,6 @@ services:
 
   dapr-placement:
     image: "daprio/dapr:1.12.3"
+    command: ["./placement", "--port", "50006"]
+    ports:
+      - "50006:50006"
