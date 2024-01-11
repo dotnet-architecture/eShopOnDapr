@@ -31,7 +31,7 @@ services:
       - redis
 
   basket-api-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:basket-api"
     depends_on:
       - basket-api
@@ -51,7 +51,7 @@ services:
       - sqldata
 
   catalog-api-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:catalog-api"
     depends_on:
       - catalog-api
@@ -65,7 +65,7 @@ services:
       - sqldata
 
   identity-api-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:identity-api"
     depends_on:
       - identity-api
@@ -79,7 +79,7 @@ services:
       - sqldata
 
   ordering-api-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:ordering-api"
     depends_on:
       - ordering-api
@@ -91,7 +91,7 @@ services:
       dockerfile: src/Services/Payment/Payment.API/Dockerfile
 
   payment-api-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:payment-api"
     depends_on:
       - payment-api
@@ -109,7 +109,7 @@ services:
       - sqldata
 
   webshoppingagg-dapr:
-    image: "daprio/daprd:1.12.3"
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:webshoppingagg"
     depends_on:
       - webshoppingagg
@@ -121,14 +121,7 @@ services:
       dockerfile: src/ApiGateways/Envoy/Dockerfile
 
   webshoppingapigw-dapr:
-    image: "daprio/daprd:1.12.3"
-    command: [
-      "./daprd",
-     "--app-id", "webshoppingapigw",
-     "--app-port", "3000",
-     "--placement-host-address", "dapr-placement:50006", # Dapr's placement service can be reach via the docker DNS entry
-     "--resources-path", "./dapr/components"
-    ]
+    image: "daprio/dapr:1.12.0"
     network_mode: "service:webshoppingapigw"
     depends_on:
       - webshoppingapigw
@@ -140,7 +133,4 @@ services:
       dockerfile: src/Web/WebStatus/Dockerfile
 
   dapr-placement:
-    image: "daprio/dapr:1.12.3"
-    command: ["./placement", "--port", "50006"]
-    ports:
-      - "50006:50006"
+    image: "daprio/dapr:1.12.0"
