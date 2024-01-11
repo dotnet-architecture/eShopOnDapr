@@ -126,7 +126,7 @@ services:
       "./daprd",
      "--app-id", "webshoppingapigw",
      "--app-port", "3000",
-     "--placement-host-address", "placement:50006", # Dapr's placement service can be reach via the docker DNS entry
+     "--placement-host-address", "dapr-placement:50006", # Dapr's placement service can be reach via the docker DNS entry
      "--resources-path", "./dapr/components"
     ]
     network_mode: "service:webshoppingapigw"
