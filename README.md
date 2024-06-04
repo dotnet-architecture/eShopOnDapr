@@ -1,6 +1,6 @@
 # eShop on Dapr
 
-> Find new samples for Dapr and .NET on the official [Dapr website](https://dapr.io) and on the [Dapr GitHub](https://github.com/dapr).
+> Find new samples for Dapr and .NET on the official [Dapr website](https://dapr.io) and on the [Dapr GitHub](https://github.com/dapr). Additionally, be sure to see the [Azure Container Apps Landing Zone](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/announcing-landing-zone-accelerator-for-azure-container-apps/ba-p/3843989) with Dapr support.
 
 A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/). The current version targets .NET 7.
 
