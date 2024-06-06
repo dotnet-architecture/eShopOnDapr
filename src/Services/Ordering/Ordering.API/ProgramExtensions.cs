@@ -11,7 +11,38 @@ public static class ProgramExtensions
     {
         builder.Configuration.AddDaprSecretStore(
            "eshopondapr-secretstore",
-           new DaprClientBuilder().Build());
+           new DaprClientBuilder()
+               .UseEndpoints(builder.Configuration)
+               .Build());
+    }
+
+    public static DaprClientBuilder UseEndpoints(this DaprClientBuilder builder, ConfigurationManager configuration)
+    {
+        var daprHttpEndpoint = configuration["DAPR_HTTP_ENDPOINT"];
+
+        if (!string.IsNullOrEmpty(daprHttpEndpoint))
+        {
+            builder.UseHttpEndpoint(daprHttpEndpoint);
+        }
+
+        var daprGrpcEndpoint = configuration["DAPR_GRPC_ENDPOINT"];
+
+        if (!string.IsNullOrEmpty(daprGrpcEndpoint))
+        {
+            builder.UseGrpcEndpoint(daprGrpcEndpoint);
+        }
+
+        return builder;
+    }
+
+    public static void UseEndpoint(this ActorRuntimeOptions options, ConfigurationManager configuration)
+    {
+        var daprHttpEndpoint = configuration["DAPR_HTTP_ENDPOINT"];
+
+        if (!string.IsNullOrEmpty(daprHttpEndpoint))
+        {
+            options.HttpEndpoint = daprHttpEndpoint;
+        }
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
@@ -101,7 +132,7 @@ public static class ProgramExtensions
             .AddSqlServer(
                 builder.Configuration["ConnectionStrings:OrderingDB"]!,
                 name: "OrderingDB-check",
-                tags: new [] { "orderdb" });
+                tags: new[] { "orderdb" });
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {

@@ -54,6 +54,30 @@ Note that it will take a little while to start all containers. eShopOnDapr inclu
 
 When all microservices are healthy, you can navigate to http://localhost:5104 to view the eShopOnDapr UI.
 
+#### Unit and integration testing
+
+The tests in eShopOnDapr are structured in the following structure, per type:
+
+- Tests per microservice
+
+  - Unit Tests
+  - Functional/Integration Tests
+
+  To run the tests per microservice from the CLI, run the following command from the root folder:
+
+  ```terminal
+  docker compose -f docker-compose-tests.yml -f docker-compose-tests.override.yml up
+  ```
+
+- Global application tests
+  - Microservices Functional/Integration Tests across the whole application
+
+  To run the global application test from the CLI, run the following command from the root folder:
+
+  ```terminal
+  docker compose -f docker-compose-integration-tests.yml -f docker-compose-integration-tests.override.yml up
+  ```
+
 ### Attributions
 
 Model photo by  [Angelo Pantazis](https://unsplash.com/@angelopantazis?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)  on  [Unsplash](https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
