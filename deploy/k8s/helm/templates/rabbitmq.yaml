@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: redis
+    service: rabbitmq
 spec:
   replicas: 1
   selector:
